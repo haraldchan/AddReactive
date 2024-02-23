@@ -115,24 +115,24 @@ class ReactiveControl {
 
     reformat(text, depend) {
         reconcat(text, val) {
-            lCurl :=  InStr(text, "{") + 1
-            rCurl := InStr(text, "}") 
+            lCurl := InStr(text, "{") + 1
+            rCurl := InStr(text, "}")
 
-            index := Trim(SubStr(text, lCurl, rCurl - lCurl - 1 )) = "" 
-                ? 1 
-                : Trim(SubStr(text, lCurl, rCurl - lCurl - 1 ))
+            index := Trim(SubStr(text, lCurl, rCurl - lCurl - 1)) = ""
+                ? 1
+                : Trim(SubStr(text, lCurl, rCurl - lCurl - 1))
 
             lPart := SubStr(text, 1, lCurl - 1)
             rPart := SubStr(text, rCurl)
 
             return Format(lPart . "{1}" . rPart, val)
         }
-        
+
         newStr := text
         vals := []
         if (depend is Array) {
             for dep in depend {
-                vals.Push(dep.val)  
+                vals.Push(dep.val)
             }
         } else {
             vals.Push(depend.val)
@@ -140,8 +140,8 @@ class ReactiveControl {
         }
         loop vals.Length {
             newStr := reconcat(newStr, vals[A_Index])
-            newStr := StrReplace(newStr, "{", "",,,1)
-            newStr := StrReplace(newStr, "}", "",,,1)
+            newStr := StrReplace(newStr, "{", "", , , 1)
+            newStr := StrReplace(newStr, "}", "", , , 1)
         }
         return newStr
     }
