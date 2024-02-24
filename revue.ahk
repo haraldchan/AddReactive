@@ -1,3 +1,5 @@
+#Include "./typeChecker.ahk"
+
 class ReactiveSignal {
     __New(val) {
         this.val := val
@@ -17,15 +19,16 @@ class ReactiveSignal {
         if (newSignalValue = this.val) {
             return
         }
-        ; update val with new value
         this.val := newSignalValue is Func
             ? newSignalValue(this.val)
             : newSignalValue
-        for ctrl in this.subs {
-            ctrl.update(this)
-        }
+        ; notify all computed signals
         for comp in this.comps {
             comp.sync(this.val)
+        }
+        ; notify all subscribers to update
+        for ctrl in this.subs {
+            ctrl.update(this)
         }
     }
 
@@ -40,6 +43,9 @@ class ReactiveSignal {
 
 class ComputedSignal {
     __New(signal, mutation) {
+        checkType(signal, ReactiveSignal, "First parameter is not a ReactiveSignal.")
+        checkType(mutation, Func, "Second parameter is not a Function.")
+
         this.signal := signal
         this.mutation := mutation
         this.val := this.mutation.Call(this.signal.get())
@@ -62,12 +68,18 @@ class ComputedSignal {
 }
 
 class ReactiveControl {
-    __New(controlType, GuiObject, options, formatString, depend, event := 0) {
+    __New(controlType, GuiObject, options, formattedString, depend, event := 0) {
+        checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
+        checkType(options, String, "Second(options) param is not a String.")
+        checkTypeFormattedString(formattedString)
+        checkTypeDepend(depend)
+        checkTypeEvent(event)
+
         this.depend := depend
         this.GuiObject := GuiObject
         this.options := options
-        this.formatString := formatString
-        this.innerText := this.reformat(formatString, depend)
+        this.formattedString := formattedString
+        this.innerText := this.reformat(formattedString, depend)
         this.ctrlType := controlType
 
         this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
@@ -87,29 +99,11 @@ class ReactiveControl {
 
     }
 
-    setOptions(newOptions) {
-        this.ctrl.Opt(newOptions)
-    }
-
-    getInnerText() {
-        return this.ctrl.Text
-    }
-
-    setInnerText(newInnerText) {
-        this.ctrl.Text := newInnerText is Func
-            ? newInnerText(this.ctrl.Text)
-            : newInnerText
-    }
-
-    setEvent(event, callback) {
-        this.ctrl.OnEvent(event, (*) => callback())
-    }
-
     update(depend) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
-            this.ctrl.Text := this.reformat(this.formatString, this.depend)
+            this.ctrl.Text := this.reformat(this.formattedString, this.depend)
         } else if (this.ctrl is Gui.Edit) {
-            this.ctrl.Value := this.reformat(this.formatString, this.depend)
+            this.ctrl.Value := this.reformat(this.formattedString, this.depend)
         }
     }
 
@@ -127,27 +121,10 @@ class ReactiveControl {
 
         return Format(formatString, vals*)
     }
-}
 
-class addReactiveButton extends ReactiveControl {
-    __New(GuiObject, options, innerText, depend, event := 0) {
-        super.__New("Button", GuiObject, options, innerText, depend, event)
-    }
-}
-
-class addReactiveEdit extends ReactiveControl {
-    __New(GuiObject, options, innerText, depend, event := 0) {
-        super.__New("Edit", GuiObject, options, innerText, depend, event)
-    }
-
-    getValue() {
-        return this.ctrl.Value
-    }
-}
-
-class addReactiveCheckBox extends ReactiveControl {
-    __New(GuiObject, options, innerText, depend, event := 0) {
-        super.__New("CheckBox", GuiObject, options, innerText, depend, event)
+    ; control option methods
+    setOptions(newOptions) {
+        this.ctrl.Opt(newOptions)
     }
 
     getValue() {
@@ -159,33 +136,67 @@ class addReactiveCheckBox extends ReactiveControl {
             ? newValue(this.ctrl.Value)
             : newValue
     }
-}
 
-class addReactiveComboBox extends ReactiveControl {
-    __New(depend, GuiObject, options, items, event := 0) {
-        this.items := items
-        this.vals := []
-        this.texts := []
-        for val, text in items {
-            this.vals.Push(val)
-            this.texts.Push(text)
-        }
-        super.__New("ComboBox", depend, GuiObject, options, this.texts, event)
+    getInnerText() {
+        return this.ctrl.Text
     }
 
-    getValue() {
-        return this.vals[this.ctrl.Value]
+    setInnerText(newInnerText) {
+        this.ctrl.Text := newInnerText is Func
+            ? newInnerText(this.ctrl.Text)
+            : newInnerText
+    }
+
+    setEvent(event, callback) {
+        this.ctrl.OnEvent(event, (*) => callback())
     }
 }
 
-class addReactiveText extends ReactiveControl {
+class AddReactiveText extends ReactiveControl {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("Text", GuiObject, options, innerText, depend, event)
     }
 }
 
-class addReactiveRadio extends ReactiveControl {
+class AddReactiveEdit extends ReactiveControl {
+    __New(GuiObject, options, innerText, depend, event := 0) {
+        super.__New("Edit", GuiObject, options, innerText, depend, event)
+    }
+}
+
+class AddReactiveButton extends ReactiveControl {
+    __New(GuiObject, options, innerText, depend, event := 0) {
+        super.__New("Button", GuiObject, options, innerText, depend, event)
+    }
+}
+
+class AddReactiveRadio extends ReactiveControl {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("Radio", GuiObject, options, innerText, depend, event)
+    }
+}
+
+class AddReactiveCheckBox extends ReactiveControl {
+    __New(GuiObject, options, innerText, depend, event := 0) {
+        super.__New("CheckBox", GuiObject, options, innerText, depend, event)
+    }
+}
+
+class AddReactiveComboBox extends ReactiveControl {
+    __New(depend, GuiObject, options, mapObj, event := 0) {
+        ; mapObj: a Map(value, optionText) map object
+        this.mapObj := mapObj
+        this.vals := []
+        this.text := []
+        for val, text in this.mapObj {
+            this.vals.Push(val)
+            this.text.Push(text)
+        }
+        super.__New("ComboBox", depend, GuiObject, options, this.text, event)
+    }
+
+    ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
+    getValue() {
+        return this.vals[this.ctrl.Value]
     }
 }
