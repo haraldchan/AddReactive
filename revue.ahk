@@ -62,15 +62,15 @@ class ComputedSignal {
 }
 
 class ReactiveControl {
-    __New(controlType, GuiObject, options, innerText, depend, event := 0) {
+    __New(controlType, GuiObject, options, formatString, depend, event := 0) {
         this.depend := depend
         this.GuiObject := GuiObject
         this.options := options
-        this.innerText := innerText
-        this.fromattedText := this.reformat(innerText, depend)
+        this.formatString := formatString
+        this.innerText := this.reformat(formatString, depend)
         this.ctrlType := controlType
 
-        this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.fromattedText)
+        this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
         if (event != 0) {
             this.event := event[1]
             this.callback := event[2]
@@ -107,29 +107,15 @@ class ReactiveControl {
 
     update(depend) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
-            this.ctrl.Text := this.reformat(this.innerText, depend)
+            this.ctrl.Text := this.reformat(this.formatString, this.depend)
         } else if (this.ctrl is Gui.Edit) {
-            this.ctrl.Value := this.reformat(this.innerText, this.depend)
+            this.ctrl.Value := this.reformat(this.formatString, this.depend)
         }
     }
 
-    reformat(text, depend) {
-        reconcat(text, val) {
-            lCurl := InStr(text, "{") + 1
-            rCurl := InStr(text, "}")
-
-            index := Trim(SubStr(text, lCurl, rCurl - lCurl - 1)) = ""
-                ? 1
-                : Trim(SubStr(text, lCurl, rCurl - lCurl - 1))
-
-            lPart := SubStr(text, 1, lCurl - 1)
-            rPart := SubStr(text, rCurl)
-
-            return Format(lPart . "{1}" . rPart, val)
-        }
-
-        newStr := text
+    reformat(formatString, depend) {
         vals := []
+
         if (depend is Array) {
             for dep in depend {
                 vals.Push(dep.val)
@@ -138,12 +124,8 @@ class ReactiveControl {
             vals.Push(depend.val)
 
         }
-        loop vals.Length {
-            newStr := reconcat(newStr, vals[A_Index])
-            newStr := StrReplace(newStr, "{", "", , , 1)
-            newStr := StrReplace(newStr, "}", "", , , 1)
-        }
-        return newStr
+
+        return Format(formatString, vals*)
     }
 }
 
