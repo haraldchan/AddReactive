@@ -22,7 +22,7 @@ checkTypeDepend(depend) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}"), errMsg, Type(depend))
     } else if (depend is Array) {
         for item in depend {
-            if (!(item is ReactiveControl)) {
+            if (!(item is AddReactive)) {
                 throw TypeError(Format("{1}; `n`nCurrent Type: {2}"), errMsg, Type(depend))
             }
         }

@@ -2,29 +2,29 @@
 
 class ReactiveSignal {
     __New(val) {
-        this.val := val
+        this.value := val
         this.subs := []
         this.comps := []
     }
 
     get(mutateFunction := 0) {
         if (mutateFunction != 0 && mutateFunction is Func) {
-            return mutateFunction(this.val)
+            return mutateFunction(this.value)
         } else {
-            return this.val
+            return this.value
         }
     }
 
     set(newSignalValue) {
-        if (newSignalValue = this.val) {
+        if (newSignalValue = this.value) {
             return
         }
         this.val := newSignalValue is Func
-            ? newSignalValue(this.val)
+            ? newSignalValue(this.value)
             : newSignalValue
         ; notify all computed signals
         for comp in this.comps {
-            comp.sync(this.val)
+            comp.sync(this.value)
         }
         ; notify all subscribers to update
         for ctrl in this.subs {
@@ -48,7 +48,7 @@ class ComputedSignal {
 
         this.signal := signal
         this.mutation := mutation
-        this.val := this.mutation.Call(this.signal.get())
+        this.value := this.mutation.Call(this.signal.get())
         ; msgbox this.mutation.Call(this.signal.get())
         this.subs := []
 
@@ -56,7 +56,7 @@ class ComputedSignal {
     }
 
     sync(newVal) {
-        this.val := this.mutation.Call(newVal)
+        this.value := this.mutation.Call(newVal)
         for ctrl in this.subs {
             ctrl.update(this)
         }
@@ -67,7 +67,7 @@ class ComputedSignal {
     }
 }
 
-class ReactiveControl {
+class AddReactive {
     __New(controlType, GuiObject, options, formattedString, depend, event := 0) {
         checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
         checkType(options, String, "Second(options) param is not a String.")
@@ -112,10 +112,10 @@ class ReactiveControl {
 
         if (depend is Array) {
             for dep in depend {
-                vals.Push(dep.val)
+                vals.Push(dep.value)
             }
         } else {
-            vals.Push(depend.val)
+            vals.Push(depend.value)
 
         }
 
@@ -152,37 +152,37 @@ class ReactiveControl {
     }
 }
 
-class AddReactiveText extends ReactiveControl {
+class AddReactiveText extends AddReactive {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("Text", GuiObject, options, innerText, depend, event)
     }
 }
 
-class AddReactiveEdit extends ReactiveControl {
+class AddReactiveEdit extends AddReactive {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("Edit", GuiObject, options, innerText, depend, event)
     }
 }
 
-class AddReactiveButton extends ReactiveControl {
+class AddReactiveButton extends AddReactive {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("Button", GuiObject, options, innerText, depend, event)
     }
 }
 
-class AddReactiveRadio extends ReactiveControl {
+class AddReactiveRadio extends AddReactive {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("Radio", GuiObject, options, innerText, depend, event)
     }
 }
 
-class AddReactiveCheckBox extends ReactiveControl {
+class AddReactiveCheckBox extends AddReactive {
     __New(GuiObject, options, innerText, depend, event := 0) {
         super.__New("CheckBox", GuiObject, options, innerText, depend, event)
     }
 }
 
-class AddReactiveComboBox extends ReactiveControl {
+class AddReactiveComboBox extends AddReactive {
     __New(depend, GuiObject, options, mapObj, event := 0) {
         ; mapObj: a Map(value, optionText) map object
         this.mapObj := mapObj
