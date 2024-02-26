@@ -69,19 +69,20 @@ class ComputedSignal {
 }
 
 class AddReactive {
-    __New(controlType, GuiObject, options, textString, depend := 0, event := 0) {
+    __New(controlType, GuiObject, options := "", textString := "", depend := 0, event := 0, key := 0) {
         checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
         checkType(options, String, "Second(options) param is not a String.")
         checkTypeFormattedString(textString)
         checkTypeDepend(depend)
         checkTypeEvent(event)
 
-        this.depend := depend
+        this.ctrlType := controlType
         this.GuiObject := GuiObject
         this.options := options
         this.formattedString := textString
         this.innerText := RegExMatch(textString, "/{(\d+)}/g") ? this.reformat(textString, depend) : textString
-        this.ctrlType := controlType
+        this.depend := depend
+        this.key := key
 
         ; add control
         this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
@@ -97,7 +98,7 @@ class AddReactive {
         }
     }
 
-    subscribe(depend){
+    subscribe(depend) {
         if (depend = 0) {
             return
         } else if (depend is Array) {
@@ -122,11 +123,18 @@ class AddReactive {
 
         if (depend is Array) {
             for dep in depend {
-                vals.Push(dep.value)
+                if (dep.value is Object) {
+                    vals.Push(dep.value[this.key])
+                } else {
+                    vals.Push(dep.value)
+                }
             }
         } else {
-            vals.Push(depend.value)
-
+            if (depend.value is Object) {
+                vals.Push(depend.value[this.key])
+            } else {
+                vals.Push(depend.value)
+            }
         }
 
         return Format(formatString, vals*)
@@ -157,7 +165,7 @@ class AddReactive {
             : newInnerText
     }
 
-    setDepend(depend){
+    setDepend(depend) {
         this.depend := depend
         this.subscribe(this.depend)
     }
@@ -168,37 +176,37 @@ class AddReactive {
 }
 
 class AddReactiveText extends AddReactive {
-    __New(GuiObject, options, innerText, depend := 0, event := 0) {
-        super.__New("Text", GuiObject, options, innerText, depend, event)
+    __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        super.__New("Text", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveEdit extends AddReactive {
-    __New(GuiObject, options, innerText, depend := 0, event := 0) {
-        super.__New("Edit", GuiObject, options, innerText, depend, event)
+    __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        super.__New("Edit", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveButton extends AddReactive {
-    __New(GuiObject, options, innerText, depend := 0, event := 0) {
-        super.__New("Button", GuiObject, options, innerText, depend, event)
+    __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        super.__New("Button", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveRadio extends AddReactive {
-    __New(GuiObject, options, innerText, depend := 0, event := 0) {
-        super.__New("Radio", GuiObject, options, innerText, depend, event)
+    __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        super.__New("Radio", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveCheckBox extends AddReactive {
-    __New(GuiObject, options, innerText, depend := 0, event := 0) {
-        super.__New("CheckBox", GuiObject, options, innerText, depend, event)
+    __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        super.__New("CheckBox", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveComboBox extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, event := 0) {
+    __New(GuiObject, options, mapObj, depend := 0, event := 0, key := 0) {
         ; mapObj: a Map(value, optionText) map object
         this.mapObj := mapObj
         this.vals := []
@@ -207,7 +215,7 @@ class AddReactiveComboBox extends AddReactive {
             this.vals.Push(val)
             this.text.Push(text)
         }
-        super.__New("ComboBox", GuiObject, options, this.text, depend, event)
+        super.__New("ComboBox", GuiObject, options, this.text, depend, event, key)
     }
 
     ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
