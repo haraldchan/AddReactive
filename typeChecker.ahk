@@ -17,6 +17,9 @@ checkTypeFormattedString(fs) {
 }
 
 checkTypeDepend(depend) {
+    if (depend = 0) {
+        return
+    }
     errMsg := "Forth(depend signal) parameter is not a ReactiveSignal or an array containing ReactiveSignals"
     if (!(depend is ReactiveSignal)) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}"), errMsg, Type(depend))
