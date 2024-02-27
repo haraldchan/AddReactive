@@ -19,7 +19,7 @@ class ReactiveSignal {
         if (newSignalValue = this.value) {
             return
         }
-        this.val := newSignalValue is Func
+        this.value := newSignalValue is Func
             ? newSignalValue(this.value)
             : newSignalValue
 
@@ -45,8 +45,8 @@ class ReactiveSignal {
 
 class ComputedSignal {
     __New(signal, mutation) {
-        checkType(signal, ReactiveSignal, "First parameter is not a ReactiveSignal.")
-        checkType(mutation, Func, "Second parameter is not a Function.")
+        ; checkType(signal, ReactiveSignal, "First parameter is not a ReactiveSignal.")
+        ; checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := signal
         this.mutation := mutation
@@ -70,17 +70,18 @@ class ComputedSignal {
 
 class AddReactive {
     __New(controlType, GuiObject, options := "", textString := "", depend := 0, event := 0, key := 0) {
-        checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
-        checkType(options, String, "Second(options) param is not a String.")
-        checkTypeFormattedString(textString)
-        checkTypeDepend(depend)
-        checkTypeEvent(event)
+        ; checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
+        ; checkType(options, String, "Second(options) param is not a String.")
+        ; checkTypeFormattedString(textString)
+        ; checkTypeDepend(depend)
+        ; checkTypeEvent(event)
 
         this.ctrlType := controlType
         this.GuiObject := GuiObject
         this.options := options
         this.formattedString := textString
-        this.innerText := RegExMatch(textString, "/{(\d+)}/g") ? this.reformat(textString, depend) : textString
+        this.innerText := RegExMatch(textString, "\{\d+\}") ? this.reformat(textString, depend) : textString
+
         this.depend := depend
         this.key := key
 
@@ -88,17 +89,6 @@ class AddReactive {
         this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
 
         ; add subscribe
-        this.subscribe(this.depend)
-
-        ; add event
-        if (event != 0) {
-            this.event := event[1]
-            this.callback := event[2]
-            this.ctrl.OnEvent(this.event, (*) => this.callback())
-        }
-    }
-
-    subscribe(depend) {
         if (depend = 0) {
             return
         } else if (depend is Array) {
@@ -107,6 +97,13 @@ class AddReactive {
             }
         } else {
             depend.addSub(this)
+        }
+
+        ; add event
+        if (event != 0) {
+            this.event := event[1]
+            this.callback := event[2]
+            this.ctrl.OnEvent(this.event, (*) => this.callback())
         }
     }
 
@@ -123,19 +120,20 @@ class AddReactive {
 
         if (depend is Array) {
             for dep in depend {
-                if (dep.value is Object) {
-                    vals.Push(dep.value[this.key])
-                } else {
+                ; if (dep.value is Object) {
+                    ; vals.Push(dep.value[this.key])
+                ; } else {
                     vals.Push(dep.value)
-                }
+                ; }
             }
         } else {
-            if (depend.value is Object) {
-                vals.Push(depend.value[this.key])
-            } else {
+            ; if (depend.value is Array) {
+                ; vals.Push(depend.value[this.key])
+            ; } else {
                 vals.Push(depend.value)
-            }
+            ; }
         }
+
 
         return Format(formatString, vals*)
     }
@@ -174,6 +172,7 @@ class AddReactive {
         this.ctrl.OnEvent(event, (*) => callback())
     }
 }
+
 
 class AddReactiveText extends AddReactive {
     __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {

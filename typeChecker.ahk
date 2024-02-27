@@ -9,7 +9,7 @@ checkTypeFormattedString(fs) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}",
             "Third(formatted string) parameter is not a String.",
             Type(fs)))
-    } else if (!RegExMatch(fs, "/{(\d+)}/g")) {
+    } else if (RegExMatch(fs, "/{(\d+)}/g")) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}",
             "Third(formatted string) parameter is not a formatted string with {}.",
             Type(fs)))
@@ -34,10 +34,11 @@ checkTypeDepend(depend) {
 
 checkTypeEvent(e) {
     errMsg := "Fifth(event) parameter is not an [ event, callback ] array."
-    if (e := 0) {
+    if (e = 0) {
         return
-    } else if (e.Length != 2) {
+    } else if (e is Array && e.Length != 2) {
         throw TypeError(errMsg)
+    } else {
+        checkType(e, Array, errMsg)
     }
-    checkType(e, Array, errMsg)
 }
