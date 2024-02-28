@@ -1,5 +1,8 @@
 #Include "./typeChecker.ahk"
 
+Gui.Prototype.AddReactive := AddReactive.Call
+Gui.Prototype.AddReactiveText := AddReactiveText.Call
+
 class ReactiveSignal {
     __New(val) {
         this.value := val
@@ -120,18 +123,18 @@ class AddReactive {
 
         if (depend is Array) {
             for dep in depend {
-                ; if (dep.value is Object) {
-                    ; vals.Push(dep.value[this.key])
-                ; } else {
+                if (dep.value is Array) {
+                    vals.Push(dep.value[depend.key])
+                } else {
                     vals.Push(dep.value)
-                ; }
+                }
             }
         } else {
-            ; if (depend.value is Array) {
-                ; vals.Push(depend.value[this.key])
-            ; } else {
+            if (depend.value is Array) {
+                vals.Push(depend.value[depend.key])
+            } else {
                 vals.Push(depend.value)
-            ; }
+            }
         }
 
 
