@@ -1,8 +1,5 @@
 #Include "./typeChecker.ahk"
 
-Gui.Prototype.AddReactive := AddReactive.Call
-Gui.Prototype.AddReactiveText := AddReactiveText.Call
-
 class ReactiveSignal {
     __New(val) {
         this.value := val
@@ -87,7 +84,6 @@ class AddReactive {
 
         this.depend := depend
         this.key := key
-
         ; add control
         this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
 
@@ -124,14 +120,14 @@ class AddReactive {
         if (depend is Array) {
             for dep in depend {
                 if (dep.value is Array) {
-                    vals.Push(dep.value[depend.key])
+                    vals.Push(dep.value[this.key])
                 } else {
                     vals.Push(dep.value)
                 }
             }
         } else {
             if (depend.value is Array) {
-                vals.Push(depend.value[depend.key])
+                vals.Push(depend.value[this.key])
             } else {
                 vals.Push(depend.value)
             }
@@ -179,30 +175,35 @@ class AddReactive {
 
 class AddReactiveText extends AddReactive {
     __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        this.key := key
         super.__New("Text", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveEdit extends AddReactive {
     __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        this.key := key
         super.__New("Edit", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveButton extends AddReactive {
     __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        this.key := key
         super.__New("Button", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveRadio extends AddReactive {
     __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        this.key := key
         super.__New("Radio", GuiObject, options, innerText, depend, event, key)
     }
 }
 
 class AddReactiveCheckBox extends AddReactive {
     __New(GuiObject, options := "", innerText := "", depend := 0, event := 0, key := 0) {
+        this.key := key
         super.__New("CheckBox", GuiObject, options, innerText, depend, event, key)
     }
 }
@@ -210,6 +211,7 @@ class AddReactiveCheckBox extends AddReactive {
 class AddReactiveComboBox extends AddReactive {
     __New(GuiObject, options, mapObj, depend := 0, event := 0, key := 0) {
         ; mapObj: a Map(value, optionText) map object
+        this.key := key
         this.mapObj := mapObj
         this.vals := []
         this.text := []

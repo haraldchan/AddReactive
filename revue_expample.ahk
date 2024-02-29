@@ -12,13 +12,14 @@ mouseX := ReactiveSignal(0)
 mouseY := ReactiveSignal(0)
 isTracking := ReactiveSignal(true)
 
-AddReactiveText(Example, "h15 w200", "num is {1}, it's reactive!", num)
+AddReactiveText(Example, "h15 w200","num is {1}, it's reactive!", num)
 AddReactiveText(Example, "h15 w200", "double num is {1}, also reactive!", num2)
 AddReactiveText(Example, "h15 w200", "num 1 is {1}, num2 is {2}", [num, num2])
 Example.AddButton("y+25 h40 w150", "++").OnEvent("Click", (*) => num.set(n => n + 1))
 
 loop nums.value.Length {
-	AddReactiveText(Example, "h15 w200", " - list num: {1}", nums,, A_Index)
+	listStyle := A_Index = 1 ? "y+25 h10 w200" : "h10 w200"
+	AddReactiveText(Example, listStyle, " - list num: {1}", nums,, A_Index)
 }	
 
 AddReactiveText(Example, "y+25 h40 w200", "mouse pos X: {1}; `nmouse pos Y: {2}", [mouseX, mouseY])
