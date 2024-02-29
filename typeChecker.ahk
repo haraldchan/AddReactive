@@ -7,34 +7,19 @@ checkType(val, typeChecking, errMsg := 0) {
     }
 }
 
-checkTypeFormattedString(fs) {
-    if (fs = "") {
-        return
-    }
-    if (!(fs is String)) {
-        throw TypeError(Format("{1}; `n`nCurrent Type: {2}",
-            "Third(formatted string) parameter is not a String.",
-            Type(fs)))
-    } else if (RegExMatch(fs, "\{\d+\}")) {
-        throw TypeError(Format("{1}; `n`nCurrent Type: {2}",
-            "Third(formatted string) parameter is not a formatted string with {}.",
-            Type(fs)))
-    }
-}
-
 checkTypeDepend(depend) {
     if (depend = 0) {
         return
     }
-    errMsg := "Forth(depend signal) parameter is not a ReactiveSignal or an array containing ReactiveSignals"
-    if (!(depend is ReactiveSignal)) {
-        throw TypeError(Format("{1}; `n`nCurrent Type: {2}"), errMsg, Type(depend))
-    } else if (depend is Array) {
-        for item in depend {
-            if (!(item is AddReactive)) {
-                throw TypeError(Format("{1}; `n`nCurrent Type: {2}"), errMsg, Type(depend))
+    errMsg := "Forth(depend signal) parameter is not a Signal or an array containing Signals"
+    if (depend is Array) {
+         for item in depend {
+            if (!(item is ReactiveSignal || item is ComputedSignal)) {
+                throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
             }
         }
+    } else if (!(depend is ReactiveSignal || depend is ComputedSignal)) {
+        throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
     }
 }
 
