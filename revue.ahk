@@ -45,8 +45,8 @@ class ReactiveSignal {
 
 class ComputedSignal {
     __New(signal, mutation) {
-        ; checkType(signal, ReactiveSignal, "First parameter is not a ReactiveSignal.")
-        ; checkType(mutation, Func, "Second parameter is not a Function.")
+        checkType(signal, ReactiveSignal, "First parameter is not a ReactiveSignal.")
+        checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := signal
         this.mutation := mutation
@@ -70,20 +70,20 @@ class ComputedSignal {
 
 class AddReactive {
     __New(controlType, GuiObject, options := "", textString := "", depend := 0, event := 0, key := 0) {
-        ; checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
-        ; checkType(options, String, "Second(options) param is not a String.")
-        ; checkTypeFormattedString(textString)
-        ; checkTypeDepend(depend)
-        ; checkTypeEvent(event)
+        ; params type checking
+        checkType(GuiObject, Gui, "First(GuiObject) param is not a Gui Object.")
+        checkType(options, String, "Second(options) param is not a String.")
+        checkTypeDepend(depend)
+        checkTypeEvent(event)
 
         this.ctrlType := controlType
         this.GuiObject := GuiObject
         this.options := options
         this.formattedString := textString
         this.innerText := RegExMatch(textString, "\{\d+\}") ? this.reformat(textString, depend) : textString
-
         this.depend := depend
         this.key := key
+
         ; add control
         this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
 
