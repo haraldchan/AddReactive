@@ -65,9 +65,38 @@ NumberList(App) {
 	}
 
 	return (
-		nums.value.map(item => AddReactiveText(App, "h15 w200", " - list num: {1}", nums,, A_Index)),
+		nums.value.map(item => AddReactiveText(App, "h15 w200", " - list num: {1}", nums, A_Index)),
 		AddReactiveText(App, "h15 w200", "First: {1}, Second: {2}, Third: {3}.", nums),
 		App.AddButton("y+25 h40 w150", "assign new item")
 	   		.OnEvent("Click", (*) => nums.set(randomArr()))
+	)
+}
+
+ObjectText(App) {
+	obj := ReactiveSignal({name: "Harald", position: "Supervisor"})
+	
+	return (
+		AddReactiveText(
+			App, 
+			"h40 w300", 
+			"Staff Name: {1}, Current Position: {2}", obj, ["name", "position"]
+		)
+	)
+}
+
+ObjectList(App) {
+	crewInfo := [
+		{name: "Amy", position: "Manager"},
+		{name: "Harald", position: "Supervisor"},
+		{name: "Ben", position: "Attendant"}
+	]
+	crew := ReactiveSignal(crewInfo)
+
+	return ( 
+		crewInfo.map(item => AddReactiveText(App, 
+											 "h30 w300", 
+											 "Staff Name: {1}, Current Position: {2}",
+											 crew,
+											 [[A_Index], "name", "position"]))
 	)
 }
