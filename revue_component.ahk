@@ -48,7 +48,7 @@ MouseTracker(App) {
 		}
 	}
 
-	SetTimer trackMouse, 100,
+	SetTimer trackMouse, 100
 
 	return (
 		AddReactiveText(App, "y+25 h40 w200", "mouse pos X: {1}; `nmouse pos Y: {2}", [mouseX, mouseY]),
