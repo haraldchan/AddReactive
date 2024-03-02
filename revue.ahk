@@ -1,4 +1,5 @@
 #Include "./typeChecker.ahk"
+; #Include "./JSON.ahk"
 
 class ReactiveSignal {
     __New(val) {
@@ -127,7 +128,11 @@ class AddReactive {
             }
         } else {
             if (depend.value is Array) {
-                vals.Push(depend.value[this.key])
+                if (this.key != 0) {
+                     vals.Push(depend.value[this.key])
+                } else {
+                    vals := depend.value
+                }
             } else {
                 vals.Push(depend.value)
             }
