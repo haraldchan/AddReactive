@@ -5,10 +5,12 @@
 
 Example := Gui("+MinSize250x300 +AlwaysOnTop", "testGui")
 
-Counter(Example)
 NumberTexts(Example)
 NumberList(Example)
+Counter(Example)
 MouseTracker(Example)
+ObjectText(Example)
+ObjectList(Example)
 
 Example.Show()
 
