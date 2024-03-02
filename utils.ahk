@@ -1,4 +1,4 @@
-#Include "./_JXON.ahk"
+#Include "./JSON.ahk"
 
 ;utils: general utility methods
 class utils {
@@ -44,8 +44,7 @@ class utils {
 ;debug: save output log / show msgbox
 class debug {
     static mb(res) {
-        prefix := res
-        str := Jxon_Dump(res)
+        str := JSON.stringify(res)
         MsgBox(str, "Debug")
     }
 
@@ -55,7 +54,7 @@ class debug {
             FileAppend("", log)
         }
         sendPrefix := Format("From: {1}, {2} `r`n", A_UserName, FormatTime(A_Now))
-        logText := Jxon_Dump(res)
+        logText := JSON.stringify(res)
         utils.filePrepend(sendPrefix . logText . "`r`n`r`n", log)
     }
 }
