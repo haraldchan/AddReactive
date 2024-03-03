@@ -41,11 +41,8 @@ MouseTracker(App) {
 
 	toggleTracking() {
 		isTracking.set(t => !t)
-		if (isTracking.get() = false) {
-			SetTimer trackMouse, 0
-		} else {
-			SetTimer trackMouse, 100
-		}
+		interval := isTracking.get() = false ? 0 : 100
+		SetTimer trackMouse, interval
 	}
 
 	SetTimer trackMouse, 100
