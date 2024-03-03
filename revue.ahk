@@ -43,10 +43,10 @@ class ReactiveSignal {
         this.comps.Push(computed)
     }
 
-    mapify(obj) {
+    static mapify(obj) {
         if (!(obj is Object)) {
             return
-        } 
+        }
         return JSON.parse(JSON.stringify(obj))
     }
 }
@@ -124,11 +124,12 @@ class AddReactive {
 
     reformat(formatString, depend) {
         vals := []
-        ; msgbox JSON.stringify(depend)
+        ; key is Array: depend.value is Object or an array contain Objects.
         if (this.key is Array) {
+            ; if depend.value is array contains Objects, the first element is its index indicator in another array, like [1]
             if (this.key[1] is Array) {
                 for key in this.key {
-                    ; skip the first element
+                    ; skip the first element(index indicator)
                     if (A_Index = 1) {
                         continue
                     }
@@ -137,7 +138,7 @@ class AddReactive {
             } else {
                 for key in this.key {
                     vals.Push(depend.value[key])
-                }                
+                }
             }
         } else if (depend is Array) {
             for dep in depend {
@@ -150,7 +151,7 @@ class AddReactive {
         } else {
             if (depend.value is Array) {
                 if (this.key != 0) {
-                     vals.Push(depend.value[this.key])
+                    vals.Push(depend.value[this.key])
                 } else {
                     vals := depend.value
                 }
@@ -160,6 +161,53 @@ class AddReactive {
         }
 
         return Format(formatString, vals*)
+    }
+
+    handleFormatStr(formatStr, depend, key) {
+        vals := []
+
+        if (key = 0) {
+            handleKeyless()
+        } else if (key is Number) {
+            handleKeyNumber()
+        } else {
+            handleKeyObject()
+        }
+
+        handleKeyless() {
+            if (depend is Array) {
+                for dep in depend {
+                    vals.Push(dep.valule)
+                }
+            } else if (depend.value is Array) {
+                vals := depend.value
+            } else {
+                vals.Push(depend.value)
+            }
+        }
+
+        handleKeyNumber() {
+            for item in depend.value {
+                vals.Push(depend.value[key])
+            }
+        }
+
+        handleKeyObject() {
+            if (key[1] is Array) {
+                for k in key {
+                    if (A_Index = 1) {
+                        continue
+                    }
+                    vals.Push(depend.value[key[1][1]][k])
+                }
+            } else {
+                for k in key {
+                   vals.Push(depend.value[k]) 
+                }
+            }
+        }
+
+        return Format(formatStr, vals*)
     }
 
     ; control option methods
