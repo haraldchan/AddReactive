@@ -31,7 +31,7 @@ class ReactiveSignal {
 
         ; notify all subscribers to update
         for ctrl in this.subs {
-            ctrl.update(this)
+            ctrl.update()
         }
     }
 
@@ -43,7 +43,7 @@ class ReactiveSignal {
         this.comps.Push(computed)
     }
 
-    static mapify(obj) {
+    mapify(obj) {
         if (!(obj is Object)) {
             return
         }
@@ -67,7 +67,7 @@ class ComputedSignal {
     sync(newVal) {
         this.value := this.mutation.Call(newVal)
         for ctrl in this.subs {
-            ctrl.update(this)
+            ctrl.update()
         }
     }
 
@@ -88,7 +88,7 @@ class AddReactive {
         this.GuiObject := GuiObject
         this.options := options
         this.formattedString := textString
-        this.innerText := RegExMatch(textString, "\{\d+\}") ? this.reformat(textString, depend) : textString
+        this.innerText := RegExMatch(textString, "\{\d+\}") ? this.handleFormatStr(textString, depend, key) : textString
         this.depend := depend
         this.key := key
 
@@ -114,53 +114,12 @@ class AddReactive {
         }
     }
 
-    update(depend) {
+    update() {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
-            this.ctrl.Text := this.reformat(this.formattedString, this.depend)
+            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
         } else if (this.ctrl is Gui.Edit) {
-            this.ctrl.Value := this.reformat(this.formattedString, this.depend)
+            this.ctrl.Value := this.handleFormatStr(this.formattedString, this.depend, this.key)
         }
-    }
-
-    reformat(formatString, depend) {
-        vals := []
-        ; key is Array: depend.value is Object or an array contain Objects.
-        if (this.key is Array) {
-            ; if depend.value is array contains Objects, the first element is its index indicator in another array, like [1]
-            if (this.key[1] is Array) {
-                for key in this.key {
-                    ; skip the first element(index indicator)
-                    if (A_Index = 1) {
-                        continue
-                    }
-                    vals.Push(depend.value[this.key[1][1]][key])
-                }
-            } else {
-                for key in this.key {
-                    vals.Push(depend.value[key])
-                }
-            }
-        } else if (depend is Array) {
-            for dep in depend {
-                if (dep.value is Array) {
-                    vals.Push(dep.value[this.key])
-                } else {
-                    vals.Push(dep.value)
-                }
-            }
-        } else {
-            if (depend.value is Array) {
-                if (this.key != 0) {
-                    vals.Push(depend.value[this.key])
-                } else {
-                    vals := depend.value
-                }
-            } else {
-                vals.Push(depend.value)
-            }
-        }
-
-        return Format(formatString, vals*)
     }
 
     handleFormatStr(formatStr, depend, key) {
@@ -177,7 +136,7 @@ class AddReactive {
         handleKeyless() {
             if (depend is Array) {
                 for dep in depend {
-                    vals.Push(dep.valule)
+                    vals.Push(dep.value)
                 }
             } else if (depend.value is Array) {
                 vals := depend.value
