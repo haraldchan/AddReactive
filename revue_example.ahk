@@ -8,14 +8,14 @@ App(){
 	
 	Example := Gui("+MinSize250x300 +AlwaysOnTop", "testGui")
 
-	Text(Example, num, anotherText)
+	Text(Example, num, AnotherText)
 	Edit(Example, num)
 	Button(Example, num)
 
 	Example.Show()
 }
 
-anotherText(App, signal){
+AnotherText(App, signal){
 	num2 := ComputedSignal(signal, n => n * 2)
 
 	return AddReactiveText(App, "h20 w300", "number2 : {1}", num2)
