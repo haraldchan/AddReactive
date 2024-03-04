@@ -215,6 +215,10 @@ class AddReactive {
     setEvent(event, callback) {
         this.ctrl.OnEvent(event, (*) => callback())
     }
+
+    disable(state){
+        this.ctrl.Enabled := state
+    }
 }
 
 class AddReactiveText extends AddReactive {
@@ -238,6 +242,13 @@ class AddReactiveButton extends AddReactive {
     }
 }
 
+class AddReactiveCheckBox extends AddReactive {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+        this.key := key
+        super.__New("CheckBox", GuiObject, options, innerText, depend, key, event)
+    }
+}
+
 ; class AddReactiveRadio extends AddReactive {
 ;     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
 ;         this.key := key
@@ -245,12 +256,7 @@ class AddReactiveButton extends AddReactive {
 ;     }
 ; }
 
-; class AddReactiveCheckBox extends AddReactive {
-;     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-;         this.key := key
-;         super.__New("CheckBox", GuiObject, options, innerText, depend, key, event)
-;     }
-; }
+
 
 ; class AddReactiveComboBox extends AddReactive {
 ;     __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
