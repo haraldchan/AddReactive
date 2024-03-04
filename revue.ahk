@@ -20,9 +20,15 @@ class ReactiveSignal {
         if (newSignalValue = this.value) {
             return
         }
+
         this.value := newSignalValue is Func
             ? newSignalValue(this.value)
             : newSignalValue
+
+        ; change to Map()
+        if (newSignalValue is Object) {
+            this.value := this.mapify(this.value)
+        }
 
         ; notify all computed signals
         for comp in this.comps {
@@ -45,7 +51,7 @@ class ReactiveSignal {
 
     mapify(obj) {
         if (!(obj is Object)) {
-            return
+            return obj
         }
         return JSON.parse(JSON.stringify(obj))
     }
@@ -169,6 +175,13 @@ class AddReactive {
         return Format(formatStr, vals*)
     }
 
+    mapify(obj) {
+        if (!(obj is Object)) {
+            return obj
+        }
+        return JSON.parse(JSON.stringify(obj))
+    }
+
     ; control option methods
     setOptions(newOptions) {
         this.ctrl.Opt(newOptions)
@@ -225,36 +238,36 @@ class AddReactiveButton extends AddReactive {
     }
 }
 
-class AddReactiveRadio extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New("Radio", GuiObject, options, innerText, depend, key, event)
-    }
-}
+; class AddReactiveRadio extends AddReactive {
+;     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+;         this.key := key
+;         super.__New("Radio", GuiObject, options, innerText, depend, key, event)
+;     }
+; }
 
-class AddReactiveCheckBox extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New("CheckBox", GuiObject, options, innerText, depend, key, event)
-    }
-}
+; class AddReactiveCheckBox extends AddReactive {
+;     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+;         this.key := key
+;         super.__New("CheckBox", GuiObject, options, innerText, depend, key, event)
+;     }
+; }
 
-class AddReactiveComboBox extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
-        ; mapObj: a Map(value, optionText) map object
-        this.key := key
-        this.mapObj := mapObj
-        this.vals := []
-        this.text := []
-        for val, text in this.mapObj {
-            this.vals.Push(val)
-            this.text.Push(text)
-        }
-        super.__New("ComboBox", GuiObject, options, this.text, depend, key, event)
-    }
+; class AddReactiveComboBox extends AddReactive {
+;     __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
+;         ; mapObj: a Map(value, optionText) map object
+;         this.key := key
+;         this.mapObj := mapObj
+;         this.vals := []
+;         this.text := []
+;         for val, text in this.mapObj {
+;             this.vals.Push(val)
+;             this.text.Push(text)
+;         }
+;         super.__New("ComboBox", GuiObject, options, this.text, depend, key, event)
+;     }
 
-    ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
-    getValue() {
-        return this.vals[this.ctrl.Value]
-    }
-}
+;     ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
+;     getValue() {
+;         return this.vals[this.ctrl.Value]
+;     }
+; }
