@@ -14,11 +14,11 @@ checkTypeDepend(depend) {
     errMsg := "Forth(depend signal) parameter is not a Signal or an array containing Signals"
     if (depend is Array) {
          for item in depend {
-            if (!(item is ReactiveSignal || item is ComputedSignal)) {
+            if (!(item is signal || item is computed)) {
                 throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
             }
         }
-    } else if (!(depend is ReactiveSignal || depend is ComputedSignal)) {
+    } else if (!(depend is signal || depend is computed)) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
     }
 }

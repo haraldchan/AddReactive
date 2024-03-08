@@ -1,7 +1,7 @@
 #Include "./typeChecker.ahk"
 #Include "./JSON.ahk"
 
-class ReactiveSignal {
+class signal {
     __New(val) {
         this.value := val is Object ? this.mapify(val) : val
         this.subs := []
@@ -57,9 +57,9 @@ class ReactiveSignal {
     }
 }
 
-class ComputedSignal {
+class computed {
     __New(signal, mutation) {
-        checkType(signal, ReactiveSignal, "First parameter is not a ReactiveSignal.")
+        checkType(signal, signal, "First parameter is not a ReactiveSignal.")
         checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := signal
@@ -94,12 +94,14 @@ class AddReactive {
         this.GuiObject := GuiObject
         this.options := options
         this.formattedString := textString
-        this.innerText := RegExMatch(textString, "\{\d+\}") ? this.handleFormatStr(textString, depend, key) : textString
+        this.innerText := RegExMatch(textString, "\{\d+\}")
+            ? this.handleFormatStr(textString, depend, key)
+            : textString
         this.depend := depend
         this.key := key
 
         ; add control
-        this.ctrl := this.GuiObject.Add(this.ctrlType, options, this.innerText)
+        this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
 
         ; add subscribe
         if (depend = 0) {
@@ -167,19 +169,12 @@ class AddReactive {
                 }
             } else {
                 for k in key {
-                   vals.Push(depend.value[k]) 
+                    vals.Push(depend.value[k])
                 }
             }
         }
 
         return Format(formatStr, vals*)
-    }
-
-    mapify(obj) {
-        if (!(obj is Object)) {
-            return obj
-        }
-        return JSON.parse(JSON.stringify(obj))
     }
 
     ; control option methods
@@ -216,7 +211,7 @@ class AddReactive {
         this.ctrl.OnEvent(event, (*) => callback())
     }
 
-    disable(state){
+    disable(state) {
         this.ctrl.Enabled := state
     }
 }
@@ -255,7 +250,6 @@ class AddReactiveCheckBox extends AddReactive {
 ;         super.__New("Radio", GuiObject, options, innerText, depend, key, event)
 ;     }
 ; }
-
 
 
 ; class AddReactiveComboBox extends AddReactive {

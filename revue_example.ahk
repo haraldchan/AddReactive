@@ -4,7 +4,7 @@
 #SingleInstance Force
 
 App(){
-	num := ReactiveSignal(0)
+	num := signal(0)
 	
 	Example := Gui("+MinSize250x300 +AlwaysOnTop", "testGui")
 
@@ -16,7 +16,7 @@ App(){
 }
 
 AnotherText(App, signal){
-	num2 := ComputedSignal(signal, n => n * 2)
+	num2 := computed(signal, n => n * 2)
 
 	return AddReactiveText(App, "h20 w300", "number2 : {1}", num2)
 }

@@ -3,8 +3,8 @@
 #SingleInstance Force
 
 Counter(App) {
-	aNum := ReactiveSignal(666)
-	bNum := ComputedSignal(aNum, n => n + 333)
+	aNum := signal(666)
+	bNum := computed(aNum, n => n + 333)
 
 	return (
 		AddReactiveText(App, "h15 w200", "Component number: {1}", aNum),
@@ -15,8 +15,8 @@ Counter(App) {
 }
 
 NumberTexts(App) {
-	num := ReactiveSignal(5)
-	num2 := ComputedSignal(num, n => n * 2)
+	num := signal(5)
+	num2 := computed(num, n => n * 2)
 
 	return (
 		AddReactiveText(App, "h15 w200","num is {1}, it's reactive!", num),
@@ -28,9 +28,9 @@ NumberTexts(App) {
 }
 
 MouseTracker(App) {
-	mouseX := ReactiveSignal(0)
-	mouseY := ReactiveSignal(0)
-	isTracking := ReactiveSignal(true)
+	mouseX := signal(0)
+	mouseY := signal(0)
+	isTracking := signal(true)
 
 	trackMouse() {
 		CoordMode "Mouse", "Screen"
@@ -55,7 +55,7 @@ MouseTracker(App) {
 }
 
 NumberList(App) {
-	nums := ReactiveSignal(["a","b","c"])
+	nums := signal(["a","b","c"])
 
 	randomArr(){
 		return [Random(1, 10), Random(1, 10),Random(1, 10)]
@@ -70,7 +70,7 @@ NumberList(App) {
 }
 
 ObjectText(App) {
-	obj := ReactiveSignal({name: "Harald", position: "Supervisor"})
+	obj := signal({name: "Harald", position: "Supervisor"})
 	
 	return (
 		AddReactiveText(
@@ -87,7 +87,7 @@ ObjectList(App) {
 		{name: "Harald", position: "Supervisor"},
 		{name: "Ben", position: "Attendant"}
 	]
-	crew := ReactiveSignal(crewInfo)
+	crew := signal(crewInfo)
 
 	return ( 
 		crewInfo.map(item => AddReactiveText(App, 
