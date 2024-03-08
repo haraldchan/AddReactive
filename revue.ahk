@@ -6,6 +6,7 @@ class signal {
         this.value := val is Object ? this.mapify(val) : val
         this.subs := []
         this.comps := []
+        this.effects := []
     }
 
     get(mutateFunction := 0) {
@@ -30,14 +31,19 @@ class signal {
             this.value := this.mapify(this.value)
         }
 
+        ; notify all subscribers to update
+        for ctrl in this.subs {
+            ctrl.update()
+        }
+
         ; notify all computed signals
         for comp in this.comps {
             comp.sync(this.value)
         }
 
-        ; notify all subscribers to update
-        for ctrl in this.subs {
-            ctrl.update()
+        ; run all effects
+        for effect in this.effects {
+            effect()
         }
     }
 
@@ -47,6 +53,10 @@ class signal {
 
     addComp(computed) {
         this.comps.Push(computed)
+    }
+
+    addEffect(effectFn) {
+        this.effects.Push(effectFn)
     }
 
     mapify(obj) {
@@ -64,21 +74,51 @@ class computed {
 
         this.signal := signal
         this.mutation := mutation
-        this.value := this.mutation.Call(this.signal.get())
+        this.value := this.mutation.Call(this.signal.value)
         this.subs := []
+        this.comps := []
+        this.effect := []
 
         signal.addComp(this)
     }
 
     sync(newVal) {
         this.value := this.mutation.Call(newVal)
+        
+        ; notify all subscribers to update
         for ctrl in this.subs {
             ctrl.update()
+        }
+
+        ; notify all computed signals
+        for comp in this.comps {
+            comp.sync(this.value)
+        }
+
+        ; run all effects
+        for effect in this.effects {
+            effect()
         }
     }
 
     addSub(controlInstance) {
         this.subs.Push(controlInstance)
+    }
+
+    addComp(computed) {
+        this.comps.Push(computed)
+    }
+
+    addEffect(effectFn) {
+        this.effects.Push(effectFn)
+    }
+}
+
+class effect {
+    __New(effectFn, depends*) {
+        for depend in depends {
+            depend.addEffect(effectFn)
+        }
     }
 }
 
@@ -244,12 +284,12 @@ class AddReactiveCheckBox extends AddReactive {
     }
 }
 
-; class AddReactiveRadio extends AddReactive {
-;     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-;         this.key := key
-;         super.__New("Radio", GuiObject, options, innerText, depend, key, event)
-;     }
-; }
+class AddReactiveRadio extends AddReactive {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+        this.key := key
+        super.__New("Radio", GuiObject, options, innerText, depend, key, event)
+    }
+}
 
 
 ; class AddReactiveComboBox extends AddReactive {
