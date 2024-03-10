@@ -68,18 +68,18 @@ class signal {
 }
 
 class computed {
-    __New(signal, mutation) {
-        checkType(signal, signal, "First parameter is not a ReactiveSignal.")
+    __New(_signal, mutation) {
+        checkType(_signal, signal, "First parameter is not a ReactiveSignal.")
         checkType(mutation, Func, "Second parameter is not a Function.")
 
-        this.signal := signal
+        this.signal := _signal
         this.mutation := mutation
         this.value := this.mutation.Call(this.signal.value)
         this.subs := []
         this.comps := []
-        this.effect := []
+        this.effects := []
 
-        signal.addComp(this)
+        this.signal.addComp(this)
     }
 
     sync(newVal) {
@@ -95,10 +95,13 @@ class computed {
             comp.sync(this.value)
         }
 
-        ; run all effects
-        for effect in this.effects {
-            effect()
+        ; run all effectss
+        if (this.effects.Length > 0) {
+            for effect in this.effects {
+                effect()
+            }
         }
+
     }
 
     addSub(controlInstance) {
