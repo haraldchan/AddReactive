@@ -18,6 +18,8 @@ class signal {
     }
 
     set(newSignalValue) {
+        prevValue := this.value
+
         if (newSignalValue = this.value) {
             return
         }
@@ -43,7 +45,13 @@ class signal {
 
         ; run all effects
         for effect in this.effects {
-            effect()
+            if (effect.MaxParams = 1) {
+                effect(this.value)
+            } else if (effect.MaxParams = 2) {
+                effect(this.value, prevValue)
+            } else {
+                effect()
+            }
         }
     }
 
@@ -118,10 +126,8 @@ class computed {
 }
 
 class effect {
-    __New(effectFn, depends*) {
-        for depend in depends {
-            depend.addEffect(effectFn)
-        }
+    __New(depend, effectFn) {
+        depend.addEffect(effectFn)
     }
 }
 
@@ -161,7 +167,7 @@ class AddReactive {
         if (event != 0) {
             this.event := event[1]
             this.callback := event[2]
-            this.ctrl.OnEvent(this.event, (*) => this.callback())
+            this.ctrl.OnEvent(this.event, this.callback)
         }
     }
 
@@ -251,7 +257,7 @@ class AddReactive {
     }
 
     setEvent(event, callback) {
-        this.ctrl.OnEvent(event, (*) => callback())
+        this.ctrl.OnEvent(event, this.callback)
     }
 
     disable(state) {
