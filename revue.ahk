@@ -3,10 +3,10 @@
 
 class signal {
     __New(val) {
-        this.value := val is Class 
-            ? val 
+        this.value := ((val is Class) or (val is Func))
+            ? val
             : val is Object
-                ? this.mapify(val) 
+                ? this.mapify(val)
                 : val
         this.subs := []
         this.comps := []
@@ -96,7 +96,7 @@ class computed {
 
     sync(newVal) {
         this.value := this.mutation.Call(newVal)
-        
+
         ; notify all subscribers to update
         for ctrl in this.subs {
             ctrl.update()
@@ -147,11 +147,16 @@ class AddReactive {
         this.GuiObject := GuiObject
         this.options := options
         this.formattedString := textString
-        this.innerText := RegExMatch(textString, "\{\d+\}")
-            ? this.handleFormatStr(textString, depend, key)
-            : textString
+
+        if (controlType = "ComboBox") {
+            this.innerText := textString
+        } else {
+            this.innerText := RegExMatch(textString, "\{\d+\}")
+                ? this.handleFormatStr(textString, depend, key)
+                : textString
+        }
+
         this.depend := depend
-        this.key := key
 
         ; add control
         this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
@@ -261,7 +266,7 @@ class AddReactive {
     }
 
     setEvent(event, callback) {
-        this.ctrl.OnEvent(event, this.callback)
+        this.ctrl.OnEvent(event, callback)
     }
 
     disable(state) {
