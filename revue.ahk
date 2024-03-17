@@ -1,5 +1,5 @@
 #Include "./typeChecker.ahk"
-#Include "../JSON.ahk"
+#Include "./JSON.ahk"
 
 class signal {
     __New(val) {
@@ -148,7 +148,7 @@ class AddReactive {
         this.options := options
         this.formattedString := textString
 
-        if (controlType = "ComboBox") {
+        if (controlType = "ComboBox" || controlType = "DropDownList") {
             this.innerText := textString
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
@@ -310,6 +310,26 @@ class AddReactiveRadio extends AddReactive {
     }
 }
 
+class AddReactiveDropDownList extends AddReactive {
+    __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
+        ; mapObj: a Map(value, optionText) map object
+        this.key := key
+        this.mapObj := mapObj
+        this.vals := []
+        this.text := []
+        for val, text in this.mapObj {
+            this.vals.Push(val)
+            this.text.Push(text)
+        }
+        super.__New(GuiObject, "DropDownList", options, this.text, depend, key, event)
+    }
+
+    ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
+    getValue() {
+        return this.vals[this.ctrl.Value]
+    }
+}
+
 class AddReactiveComboBox extends AddReactive {
     __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
         ; mapObj: a Map(value, optionText) map object
@@ -337,3 +357,4 @@ Gui.Prototype.AddReactiveButton := AddReactiveButton
 Gui.Prototype.AddReactiveCheckBox := AddReactiveCheckBox
 Gui.Prototype.AddReactiveRadio := AddReactiveRadio
 Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
+Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
