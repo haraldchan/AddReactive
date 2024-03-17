@@ -358,3 +358,46 @@ Gui.Prototype.AddReactiveCheckBox := AddReactiveCheckBox
 Gui.Prototype.AddReactiveRadio := AddReactiveRadio
 Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
 Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
+
+; for lsp {
+; revue.ahk
+; /**
+;  * 
+;  */
+; AddReactive(controlType[, options, textString, depend, key, event]) => Gui.Control
+
+; /**
+;  * 
+;  */
+; AddReactiveText([options, textString, depend, key, event]) => Gui.Text
+
+; /**
+;  * 
+;  */
+; AddReactiveEdit([options, textString, depend, key, event]) => Gui.Edit
+
+; /**
+;  * 
+;  */
+; AddReactiveButton([options, textString, depend, key, event]) => Gui.Button
+
+; /**
+;  * 
+;  */
+; AddReactiveCheckBox([options, textString, depend, key, event]) => Gui.CheckBox
+
+; /**
+;  * 
+;  */
+; AddReactiveRadio([options, textString, depend, key, event]) => Gui.Radio
+
+; /**
+;  * 
+;  */
+; AddReactiveDropDownList([options, mapObject, depend, key, event]) => Gui.DDL
+
+; /**
+;  * 
+;  */
+; AddReactiveComboBox([options, mapObject, depend, key, event]) => Gui.ComboBox
+; }
