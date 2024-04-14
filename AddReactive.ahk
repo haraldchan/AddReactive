@@ -1,5 +1,7 @@
-#Include "./typeChecker.ahk"
 #Include "./JSON.ahk"
+#Include "./defineArrayMethods.ahk"
+#Include "./TypeChecker.ahk"
+#Include "./AddReactive-Ctrls.ahk"
 
 class signal {
     __New(val) {
@@ -145,12 +147,21 @@ class AddReactive {
 
         this.ctrlType := controlType
         this.GuiObject := GuiObject
-        this.options := options
+        if (this controlType = "ListView") {
+            this.lvOptions := options.lvOptions
+            this.itemOptions := options.itemOptions
+        } else {
+            this.options := options
+        }
         this.formattedString := textString
 
-        if (controlType = "ComboBox" || controlType = "DropDownList") {
+        if (controlType = "ComboBox" || 
+            controlType = "DropDownList") {
             this.innerText := textString
-        } else {
+        } else if (controlType = "ListView") {
+            this.innerText := textString[2]
+            this.titleKeys := textString[1]
+        }else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
                 : textString
@@ -183,9 +194,20 @@ class AddReactive {
 
     update() {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
+            ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
         } else if (this.ctrl is Gui.Edit) {
+            ; update text value
             this.ctrl.Value := this.handleFormatStr(this.formattedString, this.depend, this.key)
+        } else if (this.ctrl is Gui.ListView) {
+            ; update list items
+            this.ctrl.Delete()
+            for item in this.depend.value {
+                rowData := this.titleKeys.map(key => item[key])
+                this.ctrl.Add(this.itemOptions, rowData*)
+            }
+            this.ctrl.Modify(1, "Select")
+            this.ctrl.Focus()
         }
     }
 
@@ -275,89 +297,7 @@ class AddReactive {
     }
 }
 
-class AddReactiveText extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New(GuiObject, "Text", options, innerText, depend, key, event)
-    }
-}
-
-class AddReactiveEdit extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New(GuiObject, "Edit", options, innerText, depend, key, event)
-    }
-}
-
-class AddReactiveButton extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New(GuiObject, "Button", options, innerText, depend, key, event)
-    }
-}
-
-class AddReactiveCheckBox extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New(GuiObject, "CheckBox", options, innerText, depend, key, event)
-    }
-}
-
-class AddReactiveRadio extends AddReactive {
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
-        this.key := key
-        super.__New(GuiObject, "Radio", options, innerText, depend, key, event)
-    }
-}
-
-class AddReactiveDropDownList extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
-        ; mapObj: a Map(value, optionText) map object
-        this.key := key
-        this.mapObj := mapObj
-        this.vals := []
-        this.text := []
-        for val, text in this.mapObj {
-            this.vals.Push(val)
-            this.text.Push(text)
-        }
-        super.__New(GuiObject, "DropDownList", options, this.text, depend, key, event)
-    }
-
-    ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
-    getValue() {
-        return this.vals[this.ctrl.Value]
-    }
-}
-
-class AddReactiveComboBox extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
-        ; mapObj: a Map(value, optionText) map object
-        this.key := key
-        this.mapObj := mapObj
-        this.vals := []
-        this.text := []
-        for val, text in this.mapObj {
-            this.vals.Push(val)
-            this.text.Push(text)
-        }
-        super.__New(GuiObject, "ComboBox", options, this.text, depend, key, event)
-    }
-
-    ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
-    getValue() {
-        return this.vals[this.ctrl.Value]
-    }
-}
-
 Gui.Prototype.AddReactive := AddReactive
-Gui.Prototype.AddReactiveText := AddReactiveText
-Gui.Prototype.AddReactiveEdit := AddReactiveEdit
-Gui.Prototype.AddReactiveButton := AddReactiveButton
-Gui.Prototype.AddReactiveCheckBox := AddReactiveCheckBox
-Gui.Prototype.AddReactiveRadio := AddReactiveRadio
-Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
-Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
 
 ; for lsp {
 ; revue.ahk
