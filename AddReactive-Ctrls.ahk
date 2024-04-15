@@ -78,12 +78,18 @@ class AddReactiveListView extends AddReactive {
     __New(GuiObject, options, colTitleGrid, depend := 0, key := 0, event := 0) {
         this.key := key
         ; colTitleGrid is a grid array in the form of:
-        ; [[key, key, key], [title, title, title]], not using Map because index is needed
+        ; { keys: [keys*], titles: [titles*] }, not using Map because index is needed
         ; only handle items that needs to be render
         super.__New(GuiObject, "ListView", options, colTitleGrid, depend, key, event)
         ; depend of ListView should be [{},{}...]
+        ; list initialize
+        for item in depend.value {
+            rowData := colTitleGrid.keys.map(key => item[key])
+            super.ctrl.Add(options.itemOptions, rowData*)
+        }
+        super.ctrl.Modify(1, "Select")
+        super.ctrl.Focus()
     }
-
 }
 
 ; mount to Gui.Prototype
@@ -94,3 +100,4 @@ Gui.Prototype.AddReactiveCheckBox := AddReactiveCheckBox
 Gui.Prototype.AddReactiveRadio := AddReactiveRadio
 Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
 Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
+Gui.Prototype.AddReactiveListView := AddReactiveListView
