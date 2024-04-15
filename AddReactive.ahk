@@ -159,8 +159,8 @@ class AddReactive {
             controlType = "DropDownList") {
             this.innerText := textString
         } else if (controlType = "ListView") {
-            this.innerText := textString[2]
-            this.titleKeys := textString[1]
+            this.innerText := textString.titles
+            this.titleKeys := textString.keys
         }else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
