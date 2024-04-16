@@ -82,13 +82,6 @@ class AddReactiveListView extends AddReactive {
         ; only handle items that needs to be render
         super.__New(GuiObject, "ListView", options, colTitleGrid, depend, key, event)
         ; depend of ListView should be [{},{}...]
-        ; list initialize
-        for item in depend.value {
-            rowData := colTitleGrid.keys.map(key => item[key])
-            super.ctrl.Add(options.itemOptions, rowData*)
-        }
-        super.ctrl.Modify(1, "Select")
-        super.ctrl.Focus()
     }
 }
 

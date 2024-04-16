@@ -147,31 +147,35 @@ class AddReactive {
 
         this.ctrlType := controlType
         this.GuiObject := GuiObject
+        this.depend := depend
+        this.key := key
+        this.formattedString := textString
+
         if (this controlType = "ListView") {
             this.lvOptions := options.lvOptions
             this.itemOptions := options.itemOptions
         } else {
             this.options := options
         }
-        this.formattedString := textString
 
-        if (controlType = "ComboBox" || 
+        if (controlType = "ComboBox" ||
             controlType = "DropDownList") {
-            this.innerText := textString
+                this.innerText := textString
         } else if (controlType = "ListView") {
             this.innerText := textString.titles
             this.titleKeys := textString.keys
-        }else {
+        } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
                 : textString
         }
 
-        this.depend := depend
-        this.key := key
 
         ; add control
         this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
+        if (this.ctrl is Gui.ListView) {
+            this.handleListViewUpdate()
+        }
 
         ; add subscribe
         if (depend = 0) {
@@ -189,25 +193,6 @@ class AddReactive {
             this.event := event[1]
             this.callback := event[2]
             this.ctrl.OnEvent(this.event, this.callback)
-        }
-    }
-
-    update() {
-        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
-            ; update text label
-            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
-        } else if (this.ctrl is Gui.Edit) {
-            ; update text value
-            this.ctrl.Value := this.handleFormatStr(this.formattedString, this.depend, this.key)
-        } else if (this.ctrl is Gui.ListView) {
-            ; update list items
-            this.ctrl.Delete()
-            for item in this.depend.value {
-                rowData := this.titleKeys.map(key => item[key])
-                this.ctrl.Add(this.itemOptions, rowData*)
-            }
-            this.ctrl.Modify(1, "Select")
-            this.ctrl.Focus()
         }
     }
 
@@ -258,6 +243,29 @@ class AddReactive {
         return Format(formatStr, vals*)
     }
 
+    handleListViewUpdate() {
+        this.ctrl.Delete()
+        for item in this.depend.value {
+            rowData := this.titleKeys.map(key => item[key])
+            this.ctrl.Add(this.itemOptions, rowData*)
+        }
+        this.ctrl.Modify(1, "Select")
+        this.ctrl.Focus()
+    }
+
+    update() {
+        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
+            ; update text label
+            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
+        } else if (this.ctrl is Gui.Edit) {
+            ; update text value
+            this.ctrl.Value := this.handleFormatStr(this.formattedString, this.depend, this.key)
+        } else if (this.ctrl is Gui.ListView) {
+            ; update list items
+            this.handleListViewUpdate()
+        }
+    }
+
     ; control option methods
     setOptions(newOptions) {
         this.ctrl.Opt(newOptions)
@@ -302,42 +310,42 @@ Gui.Prototype.AddReactive := AddReactive
 ; for lsp {
 ; revue.ahk
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactive(controlType[, options, textString, depend, key, event]) => Gui.Control
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveText([options, textString, depend, key, event]) => Gui.Text
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveEdit([options, textString, depend, key, event]) => Gui.Edit
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveButton([options, textString, depend, key, event]) => Gui.Button
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveCheckBox([options, textString, depend, key, event]) => Gui.CheckBox
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveRadio([options, textString, depend, key, event]) => Gui.Radio
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveDropDownList([options, mapObject, depend, key, event]) => Gui.DDL
 
 ; /**
-;  * 
+;  *
 ;  */
 ; AddReactiveComboBox([options, mapObject, depend, key, event]) => Gui.ComboBox
 ; }
