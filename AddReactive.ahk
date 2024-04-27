@@ -179,12 +179,9 @@ class AddReactive {
         if(controlType = "ListView") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
             this.handleListViewUpdate()
-<<<<<<< HEAD
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
-=======
->>>>>>> 78b9dabbd01ac2e45cf578299f5b1e190b70c502
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
