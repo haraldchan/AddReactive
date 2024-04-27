@@ -141,7 +141,9 @@ class AddReactive {
     __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0, event := 0) {
         ; params type checking
         checkType(GuiObject, Gui, "Second(GuiObject) param is not a Gui Object.")
-        checkType(options, String, "First(options) param is not a String.")
+        if (controlType != "ListView"){
+            checkType(options, String, "First(options) param is not a String.")
+        }
         checkTypeDepend(depend)
         checkTypeEvent(event)
 
@@ -150,20 +152,22 @@ class AddReactive {
         this.depend := depend
         this.key := key
         this.formattedString := textString
+        this.options := options
 
-        if (this controlType = "ListView") {
+        if (controlType = "ListView") {
             this.lvOptions := options.lvOptions
             this.itemOptions := options.itemOptions
-        } else {
-            this.options := options
         }
 
         if (controlType = "ComboBox" ||
             controlType = "DropDownList") {
-                this.innerText := textString
+            this.innerText := textString
         } else if (controlType = "ListView") {
             this.innerText := textString.titles
             this.titleKeys := textString.keys
+            this.colWidths := textString.HasOwnProp("widths") 
+                ? textString.widths 
+                : this.titleKeys.map(item => "AutoHdr")
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
@@ -172,9 +176,14 @@ class AddReactive {
 
 
         ; add control
-        this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
-        if (this.ctrl is Gui.ListView) {
+        if(controlType = "ListView") {
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
             this.handleListViewUpdate()
+            for width in this.colWidths {
+                this.ctrl.ModifyCol(A_Index, width)
+            }
+        } else {
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
 
         ; add subscribe
@@ -246,7 +255,8 @@ class AddReactive {
     handleListViewUpdate() {
         this.ctrl.Delete()
         for item in this.depend.value {
-            rowData := this.titleKeys.map(key => item[key])
+            itemIn := item
+            rowData := this.titleKeys.map(key => itemIn[key])
             this.ctrl.Add(this.itemOptions, rowData*)
         }
         this.ctrl.Modify(1, "Select")
