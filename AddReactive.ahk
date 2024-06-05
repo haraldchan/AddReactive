@@ -141,11 +141,11 @@ class AddReactive {
     __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0, event := 0) {
         ; params type checking
         checkType(GuiObject, Gui, "Second(GuiObject) param is not a Gui Object.")
-        if (controlType != "ListView"){
+        if (controlType != "ListView") {
             checkType(options, String, "First(options) param is not a String.")
         }
         checkTypeDepend(depend)
-        checkTypeEvent(event)
+        ; checkTypeEvent(event)
 
         this.ctrlType := controlType
         this.GuiObject := GuiObject
@@ -161,12 +161,12 @@ class AddReactive {
 
         if (controlType = "ComboBox" ||
             controlType = "DropDownList") {
-            this.innerText := textString
+                this.innerText := textString
         } else if (controlType = "ListView") {
             this.innerText := textString.titles
             this.titleKeys := textString.keys
-            this.colWidths := textString.HasOwnProp("widths") 
-                ? textString.widths 
+            this.colWidths := textString.HasOwnProp("widths")
+                ? textString.widths
                 : this.titleKeys.map(item => "AutoHdr")
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
@@ -176,7 +176,7 @@ class AddReactive {
 
 
         ; add control
-        if(controlType = "ListView") {
+        if (controlType = "ListView") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
             this.handleListViewUpdate()
             for width in this.colWidths {
@@ -199,9 +199,15 @@ class AddReactive {
 
         ; add event
         if (event != 0) {
-            this.event := event[1]
-            this.callback := event[2]
-            this.ctrl.OnEvent(this.event, this.callback)
+            if (event.every(item => item is Array)) {
+                ; multiple events
+                for e in event {
+                    this.ctrl.OnEvent(e[1], e[2])
+                }
+            } else {
+                ; single event
+                this.ctrl.OnEvent(event[1], event[2])
+            }
         }
     }
 
@@ -315,7 +321,25 @@ class AddReactive {
     }
 }
 
+class IndexList {
+    __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
+        loop depend.value.length {
+            guiObj.AddReactive(controlType, options, innerText, depend, A_Index, event)
+        }
+    }
+}
+
+class KeyList {
+    __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
+        loop depend.value.length {
+            guiObj.AddReactive(controlType, options, innerText, depend, [[A_Index], key*], event)
+        }
+    }
+}
+
 Gui.Prototype.AddReactive := AddReactive
+Gui.Prototype.IndexList := IndexList
+Gui.Prototype.KeyList := KeyList
 
 ; for lsp {
 ; revue.ahk
