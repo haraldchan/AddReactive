@@ -46,7 +46,7 @@ class signal {
 
         ; notify all computed signals
         for comp in this.comps {
-            comp.sync(this.value)
+            comp.sync(this)
         }
 
         ; run all effects
@@ -83,21 +83,53 @@ class signal {
 
 class computed {
     __New(_signal, mutation) {
-        checkType(_signal, signal, "First parameter is not a ReactiveSignal.")
+        ; try {
+        ;     checkType(_signal, signal, "First parameter is not a ReactiveSignal.")
+        ; } catch {
+        ;     checkType(_signal, computed, "First parameter is not a ReactiveSignal.")
+        ; }
         checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := _signal
         this.mutation := mutation
-        this.value := this.mutation.Call(this.signal.value)
         this.subs := []
         this.comps := []
         this.effects := []
 
-        this.signal.addComp(this)
+
+        if (this.signal is Array) {
+
+            this.subbedSignals := []
+            this.subbedSignalsValues := []
+
+            for s in this.signal {
+                this.subbedSignals.Push(s)
+                this.subbedSignalsValues.Push(s.value)
+                s.addComp(this)
+            }
+
+            this.value := this.mutation.Call(this.subbedSignalsValues*)
+
+
+        } else {
+            this.signal.addComp(this)
+            this.value := this.mutation.Call(this.signal.value)
+        }
     }
 
-    sync(newVal) {
-        this.value := this.mutation.Call(newVal)
+    sync(subbedSignal) {
+        if (this.signal is Array) {
+            for s in this.subbedSignals {
+                if (s = subbedSignal) {
+                    this.subbedSignalsValues[A_Index] := s.value
+                    break
+                }
+            }
+            this.value := this.mutation.Call(this.subbedSignalsValues*)
+        } else {
+            this.value := this.mutation.Call(subbedSignal.value)
+        }
+
 
         ; notify all subscribers to update
         for ctrl in this.subs {
@@ -285,6 +317,16 @@ class AddReactive {
     ; control option methods
     setOptions(newOptions) {
         this.ctrl.Opt(newOptions)
+    }
+
+    OnEvent(event, fn := 0) {
+        if (event is Map) {
+            for e, cb in event {
+                this.ctrl.OnEvent(e, cb)
+            }
+        } else {
+            this.ctrl.OnEvent(event, fn)
+        }
     }
 
     getValue() {
