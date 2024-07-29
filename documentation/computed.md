@@ -8,7 +8,7 @@ computed 是追踪 signal 的值变化的计算属性。与 signal 不同，comp
 
 computed 可以通过 `computed` 函数进行创建。它接收两个参数，分别是订阅对象 signal 以及一个描述如何改变值的函数：
 
-```C++
+```go
 count := signal(2)
 
 doubled := computed(count, c => c * 2) // doubled.value : 4
@@ -19,7 +19,7 @@ doubled := computed(count, c => c * 2) // doubled.value : 4
 
 computed 可以同时订阅多个 signal：
 
-```C++
+```go
 first := signal(1)
 second := signal(10)
 third := signal(20)
