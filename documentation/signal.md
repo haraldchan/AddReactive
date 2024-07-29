@@ -9,14 +9,14 @@ signal 是一个对变量的封装，它可以在自身的值更新时实时通�
 
 signal 可以通过 `signal` 函数进行创建：
 
-```C++
+```go
 count := signal(0) // 参数为 signal 的初始值
 ```
 <br>
 
 要对 signal 进行读写，可以通过 `.value` 属性及 `.set()` 方法实现：
 
-```C++
+```go
 MsgBox(Format("count is: {1}"), count.value)
 
 count.set(3) // count.value : 3
@@ -25,7 +25,7 @@ count.set(3) // count.value : 3
 
 以函数作为 `.set()` 方法的参数，也可以实现对 signal 值的更新：
 
-```C++
+```go
 count.set(3)
 
 count.set(val => val + 1) // count.value : 4
@@ -41,7 +41,7 @@ count.set(val => val + 1) // count.value : 4
 ### 复杂数据类型的更新
 
 signal 的值可以是数组、对象或 `Map` 对象：
-```c++
+```go
 numbers := signal([1, 2, 3])
 
 staff := signal({name: "john", position: "manager"})
