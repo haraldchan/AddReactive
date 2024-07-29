@@ -83,11 +83,7 @@ class signal {
 
 class computed {
     __New(_signal, mutation) {
-        ; try {
-        ;     checkType(_signal, signal, "First parameter is not a ReactiveSignal.")
-        ; } catch {
-        ;     checkType(_signal, computed, "First parameter is not a ReactiveSignal.")
-        ; }
+        checkType(_signal, [signal, computed, Array], "First parameter is not a ReactiveSignal.")
         checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := _signal
@@ -96,40 +92,43 @@ class computed {
         this.comps := []
         this.effects := []
 
-
         if (this.signal is Array) {
 
-            this.subbedSignals := []
-            this.subbedSignalsValues := []
+            ; this.subbedSignals := []
+            ; this.subbedSignalsValues := []
+            this.subbedSignals := Map()
 
             for s in this.signal {
-                this.subbedSignals.Push(s)
-                this.subbedSignalsValues.Push(s.value)
+                ; this.subbedSignals.Push(s)
+                ; this.subbedSignalsValues.Push(s.value)
+                this.subbedSignals[s] := s.value
+
                 s.addComp(this)
             }
 
-            this.value := this.mutation.Call(this.subbedSignalsValues*)
-
-
+            ; this.value := this.mutation.Call(this.subbedSignalsValues*)
+            this.value := this.mutation.Call(this.subbedSignals.values()*)
+            
         } else {
             this.signal.addComp(this)
             this.value := this.mutation.Call(this.signal.value)
         }
     }
-
+    
     sync(subbedSignal) {
         if (this.signal is Array) {
             for s in this.subbedSignals {
                 if (s = subbedSignal) {
-                    this.subbedSignalsValues[A_Index] := s.value
+                    ; this.subbedSignalsValues[A_Index] := s.value
+                    this.subbedSignals[s] := s.value
                     break
                 }
             }
-            this.value := this.mutation.Call(this.subbedSignalsValues*)
+            ; this.value := this.mutation.Call(this.subbedSignalsValues*)
+            this.value := this.mutation.Call(this.subbedSignals.values()*)
         } else {
             this.value := this.mutation.Call(subbedSignal.value)
         }
-
 
         ; notify all subscribers to update
         for ctrl in this.subs {
@@ -138,7 +137,7 @@ class computed {
 
         ; notify all computed signals
         for comp in this.comps {
-            comp.sync(this.value)
+            comp.sync(this)
         }
 
         ; run all effectss
@@ -347,15 +346,6 @@ class AddReactive {
         this.ctrl.Text := newInnerText is Func
             ? newInnerText(this.ctrl.Text)
             : newInnerText
-    }
-
-    setDepend(depend) {
-        this.depend := depend
-        this.subscribe(this.depend)
-    }
-
-    setEvent(event, callback) {
-        this.ctrl.OnEvent(event, callback)
     }
 
     disable(state) {
