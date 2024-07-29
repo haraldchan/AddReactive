@@ -24,7 +24,7 @@ oGui.AddReactiveText("w300 h20", "Hello World!")
 count := signal(0)
 
 // 在控件文本参数中传入格式化字符串, 其后的参数传入希望订阅的 signal，如同使用 Format() 一样
-oGui.AddReactiveText("vtext w300 h20", "count is {1}", count)
+showCount := oGui.AddReactiveText("w300 h20", "count is {1}", count)
 ```
 <br>
 
@@ -32,8 +32,7 @@ oGui.AddReactiveText("vtext w300 h20", "count is {1}", count)
 ```go
 count.set(5)
 
-oGui.AddReactiveText("vtext w300 h20", "count is {1}", count)
-// text.Text : count is 5
+// showCount.Text : count is 5
 ```
 <br>
 
@@ -45,8 +44,8 @@ count := signal(1)
 doubled := computed(count, c => c * 2)
 
 // 订阅多个 signal/computed 时
-oGui.AddReactiveText("vtext w300 h25", "count: {1}, doubled: {2}", [count, doubled])
+showNums := oGui.AddReactiveText("w300 h25", "count: {1}, doubled: {2}", [count, doubled])
 
-// text.Text : count: 1, doubled: 2
+// showNums.Text : count: 1, doubled: 2
 ```
 <br>
