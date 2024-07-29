@@ -2,6 +2,19 @@ checkType(val, typeChecking, errMsg := 0) {
     if (val = 0 || val = "") {
         return
     }
+
+    if(typeChecking is Array) {
+        for t in typeChecking {
+            if (val is t) {
+                return
+            } else {
+                continue
+            }
+        }
+
+        throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val)))
+    }
+
     if (!(val is typeChecking)) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val)))
     }
