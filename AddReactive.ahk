@@ -53,6 +53,17 @@ class signal {
         }
     }
 
+    update(key, newValue) {
+        if (!(this.value is Object)) {
+            throw TypeError(Format("update can only handle Array/Object/Map; `n`nCurrent Type: {2}", Type(newValue)))
+        }
+
+        updater := this.value
+        updater[key] := newValue
+
+        this.set(updater)
+    }
+
     addSub(controlInstance) {
         this.subs.Push(controlInstance)
     }
