@@ -179,7 +179,9 @@ class AddReactive {
 
         if (controlType = "ListView") {
             this.lvOptions := options.lvOptions
-            this.itemOptions := options.itemOptions
+            this.itemOptions :=  options.HasOwnProp("itemOptions")
+                ? options.itemOptions
+                : ""
         }
 
         if (controlType = "ComboBox" ||
