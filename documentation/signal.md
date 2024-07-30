@@ -40,13 +40,31 @@ count.set(val => val + 1) // count.value : 4
 
 ### 复杂数据类型的更新
 
-signal 的值可以是数组、对象或 `Map` 对象：
+signal 的值可以是数组和 `Map` 对象：
 ```go
 numbers := signal([1, 2, 3])
 
-staff := signal({name: "john", position: "manager"})
-
 apple := signal(Map("color", "red", "amount", 5))
+
+// 基础对象也可以被接收，但在 singal 内部会被转换为 Map
+staff := signal({name: "john", position: "manager"})
 ```
 <br>
 
+需要留意的是，`.set()` 方法并不能局部更新复杂数据类型的 `signal`，只能复制原值，部分更新后再次调用 `.set()`：
+```go
+newApple := apple.value
+newApple["color"] := "green"
+
+apple.set(newApple) // apple.value => Map("color", "green", "amount", 5)
+```
+<br>
+
+如果要局部更新复杂数据类型的 `signal` ，应使用 `.update()` 方法，传入 key/index 和新的值进行更新：
+```go
+
+numbers.update(1, 9) // numbers.value : [9, 2, 3]
+
+apple.update("amount", 10) // apple.value : Map("color", "green", "amount", 10)
+```
+<br>
