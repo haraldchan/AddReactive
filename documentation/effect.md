@@ -24,7 +24,6 @@ effect(count, newVal => MsgBox(Format("new count: {1}", newVal)))
 effect(count, (newVal, prevVal) => MsgBox(Format("new count: {1}; prev count: {2}", newValue, prevVal)))
 ```
 <br>
-<hr>
 
 ### 注意点
 与 computed 相同，effect 被创建时即会被添加为 signal 的订阅者。因此 effect 不应被创建在其他可能被多次调用的函数里，否则将会导致出现不符合预期的多次执行。
