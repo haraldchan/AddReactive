@@ -1,6 +1,6 @@
 # 列表渲染
 
-订阅了数据类型为 `Array` 或 `Map` 的 AddReactive 控件提供了多种实现以列表形式呈现动态内容的方式。当 `signal` 内的动态数据更新时，列表中对应的项目也将实时更新。
+订阅了数据类型为 `Array` 或 `Map` 的 AddReactive 控件提供了 `IndexList` 和 `KeyList` 两个 Gui 扩展方法，以列表形式呈现动态内容的方式。当 `signal` 内的动态数据更新时，列表中对应的项目也将实时更新。
 <br>
 <br>
 
@@ -51,7 +51,7 @@ staff name: Elody, position: attendent
 
 ### 条件渲染
 
-`IndexList` 和 `KeyList` 使用简单，但它们只会将 `signal` 中的所有值全部渲染到 Gui 窗口中。想要进行条件渲染，需要使用 AddReactive 控件中的 `key` 参数。
+`IndexList` 和 `KeyList` 使用简单，但它们只会将 `signal` 中的所有值全部渲染到 Gui 窗口中。想要进行条件渲染，需要在 `signal` 之后传入 `key` 参数。
 
 对 `Array` 进行列表渲染时，可以通过控制 `A_Index` 来控制渲染项目：
 
@@ -63,6 +63,7 @@ loop fruits.value.Length {
     if (Mod(A_Index, 2) = 0) {
         continue
     } else {
+        // 以 A_Index 作为 key 参数
         oGui.AddReactiveText("w300 h25", "It's a(n) {1}!", fruits, A_Index)
     }
 }
