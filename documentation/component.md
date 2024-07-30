@@ -1,6 +1,10 @@
 # 组件范式
 
 使用 AutoHotkey 编写 Gui 界面十分便捷，但在需要动态更新界面的文本或值，以及在编写完整功能的应用控件变多之后会令 Gui 的代码变得繁杂，降低易读性。因此，AddReactive 提倡使用 **函数化组件** 的形式编写 Gui 界面，让 AutoHotkey 应用的代码管理更加健康。
+<br>
+
+> 组件化编写只是一种范式倡议而非强制，即使不使用它，AddReactive 的响应式函数 `signal` 、`computed` 、`effect` 和 AddReactive 控件仍可单独使用。
+<br>
 
 ### 范式
 
