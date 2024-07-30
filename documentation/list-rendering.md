@@ -59,7 +59,8 @@ staff name: Elody, position: attendent
 fruits := signal(["apple", "orange", "banana", "strawberry"])
 
 loop fruits.value.Length {
-    if (Mod(A_Index, 2) != 0) {
+    // 只输出偶数索引项目
+    if (Mod(A_Index, 2) = 0) {
         continue
     } else {
         oGui.AddReactiveText("w300 h25", "It's a(n) {1}!", fruits, A_Index)
