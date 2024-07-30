@@ -103,7 +103,7 @@ staff name: Elody, position: attendent
 
 <br>
 
-使用指定下标索引作为 `key` 参数，也可以指定渲染单条项目：
+直接使用指定下标索引作为 `key` 参数，也可以指定渲染单条项目：
 
 ```go
 staff := signal([
