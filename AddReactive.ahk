@@ -188,8 +188,10 @@ class AddReactive {
             controlType = "DropDownList") {
                 this.innerText := textString
         } else if (controlType = "ListView") {
-            this.innerText := textString.titles
             this.titleKeys := textString.keys
+            this.innerText := textString.HasOwnProp("titles")
+                ? textString.titles
+                : this.titleKeys
             this.colWidths := textString.HasOwnProp("widths")
                 ? textString.widths
                 : this.titleKeys.map(item => "AutoHdr")
