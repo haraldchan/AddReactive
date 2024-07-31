@@ -94,7 +94,7 @@ Double(gui, num) {
         num.set(n => n * 2)
     }
 
-    return AddButton("w300 h25", "I can double it!")
+    return gui.AddButton("w300 h25", "I can double it!")
                .OnEvent("Click", doubling)
 }
 
@@ -104,7 +104,7 @@ Triple(gui, num) {
         num.set(n => n * 3)
     }
 
-    return AddButton("w300 h25", "I can triple it!")
+    return gui.AddButton("w300 h25", "I can triple it!")
                .OnEvent("Click", tripling)
 }
 ```
