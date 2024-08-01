@@ -7,9 +7,9 @@ class signal {
     __New(val) {
         this.value := ((val is Class) or (val is Func))
             ? val
-            : val is Object
-                ? this.mapify(val)
-                : val
+                : val is Object
+                    ? this.mapify(val)
+                    : val
         this.subs := []
         this.comps := []
         this.effects := []
@@ -24,7 +24,7 @@ class signal {
 
         this.value := newSignalValue is Func
             ? newSignalValue(this.value)
-            : newSignalValue
+                : newSignalValue
 
         ; change to Map()
         if (!(newSignalValue is Class) && newSignalValue is Object) {
@@ -86,7 +86,7 @@ class signal {
 
 class computed {
     __New(_signal, mutation) {
-        checkType(_signal, [signal, computed, Array], "First parameter is not a ReactiveSignal.")
+        checkType(_signal, [signal, computed, Array], "First parameter is not a signal.")
         checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := _signal
@@ -102,13 +102,13 @@ class computed {
                 this.subbedSignals[s] := s.value
                 s.addComp(this)
             }
-            this.value := this.mutation.Call(this.subbedSignals.values()*)            
+            this.value := this.mutation.Call(this.subbedSignals.values()*)
         } else {
             this.signal.addComp(this)
             this.value := this.mutation.Call(this.signal.value)
         }
     }
-    
+
     sync(subbedSignal) {
         if (this.signal is Array) {
             for s in this.subbedSignals {
@@ -170,37 +170,38 @@ class AddReactive {
         checkTypeDepend(depend)
         ; checkTypeEvent(event)
 
-        this.ctrlType := controlType
         this.GuiObject := GuiObject
+        this.ctrlType := controlType
+        this.options := options
+        this.formattedString := textString
         this.depend := depend
         this.key := key
-        this.formattedString := textString
-        this.options := options
 
+        ; ListView options
         if (controlType = "ListView") {
             this.lvOptions := options.lvOptions
-            this.itemOptions :=  options.HasOwnProp("itemOptions")
+            this.itemOptions := options.HasOwnProp("itemOptions")
                 ? options.itemOptions
-                : ""
+                    : ""
         }
 
+        ; textString handling
         if (controlType = "ComboBox" ||
             controlType = "DropDownList") {
-                this.innerText := textString
+            this.innerText := textString
         } else if (controlType = "ListView") {
             this.titleKeys := textString.keys
             this.innerText := textString.HasOwnProp("titles")
                 ? textString.titles
-                : this.titleKeys
+                    : this.titleKeys
             this.colWidths := textString.HasOwnProp("widths")
                 ? textString.widths
-                : this.titleKeys.map(item => "AutoHdr")
+                    : this.titleKeys.map(item => "AutoHdr")
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
-                : textString
+                    : textString
         }
-
 
         ; add control
         if (controlType = "ListView") {
@@ -300,20 +301,36 @@ class AddReactive {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
-        } else if (this.ctrl is Gui.Edit) {
+        }
+
+        if (this.ctrl is Gui.Edit) {
             ; update text value
             this.ctrl.Value := this.handleFormatStr(this.formattedString, this.depend, this.key)
-        } else if (this.ctrl is Gui.ListView) {
+        }
+
+        if (this.ctrl is Gui.ListView) {
             ; update list items
             this.handleListViewUpdate()
+
+            if (this.HasOwnProp("checkStatus")) {
+                ; link all check item with checkStatus
+                this.ctrl.Modify(0, this.checkStatus.value = true ? "Check" : "-Check")
+            }
+        }
+
+        if (this.ctrl is Gui.CheckBox) {
+            ; update text label
+            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
+
+            if (this.HasOwnProp("checkStatus")) {
+                ; update value if using checkStatus
+                this.ctrl.Value := this.checkStatus.value
+            }
         }
     }
 
-    ; control option methods
-    setOptions(newOptions) {
-        this.ctrl.Opt(newOptions)
-    }
 
+    ; APIs
     OnEvent(event, fn := 0) {
         if (event is Map) {
             for e, cb in event {
@@ -324,6 +341,14 @@ class AddReactive {
         }
     }
 
+    setOptions(newOptions) {
+        this.ctrl.Opt(newOptions)
+    }
+
+    setFont(options := "", fontName := "") {
+        this.ctrl.SetFont(options, fontName)
+    }
+
     getValue() {
         return this.ctrl.Value
     }
@@ -331,7 +356,7 @@ class AddReactive {
     setValue(newValue) {
         this.ctrl.Value := newValue is Func
             ? newValue(this.ctrl.Value)
-            : newValue
+                : newValue
     }
 
     getInnerText() {
@@ -341,11 +366,31 @@ class AddReactive {
     setInnerText(newInnerText) {
         this.ctrl.Text := newInnerText is Func
             ? newInnerText(this.ctrl.Text)
-            : newInnerText
+                : newInnerText
     }
 
     disable(state) {
         this.ctrl.Enabled := state
+    }
+
+    ; ctrl type specific APIs
+    useCheckStatus(_signal) {
+        checkType(_signal, signal, "First parameter is not a signal.")
+
+        if (this.ctrl is Gui.CheckBox || this.ctrl is Gui.ListView) {
+            ; add additional checkStatus depend
+            this.checkStatus := _signal
+            _signal.addSub(this)
+        }
+
+        if (this.ctrl is Gui.ListView) {
+            ; link check all status with by using shared signal
+            this.OnEvent("ItemCheck", (LV, *) =>
+                (LV.getCheckedRowNumbers() = LV.GetCount())
+                    ? _signal.set(true)
+                    : _signal.set(false)
+            )
+        }
     }
 }
 
