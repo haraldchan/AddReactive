@@ -374,22 +374,20 @@ class AddReactive {
     }
 
     ; ctrl type specific APIs
-    useCheckStatus(_signal) {
-        checkType(_signal, signal, "First parameter is not a signal.")
+    useCheckStatus(isCheckedSignal) {
+        checkType(isCheckedSignal, signal, "First parameter is not a signal.")
+        checkType(this.ctrl, [Gui.CheckBox, Gui.ListView], "useCheckStatus can only use on CheckBox or ListView.")
 
-        if (this.ctrl is Gui.CheckBox || this.ctrl is Gui.ListView) {
-            ; add additional checkStatus depend
-            this.checkStatus := _signal
-            _signal.addSub(this)
+        this.checkStatus := isCheckedSignal
+        isCheckedSignal.addSub(this)
+        
+        if (this.ctrl is Gui.CheckBox) {
+            this.OnEvent("Click", (ctrl, _) => isCheckedSignal.set(ctrl.Value))
         }
 
         if (this.ctrl is Gui.ListView) {
             ; link check all status with by using shared signal
-            this.OnEvent("ItemCheck", (LV, *) =>
-                (LV.getCheckedRowNumbers() = LV.GetCount())
-                    ? _signal.set(true)
-                    : _signal.set(false)
-            )
+            this.OnEvent("ItemCheck", (LV, *) => isCheckedSignal.set(LV.getCheckedRowNumbers() = LV.GetCount()))
         }
     }
 }
