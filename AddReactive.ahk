@@ -182,7 +182,8 @@ class AddReactive {
             this.lvOptions := options.lvOptions
             this.itemOptions := options.HasOwnProp("itemOptions")
                 ? options.itemOptions
-                    : ""
+                : ""
+            this.checkedRows := []
         }
 
         ; textString handling
@@ -193,23 +194,25 @@ class AddReactive {
             this.titleKeys := textString.keys
             this.innerText := textString.HasOwnProp("titles")
                 ? textString.titles
-                    : this.titleKeys
+                : this.titleKeys
             this.colWidths := textString.HasOwnProp("widths")
                 ? textString.widths
-                    : this.titleKeys.map(item => "AutoHdr")
+                : this.titleKeys.map(item => "AutoHdr")
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
-                    : textString
+                : textString
         }
 
         ; add control
         if (controlType = "ListView") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
-            this.handleListViewUpdate()
+            this.handleListViewUpdate(true)
+
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
+
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
@@ -251,6 +254,10 @@ class AddReactive {
         }
 
         handleKeyless() {
+            if (depend = 0) {
+                return
+            }
+
             if (depend is Array) {
                 for dep in depend {
                     vals.Push(dep.value)
@@ -286,13 +293,22 @@ class AddReactive {
         return Format(formatStr, vals*)
     }
 
-    handleListViewUpdate() {
+    handleListViewUpdate(isFirst := false) {
         this.ctrl.Delete()
         for item in this.depend.value {
             itemIn := item
             rowData := this.titleKeys.map(key => itemIn[key])
             this.ctrl.Add(this.itemOptions, rowData*)
         }
+
+        ; if (isFirst = true) {
+        ;     this.checkedRows := this.ctrl.GetCount()
+        ; } else {
+        ;     for row in this.CheckedRows {
+        ;         this.ctrl.Modify(row, "Check")
+        ;     }
+        ; }
+
         this.ctrl.Modify(1, "Select")
         this.ctrl.Focus()
     }
@@ -313,9 +329,10 @@ class AddReactive {
             this.handleListViewUpdate()
 
             if (this.HasOwnProp("checkStatus")) {
-                ; link all check item with checkStatus
-                this.ctrl.Modify(0, this.checkStatus.value = true ? "Check" : "-Check")
+                ; link all check item with useCheckStatus
+                this.checkStatus.set(this.ctrl.getCheckedRowNumbers().Length = this.ctrl.GetCount())
             }
+
         }
 
         if (this.ctrl is Gui.CheckBox) {
@@ -379,6 +396,7 @@ class AddReactive {
         checkType(this.ctrl, [Gui.CheckBox, Gui.ListView], "useCheckStatus can only use on CheckBox or ListView.")
 
         this.checkStatus := isCheckedSignal
+
         isCheckedSignal.addSub(this)
         
         if (this.ctrl is Gui.CheckBox) {
@@ -387,7 +405,10 @@ class AddReactive {
 
         if (this.ctrl is Gui.ListView) {
             ; link check all status with by using shared signal
-            this.OnEvent("ItemCheck", (LV, *) => isCheckedSignal.set(LV.getCheckedRowNumbers() = LV.GetCount()))
+
+            this.OnEvent("ItemCheck", (LV, *) => 
+                isCheckedSignal.set(LV.getCheckedRowNumbers().Length = LV.GetCount())
+            )
         }
     }
 }
