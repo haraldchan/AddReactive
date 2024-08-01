@@ -295,26 +295,19 @@ class AddReactive {
 
     handleListViewUpdate(isFirst := false) {
         this.ctrl.Delete()
+
         for item in this.depend.value {
             itemIn := item
             rowData := this.titleKeys.map(key => itemIn[key])
             this.ctrl.Add(this.itemOptions, rowData*)
         }
 
-        ; if (isFirst = true) {
-        ;     this.checkedRows := this.ctrl.GetCount()
-        ; } else {
-        ;     for row in this.CheckedRows {
-        ;         this.ctrl.Modify(row, "Check")
-        ;     }
-        ; }
-
         this.ctrl.Modify(1, "Select")
         this.ctrl.Focus()
     }
 
     update() {
-        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
+        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button || this.ctrl is Gui.CheckBox) {
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
         }
@@ -327,22 +320,6 @@ class AddReactive {
         if (this.ctrl is Gui.ListView) {
             ; update list items
             this.handleListViewUpdate()
-
-            if (this.HasOwnProp("checkStatus")) {
-                ; link all check item with useCheckStatus
-                this.checkStatus.set(this.ctrl.getCheckedRowNumbers().Length = this.ctrl.GetCount())
-            }
-
-        }
-
-        if (this.ctrl is Gui.CheckBox) {
-            ; update text label
-            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
-
-            if (this.HasOwnProp("checkStatus")) {
-                ; update value if using checkStatus
-                this.ctrl.Value := this.checkStatus.value
-            }
         }
     }
 
@@ -388,28 +365,6 @@ class AddReactive {
 
     disable(state) {
         this.ctrl.Enabled := state
-    }
-
-    ; ctrl type specific APIs
-    useCheckStatus(isCheckedSignal) {
-        checkType(isCheckedSignal, signal, "First parameter is not a signal.")
-        checkType(this.ctrl, [Gui.CheckBox, Gui.ListView], "useCheckStatus can only use on CheckBox or ListView.")
-
-        this.checkStatus := isCheckedSignal
-
-        isCheckedSignal.addSub(this)
-        
-        if (this.ctrl is Gui.CheckBox) {
-            this.OnEvent("Click", (ctrl, _) => isCheckedSignal.set(ctrl.Value))
-        }
-
-        if (this.ctrl is Gui.ListView) {
-            ; link check all status with by using shared signal
-
-            this.OnEvent("ItemCheck", (LV, *) => 
-                isCheckedSignal.set(LV.getCheckedRowNumbers().Length = LV.GetCount())
-            )
-        }
     }
 }
 
