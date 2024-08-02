@@ -1,0 +1,1 @@
+#Include "./shareCheckStatus.ahk"

@@ -1,7 +1,7 @@
 #Include "./JSON.ahk"
-#Include "./defineArrayMethods.ahk"
-#Include "./TypeChecker.ahk"
+#Include "./type-checker.ahk"
 #Include "./AddReactive-Ctrls.ahk"
+#Include "./functions/function-index.ahk"
 
 class signal {
     __New(val) {
@@ -406,52 +406,6 @@ class KeyList {
     __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
         loop depend.value.length {
             guiObj.AddReactive(controlType, options, innerText, depend, [[A_Index], key*], event)
-        }
-    }
-}
-
-class shareCheckStatus {
-    __New(CheckBox, ListView, customFn := { CheckBox: (*) => {}, ListView: (*) => {} }) {
-        this.cbFn := customFn.hasOwnProp("CheckBox") ? customFn.CheckBox : (*) => {}
-        this.lvFn := customFn.hasOwnProp("ListView") ? customFn.ListView : (*) => {}
-
-        CheckBox.OnEvent("Click", (ctrl, _) => this.handleCheckAll(CheckBox, ListView))
-        
-        ListView.OnEvent("ItemCheck", (LV, item, isChecked) => this.handleItemCheck(CheckBox, LV, item, isChecked))
-    }
-
-    handleCheckAll(CB, LV) {
-        LV.Modify(0, CB.Value = true ? "Check" : "-Check")
-
-        if (this.cbFn is Func) {
-            this.cbFn()
-        } 
-
-        if (this.cbFn is Array) {
-            for fn in this.cbFn {
-                fn()
-            }
-        }
-    }
-
-    handleItemCheck(CB, LV, item, isChecked) {
-        focusedRows := LV.getFocusedRowNumbers()
-
-        for focusedRow in focusedRows {
-            LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
-        }
-        
-
-        setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
-
-        if (this.lvFn is Func) {
-            this.lvFn()
-        } 
-
-        if (this.lvFn is Array) {
-            for fn in this.lvFn {
-                fn()
-            }
         }
     }
 }
