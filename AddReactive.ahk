@@ -295,7 +295,6 @@ class AddReactive {
 
     handleListViewUpdate(isFirst := false) {
         this.ctrl.Delete()
-
         for item in this.depend.value {
             itemIn := item
             rowData := this.titleKeys.map(key => itemIn[key])
@@ -307,7 +306,7 @@ class AddReactive {
     }
 
     update() {
-        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button || this.ctrl is Gui.CheckBox) {
+        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
         }
@@ -320,6 +319,11 @@ class AddReactive {
         if (this.ctrl is Gui.ListView) {
             ; update list items
             this.handleListViewUpdate()
+        }
+
+        if (this.ctrl is Gui.CheckBox) {
+            ; update text label
+            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
         }
     }
 
@@ -366,6 +370,28 @@ class AddReactive {
     disable(state) {
         this.ctrl.Enabled := state
     }
+
+    ; ctrl type specific APIs
+    useCheckStatus(isCheckedSignal) {
+        checkType(isCheckedSignal, signal, "First parameter is not a signal.")
+        checkType(this.ctrl, [Gui.CheckBox, Gui.ListView], "useCheckStatus can only use on CheckBox or ListView.")
+
+        this.checkStatus := isCheckedSignal
+
+        isCheckedSignal.addSub(this)
+        
+        if (this.ctrl is Gui.CheckBox) {
+            this.OnEvent("Click", (ctrl, _) => isCheckedSignal.set(ctrl.Value))
+        }
+
+        if (this.ctrl is Gui.ListView) {
+            ; link check all status with by using shared signal
+
+            this.OnEvent("ItemCheck", (LV, *) => 
+                isCheckedSignal.set(LV.getCheckedRowNumbers().Length = LV.GetCount())
+            )
+        }
+    }
 }
 
 class IndexList {
@@ -384,6 +410,52 @@ class KeyList {
     }
 }
 
+class shareCheckStatus {
+    __New(CheckBox, ListView, customFn := { CheckBox: (*) => {}, ListView: (*) => {} }) {
+        this.cbFn := customFn.hasOwnProp("CheckBox") ? customFn.CheckBox : (*) => {}
+        this.lvFn := customFn.hasOwnProp("ListView") ? customFn.ListView : (*) => {}
+
+        CheckBox.OnEvent("Click", (ctrl, _) => this.handleCheckAll(CheckBox, ListView))
+        
+        ListView.OnEvent("ItemCheck", (LV, item, isChecked) => this.handleItemCheck(CheckBox, LV, item, isChecked))
+    }
+
+    handleCheckAll(CB, LV) {
+        LV.Modify(0, CB.Value = true ? "Check" : "-Check")
+
+        if (this.cbFn is Func) {
+            this.cbFn()
+        } 
+
+        if (this.cbFn is Array) {
+            for fn in this.cbFn {
+                fn()
+            }
+        }
+    }
+
+    handleItemCheck(CB, LV, item, isChecked) {
+        focusedRows := LV.getFocusedRowNumbers()
+
+        for focusedRow in focusedRows {
+            LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
+        }
+        
+
+        setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
+
+        if (this.lvFn is Func) {
+            this.lvFn()
+        } 
+
+        if (this.lvFn is Array) {
+            for fn in this.lvFn {
+                fn()
+            }
+        }
+    }
+}
+
 Gui.Prototype.AddReactive := AddReactive
 Gui.Prototype.IndexList := IndexList
 Gui.Prototype.KeyList := KeyList
@@ -391,7 +463,7 @@ Gui.Prototype.KeyList := KeyList
 ; for lsp {
 ; revue.ahk
 ; /**
-;  *
+;  *D
 ;  */
 ; AddReactive(controlType[, options, textString, depend, key, event]) => Gui.Control
 
