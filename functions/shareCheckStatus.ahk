@@ -8,7 +8,6 @@ class shareCheckStatus {
         this.lvFn := customFn.hasOwnProp("ListView") ? customFn.ListView : (*) => {}
 
         CheckBox.OnEvent("Click", (ctrl, _) => this.handleCheckAll(CheckBox, ListView))
-
         ListView.OnEvent("ItemCheck", (LV, item, isChecked) => this.handleItemCheck(CheckBox, LV, item, isChecked))
     }
 
@@ -19,11 +18,11 @@ class shareCheckStatus {
 
     handleItemCheck(CB, LV, item, isChecked) {
         focusedRows := LV.getFocusedRowNumbers()
-
+        
         for focusedRow in focusedRows {
             LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
         }
-
+        ; get checked rows aynchronously, wait for other items to change check status
         setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
 
         this.runCustomFn(this.lvFn)
