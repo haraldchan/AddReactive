@@ -59,6 +59,12 @@ class signal {
             throw TypeError(Format("update can only handle Array/Object/Map; `n`nCurrent Type: {2}", Type(newValue)))
         }
 
+        if (this.value is Map) {
+            updater := Map()
+        } else if (this.value is Array) {
+            updater := []
+        }
+        
         updater := this.value
         updater[key] := newValue
 
