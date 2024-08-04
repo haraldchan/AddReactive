@@ -50,7 +50,7 @@ App(gui) {
 
 需要留意的是，`shareCheckStatus()` 会占用 `CheckBox` 的 "Click" 事件和 `ListView` 的 "ItemCheck" 事件。如果往控件上添加同类型事件将会覆盖 `shareCheckStatus()` ，令其失效。
 
-需要为这两个时间添加额外行为时，可以向 `checkShareStatus()` 传入第三个参数 `customFn`。
+需要为这两个事件添加额外行为时，可以向 `checkShareStatus()` 传入第三个参数 `customFn`。
 ```go
 App(gui) {
 
