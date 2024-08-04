@@ -2,8 +2,8 @@ defineGuiMethods(guiProto) {
     guiProto.Prototype.getCtrlByName := getCtrlByName
     guiProto.Prototype.getCtrlByType := getCtrlByType
     guiProto.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
-    guiProto.ListView.Prototype.getCheckedRowNumbers := getCheckedRowNumbers
-    guiProto.ListView.Prototype.getFocusedRowNumbers := getFocusedRowNumbers
+    guiProto.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
+    guiProto.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
 
     getCtrlByName(guiProto, vName) {
         for ctrl in guiProto {
@@ -35,7 +35,7 @@ defineGuiMethods(guiProto) {
         return ctrlArray
     }
 
-    static getCheckedRowNumbers(LV) {
+    static getCheckedRows(LV) {
         checkedRowNumbers := []
         loop LV.GetCount() {
             curRow := LV.GetNext(A_Index - 1, "Checked")
@@ -50,7 +50,7 @@ defineGuiMethods(guiProto) {
         return checkedRowNumbers
     }
 
-    static getFocusedRowNumbers(LV) {
+    static getFocusedRows(LV) {
         focusedRows := []
         rowNumber := 0  
         loop {
