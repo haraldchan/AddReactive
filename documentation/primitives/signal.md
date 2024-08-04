@@ -1,20 +1,20 @@
 # Signal
-### 什么是 signal?
+### 什么是 Signal?
 
-signal 是一个对变量的封装，它可以在自身的值更新时动态地实时通知关联订阅者。它的值可以是基础也可以是复杂数据类型。
+Signal 是一个对变量的封装，它可以在自身的值更新时动态地实时通知关联订阅者。它的值可以是基础也可以是复杂数据类型。
 <br>
 <br>
 
 ### 创建与读写
 
-signal 可以通过 `signal()` 函数进行创建：
+Signal 可以通过 `signal()` 函数进行创建：
 
 ```go
 count := signal(0) // 参数为 signal 的初始值
 ```
 <br>
 
-要对 signal 进行读写，可以通过 `.value` 属性及 `.set()` 方法实现：
+要对 `signal` 进行读写，可以通过 `.value` 属性及 `.set()` 方法实现：
 
 ```go
 MsgBox(Format("count is: {1}"), count.value)
@@ -23,7 +23,7 @@ count.set(3) // count.value : 3
 ```
 <br>
 
-以函数作为 `.set()` 方法的参数，也可以实现对 signal 值的更新：
+以函数作为 `.set()` 方法的参数，也可以实现对 `signal` 值的更新：
 
 ```go
 count.set(3)
@@ -40,7 +40,7 @@ count.set(val => val + 1) // count.value : 4
 
 ### 复杂数据类型的更新
 
-signal 的值可以是 `Array` 和 `Map` 对象：
+`signal` 的值可以是 `Array` 和 `Map` 对象：
 ```go
 numbers := signal([1, 2, 3])
 
@@ -60,7 +60,7 @@ apple.set(newApple) // apple.value => Map("color", "green", "amount", 5)
 ```
 <br>
 
-如果要局部更新复杂数据类型的 `signal` ，应使用 `.update()` 方法，传入 key/index 和新的值进行更新：
+如果要局部更新复杂数据类型的 `signal` ，应使用 `.update()` 方法，传入键或索引和新的值进行更新：
 ```go
 
 numbers.update(1, 9) // numbers.value : [9, 2, 3]
