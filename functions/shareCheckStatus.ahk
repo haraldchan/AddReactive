@@ -1,4 +1,12 @@
 class shareCheckStatus {
+    /**
+     * Bind values of CheckBox and ListView for check-all status.
+     * @param CheckBox CheckBox control.
+     * @param ListView ListView Control.
+     * @param {Object} customFn Additional callback for CheckBox "Click" event and ListView "ItemCheck" event/.
+     * 
+     * @example shareCheckStatus(cb, lv, {CheckBox: (*) => {...}, ListView: (*) => {...}})
+     */
     __New(CheckBox, ListView, customFn := { CheckBox: (*) => {}, ListView: (*) => {} }) {
         checkType(CheckBox, Gui.CheckBox, "First parameter is not a Gui.CheckBox")
         checkType(ListView, Gui.ListView, "Second parameter is not a Gui.ListView")
@@ -18,7 +26,7 @@ class shareCheckStatus {
 
     handleItemCheck(CB, LV, item, isChecked) {
         focusedRows := LV.getFocusedRowNumbers()
-        
+
         for focusedRow in focusedRows {
             LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
         }
