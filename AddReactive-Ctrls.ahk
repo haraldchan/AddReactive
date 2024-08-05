@@ -1,4 +1,14 @@
 class AddReactiveText extends AddReactive {
+    /**
+     * Add a reactive Text control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @returns {AddReactiveText}     
+     */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         this.key := key
         super.__New(GuiObject, "Text", options, innerText, depend, key, event)
@@ -6,6 +16,16 @@ class AddReactiveText extends AddReactive {
 }
 
 class AddReactiveEdit extends AddReactive {
+    /**
+     * Add a reactive Edit control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @returns {AddReactiveEdit}     
+     */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         this.key := key
         super.__New(GuiObject, "Edit", options, innerText, depend, key, event)
@@ -13,6 +33,16 @@ class AddReactiveEdit extends AddReactive {
 }
 
 class AddReactiveButton extends AddReactive {
+    /**
+     * Add a reactive Button control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @returns {AddReactiveButton}     
+     */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         this.key := key
         super.__New(GuiObject, "Button", options, innerText, depend, key, event)
@@ -20,6 +50,16 @@ class AddReactiveButton extends AddReactive {
 }
 
 class AddReactiveCheckBox extends AddReactive {
+    /**
+     * Add a reactive CheckBox control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @returns {AddReactiveCheckBox}     
+     */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         this.key := key
         super.__New(GuiObject, "CheckBox", options, innerText, depend, key, event)
@@ -27,6 +67,16 @@ class AddReactiveCheckBox extends AddReactive {
 }
 
 class AddReactiveRadio extends AddReactive {
+    /**
+     * Add a reactive Radio control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @returns {AddReactiveRadio}     
+     */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         this.key := key
         super.__New(GuiObject, "Radio", options, innerText, depend, key, event)
@@ -73,8 +123,16 @@ class AddReactiveComboBox extends AddReactive {
 }
 
 class AddReactiveListView extends AddReactive {
-    ; options of ListView: { lvOptions:"", itemOptions:"" }
-    ; colTitleMap indicates the relationship between column titles and the actual key of depend obj.
+    /**
+     * Add a reactive ListView control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {{keys: string[], titles: string[], width: number[]}} columnDetails Descriptor object contains keys of col value, column title texts and column width.
+     * @param {signal} depend Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @returns {AddReactiveListView}     
+     */
     __New(GuiObject, options, colTitleGrid, depend := 0, key := 0, event := 0) {
         this.key := key
         ; colTitleGrid is a grid array in the form of:

@@ -5,6 +5,11 @@
 #Include "./extend-methods/extend-methods-index.ahk"
 
 class signal {
+    /**
+     * Creates a reactive signal variable.
+     * @param {any} initialValue The initial value of the signal.This argument is ignored after the initial render.
+     * @return {Signal}
+     */
     __New(val) {
         this.value := ((val is Class) or (val is Func))
             ? val
@@ -16,6 +21,11 @@ class signal {
         this.effects := []
     }
 
+    /**
+     * Set the new value of the signal.
+     * @param {any} newSignalValue New state of the signal. Also accept function object.
+     * @returns {void} 
+     */
     set(newSignalValue) {
         prevValue := this.value
 
@@ -64,7 +74,7 @@ class signal {
         } else if (this.value is Array) {
             updater := []
         }
-        
+
         updater := this.value
         updater[key] := newValue
 
@@ -92,6 +102,12 @@ class signal {
 }
 
 class computed {
+    /**
+     * Create a computed signal which derives a reactive value.
+     * @param {signal | signal[]} depend The signal derives from.
+     * @param {Func} mutation computation function expression.
+     * @return {computed}
+     */
     __New(_signal, mutation) {
         checkType(_signal, [signal, computed, Array], "First parameter is not a signal.")
         checkType(mutation, Func, "Second parameter is not a Function.")
@@ -162,12 +178,30 @@ class computed {
 }
 
 class effect {
+    /**
+     * Create a effect that runs when the value of depend signal changes.
+     * @param {signal} depend The signal associated with.
+     * @param {(new?, prev?) => void} effectFn Callback function object. 
+     * First param retrieves the new value of the signal, second param retrives previous value.
+     * @example effect(signal, (new, prev) => MsgBox(Format("New: {1}, prev: {2}", new, prev)))
+     */
     __New(depend, effectFn) {
         depend.addEffect(effectFn)
     }
 }
 
 class AddReactive {
+    /**
+     * Creates a new reactive control and add it to the window.
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio, DropDownList, ComboBox, ListView.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string|Array|Object} content Text or formatted text for text, options for DDL/ComboBox, column option object for ListView.
+     * @param {signal|Array|Object} depend Subscribed signal, or an array of signals. 
+     * @param {string|number} key A key or index as render indicator.
+     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
+     * @returns {AddReactive} 
+     */
     __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0, event := 0) {
         ; params type checking
         checkType(GuiObject, Gui, "Second(GuiObject) param is not a Gui Object.")
@@ -189,7 +223,7 @@ class AddReactive {
             this.lvOptions := options.lvOptions
             this.itemOptions := options.HasOwnProp("itemOptions")
                 ? options.itemOptions
-                : ""
+                    : ""
             this.checkedRows := []
         }
 
@@ -201,14 +235,14 @@ class AddReactive {
             this.titleKeys := textString.keys
             this.innerText := textString.HasOwnProp("titles")
                 ? textString.titles
-                : this.titleKeys
+                    : this.titleKeys
             this.colWidths := textString.HasOwnProp("widths")
                 ? textString.widths
-                : this.titleKeys.map(item => "AutoHdr")
+                    : this.titleKeys.map(item => "AutoHdr")
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}")
                 ? this.handleFormatStr(textString, depend, key)
-                : textString
+                    : textString
         }
 
         ; add control
@@ -336,6 +370,11 @@ class AddReactive {
 
 
     ; APIs
+    /**
+     * Registers one or more functions to be call when given event is raised. 
+     * @param {String | Map} event Event name | An Map contains key-value pairs of event-callback.
+     * @param {Func} fn (optional) Event callback function.
+     */
     OnEvent(event, fn := 0) {
         if (event is Map) {
             for e, cb in event {
@@ -380,6 +419,16 @@ class AddReactive {
 }
 
 class IndexList {
+    /**
+     * Creates a list of multiple reactive controls, ordered by index.
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} depend Subscribed signal
+     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
+     * @return {Gui.Control[]}
+     */
     __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
         loop depend.value.length {
             guiObj.AddReactive(controlType, options, innerText, depend, A_Index, event)
@@ -388,6 +437,17 @@ class IndexList {
 }
 
 class KeyList {
+    /**
+     * Creates a list of multiple reactive controls, render each item by keys.
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {signal} depend Subscribed signal
+     * @param {array} key the keys of the signal's value
+     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
+     * @return {Gui.Control[]}
+     */
     __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
         loop depend.value.length {
             guiObj.AddReactive(controlType, options, innerText, depend, [[A_Index], key*], event)
