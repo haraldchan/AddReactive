@@ -11,11 +11,7 @@ class signal {
      * @return {Signal}
      */
     __New(val) {
-        this.value := ((val is Class) or (val is Func))
-            ? val
-                : val is Object
-                    ? this.mapify(val)
-                    : val
+        this.value := (val is Object && !(val is Func) && !(val is Class)) ? this.mapify(val) : val
         this.subs := []
         this.comps := []
         this.effects := []
@@ -215,34 +211,25 @@ class AddReactive {
         this.ctrlType := controlType
         this.options := options
         this.formattedString := textString
-        this.depend := depend
+        this.depend := this.filterDepends(depend)
         this.key := key
 
         ; ListView options
         if (controlType = "ListView") {
             this.lvOptions := options.lvOptions
-            this.itemOptions := options.HasOwnProp("itemOptions")
-                ? options.itemOptions
-                    : ""
+            this.itemOptions := options.HasOwnProp("itemOptions") ? options.itemOptions : ""
             this.checkedRows := []
         }
 
         ; textString handling
-        if (controlType = "ComboBox" ||
-            controlType = "DropDownList") {
+        if (controlType = "ComboBox" || controlType = "DropDownList") {
             this.innerText := textString
         } else if (controlType = "ListView") {
             this.titleKeys := textString.keys
-            this.innerText := textString.HasOwnProp("titles")
-                ? textString.titles
-                    : this.titleKeys
-            this.colWidths := textString.HasOwnProp("widths")
-                ? textString.widths
-                    : this.titleKeys.map(item => "AutoHdr")
+            this.innerText := textString.HasOwnProp("titles") ? textString.titles : this.titleKeys
+            this.colWidths := textString.HasOwnProp("widths") ? textString.widths : this.titleKeys.map(item => "AutoHdr")
         } else {
-            this.innerText := RegExMatch(textString, "\{\d+\}")
-                ? this.handleFormatStr(textString, depend, key)
-                    : textString
+            this.innerText := RegExMatch(textString, "\{\d+\}") ? this.handleFormatStr(textString, depend, key) : textString
         }
 
         ; add control
@@ -253,7 +240,9 @@ class AddReactive {
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
-
+        } else if (controlType = "CheckBox" && this.HasOwnProp("checkValueDepend")) {
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
+            this.ctrl.Value := this.checkValueDepend.value
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
@@ -279,6 +268,28 @@ class AddReactive {
             } else {
                 ; single event
                 this.ctrl.OnEvent(event[1], event[2])
+            }
+        }
+    }
+
+    filterDepends(depend) {
+        if (depend is Array) {
+            findCheckValue := (d => !(d is Object) && d.HasOwnProp("checkValue"))
+            checkValueDepend := depend.find(findCheckValue)
+            if (!checkValueDepend) {
+                return depend
+            } else {
+                checkValueAt := depend.findIndex(findCheckValue)
+                checkValueObject := depend.RemoveAt(checkValueAt)
+                this.checkValueDepend := checkValueObject.checkValue
+
+                return depend
+            }
+        }
+
+        if (!(depend is signal)) {
+            if (depend.hasOwnProp("checkValue")) {
+                return depend.checkValue 
             }
         }
     }
@@ -365,6 +376,9 @@ class AddReactive {
         if (this.ctrl is Gui.CheckBox) {
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
+            if (this.HasOwnProp("checkValueDepend")) {
+                this.ctrl.Value := this.checkValueDepend.value
+            }
         }
     }
 
