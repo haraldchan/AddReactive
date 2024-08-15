@@ -19,7 +19,8 @@ oGui.getCtrlByName("Text").Text := "Now, change the text."
 
 <br>
 
-使用 `"vname"` 原生选项只能获取到控件本身，如果需要获取到 AddReactive 控件实例，则需要以 `"$name"` 来获取：
+使用 `"vname"` 原生选项只能获取到控件本身，如果需要获取到 AddReactive 控件实例，则需要以 `"$name"` 来获取。为了避免与原生 `name` 属性冲突，AddReactive 控件不论是添加时还是获取时都必须带有 "$" 符号：
+
 ```go
 oGui.AddReactiveText("$arText vTextCtrl w300 h25", "A reactive text control.")
 
