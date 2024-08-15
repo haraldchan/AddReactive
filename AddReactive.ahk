@@ -243,6 +243,7 @@ class AddReactive {
         } else if (controlType = "CheckBox" && this.HasOwnProp("checkValueDepend")) {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
             this.ctrl.Value := this.checkValueDepend.value
+            this.ctrl.OnEvent("Change", (ctrl, *) => this.checkValueDepend.set(ctrl.value))
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
