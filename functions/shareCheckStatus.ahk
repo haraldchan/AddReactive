@@ -3,17 +3,21 @@ class shareCheckStatus {
      * Bind values of CheckBox and ListView for check-all status.
      * @param CheckBox CheckBox control.
      * @param ListView ListView Control.
-     * @param {Object} customFn Additional callback for CheckBox "Click" event and ListView "ItemCheck" event/.
+     * @param {Object} options Additional options.
      * 
-     * @example shareCheckStatus(cb, lv, {CheckBox: (*) => {...}, ListView: (*) => {...}})
+     * @example shareCheckStatus(cb, lv, {CheckBox: (*) => {...}, ListView: (*) => {...}, {checkValue: isCheckedSignal}})
      */
-    __New(CheckBox, ListView, customFn := { CheckBox: (*) => {}, ListView: (*) => {} }) {
+    __New(CheckBox, ListView, options := { CheckBox: (*) => {}, ListView: (*) => {} }) {
         checkType(CheckBox, Gui.CheckBox, "First parameter is not a Gui.CheckBox")
         checkType(ListView, Gui.ListView, "Second parameter is not a Gui.ListView")
-        checkType(customFn, Object, "Third parameter is not an Object")
-
-        this.cbFn := customFn.hasOwnProp("CheckBox") ? customFn.CheckBox : (*) => {}
-        this.lvFn := customFn.hasOwnProp("ListView") ? customFn.ListView : (*) => {}
+        checkType(options, Object, "Third parameter is not an Object")
+        checkType(options.CheckBox, Func, "This property must be a callback function")
+        checkType(options.ListView, Func, "This property must be a callback function")
+        checkType(options.checkValue, signal, "checkValue must be a signal")
+        
+        this.cbFn := options.hasOwnProp("CheckBox") ? options.CheckBox : (*) => {}
+        this.lvFn := options.hasOwnProp("ListView") ? options.ListView : (*) => {}
+        this.checkValueDepend := options.hasOwnProp("checkValue") ? options.checkValue : ""
 
         CheckBox.OnEvent("Click", (ctrl, _) => this.handleCheckAll(CheckBox, ListView))
         ListView.OnEvent("ItemCheck", (LV, item, isChecked) => this.handleItemCheck(CheckBox, LV, item, isChecked))
@@ -31,7 +35,11 @@ class shareCheckStatus {
             LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
         }
         ; get checked rows aynchronously, wait for other items to change check status
-        setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
+        if (this.checkValueDepend != "") {
+            setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
+        } else {
+            setTimer(() => this.checkValueDepend.set(LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
+        }
 
         this.runCustomFn(this.lvFn)
     }
