@@ -4,13 +4,21 @@ defineGuiMethods(guiProto) {
     guiProto.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
     guiProto.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
     guiProto.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
+    guiProto.Prototype.arcs := []
 
-    getCtrlByName(guiProto, vName) {
+    getCtrlByName(guiProto, name) {
         for ctrl in guiProto {
-            if (ctrl.Name = vName) {
+            if (ctrl.Name = name) {
                 return ctrl
             }
         }
+
+        for arc in guiProto.arcs {
+            if (arc.name = name) {
+                return arc
+            }
+        }
+
         throw ValueError("Name not found.")
     }
 

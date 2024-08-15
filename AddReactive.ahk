@@ -209,7 +209,7 @@ class AddReactive {
 
         this.GuiObject := GuiObject
         this.ctrlType := controlType
-        this.options := options
+        this.options := this.handleArcName(options)
         this.formattedString := textString
         this.depend := this.filterDepends(depend)
         this.key := key
@@ -243,7 +243,7 @@ class AddReactive {
         } else if (controlType = "CheckBox" && this.HasOwnProp("checkValueDepend")) {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
             this.ctrl.Value := this.checkValueDepend.value
-            this.ctrl.OnEvent("Change", (ctrl, *) => this.checkValueDepend.set(ctrl.value))
+            this.ctrl.OnEvent("Change", (ctrl, *) => this.checkValueDepend(ctrl.value))
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
@@ -273,6 +273,19 @@ class AddReactive {
         }
     }
 
+    handleArcName(options){
+        optionsArr := StrSplit(options, " ")
+        this.name := optionsArr.RemoveAt(optionsArr.findIndex(item => InStr(item, "$")))
+        this.GuiObject.arcs.Push(this)
+
+        formattedOptions := ""
+        for option in optionsArr {
+            formattedOptions .= options . " "
+        }
+
+        return formattedOptions
+    }
+
     filterDepends(depend) {
         if (depend is Array) {
             findCheckValue := (d => !(d is Object) && d.HasOwnProp("checkValue"))
@@ -280,8 +293,7 @@ class AddReactive {
             if (!checkValueDepend) {
                 return depend
             } else {
-                checkValueAt := depend.findIndex(findCheckValue)
-                checkValueObject := depend.RemoveAt(checkValueAt)
+                checkValueObject := depend.RemoveAt(depend.findIndex(findCheckValue))
                 this.checkValueDepend := checkValueObject.checkValue
 
                 return depend
