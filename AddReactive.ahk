@@ -247,14 +247,14 @@ class AddReactive {
         }
 
         ; add subscribe
-        if (depend = 0) {
+        if (this.depend = 0) {
             return
-        } else if (depend is Array) {
-            for dep in depend {
+        } else if (this.depend is Array) {
+            for dep in this.depend {
                 dep.addSub(this)
             }
         } else {
-            depend.addSub(this)
+            this.depend.addSub(this)
         }
 
         ; add event
@@ -306,7 +306,6 @@ class AddReactive {
 
             return depend
         } else if (depend is Object && depend.HasOwnProp("checkValue")) {
-
             this.checkValueDepend := depend.checkValue
             this.checkValueDepend.addSub(this)
             
