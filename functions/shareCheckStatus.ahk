@@ -11,10 +11,16 @@ class shareCheckStatus {
         checkType(CheckBox, Gui.CheckBox, "First parameter is not a Gui.CheckBox")
         checkType(ListView, Gui.ListView, "Second parameter is not a Gui.ListView")
         checkType(options, Object, "Third parameter is not an Object")
-        checkType(options.CheckBox, Func, "This property must be a callback function")
-        checkType(options.ListView, Func, "This property must be a callback function")
-        checkType(options.checkValue, signal, "checkValue must be a signal")
-        
+        if options.hasOwnProp("CheckBox") {
+            checkType(options.CheckBox, Func, "This property must be a callback function")
+        }
+        if options.hasOwnProp("ListView") {
+            checkType(options.ListView, Func, "This property must be a callback function")
+        }
+        if options.hasOwnProp("checkValue") {
+            checkType(options.checkValue, signal, "checkValue must be a signal")
+        }        
+
         this.cbFn := options.hasOwnProp("CheckBox") ? options.CheckBox : (*) => {}
         this.lvFn := options.hasOwnProp("ListView") ? options.ListView : (*) => {}
         this.checkValueDepend := options.hasOwnProp("checkValue") ? options.checkValue : ""
@@ -35,7 +41,7 @@ class shareCheckStatus {
             LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
         }
         ; get checked rows aynchronously, wait for other items to change check status
-        if (this.checkValueDepend != "") {
+        if (this.checkValueDepend = "") {
             setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
         } else {
             setTimer(() => this.checkValueDepend.set(LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)

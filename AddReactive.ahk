@@ -29,9 +29,7 @@ class signal {
             return
         }
 
-        this.value := newSignalValue is Func
-            ? newSignalValue(this.value)
-                : newSignalValue
+        this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
 
         ; change to Map()
         if (!(newSignalValue is Class) && newSignalValue is Object) {
@@ -204,7 +202,7 @@ class AddReactive {
         if (controlType != "ListView") {
             checkType(options, String, "First(options) param is not a String.")
         }
-        checkTypeDepend(depend)
+        ; checkTypeDepend(depend)
         ; checkTypeEvent(event)
 
         this.GuiObject := GuiObject
@@ -243,7 +241,7 @@ class AddReactive {
         } else if (controlType = "CheckBox" && this.HasOwnProp("checkValueDepend")) {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
             this.ctrl.Value := this.checkValueDepend.value
-            this.ctrl.OnEvent("Change", (ctrl, *) => this.checkValueDepend(ctrl.value))
+            this.ctrl.OnEvent("Click", (ctrl, *) => this.checkValueDepend.set(ctrl.Value))
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
@@ -274,13 +272,24 @@ class AddReactive {
     }
 
     handleArcName(options){
-        optionsArr := StrSplit(options, " ")
-        this.name := optionsArr.RemoveAt(optionsArr.findIndex(item => InStr(item, "$")))
-        this.GuiObject.arcs.Push(this)
+        optionsString := this.ctrlType = "ListView" ? options.lvOptions : options
+
+        optionsArr := StrSplit(optionsString, " ")
+        arcNameIndex := optionsArr.findIndex(item => InStr(item, "$"))
+
+        if (arcNameIndex != "") {
+            this.name := optionsArr.RemoveAt(optionsArr.findIndex(item => InStr(item, "$")))
+            this.GuiObject.arcs.Push(this)
+        }
 
         formattedOptions := ""
         for option in optionsArr {
-            formattedOptions .= options . " "
+            formattedOptions .= option . " "
+        }
+
+        if (this.ctrlType = "ListView") {
+            options.lvOptions := formattedOptions
+            return options
         }
 
         return formattedOptions
@@ -288,24 +297,26 @@ class AddReactive {
 
     filterDepends(depend) {
         if (depend is Array) {
-            findCheckValue := (d => !(d is Object) && d.HasOwnProp("checkValue"))
-            checkValueDepend := depend.find(findCheckValue)
-            if (!checkValueDepend) {
-                return depend
-            } else {
-                checkValueObject := depend.RemoveAt(depend.findIndex(findCheckValue))
-                this.checkValueDepend := checkValueObject.checkValue
+            checkValueObject := depend.find(d => d is Object && d.HasOwnProp("checkValue"))
 
-                return depend
+            if (checkValueObject != "") {
+                this.checkValueDepend := (depend.RemoveAt(depend.findIndex(d => d is Object && d.HasOwnProp("checkValue")))).checkValue
+                this.checkValueDepend.addSub(this)
             }
-        }
 
-        if (!(depend is signal)) {
-            if (depend.hasOwnProp("checkValue")) {
-                return depend.checkValue 
-            }
+            return depend
+        } else if (depend is Object && depend.HasOwnProp("checkValue")) {
+
+            this.checkValueDepend := depend.checkValue
+            this.checkValueDepend.addSub(this)
+            
+            return 0
+        } else {
+
+            return depend
         }
     }
+        
 
     handleFormatStr(formatStr, depend, key) {
         vals := []
@@ -390,7 +401,7 @@ class AddReactive {
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
             if (this.HasOwnProp("checkValueDepend")) {
-                this.ctrl.Value := this.checkValueDepend.value
+                this.ctrl.Value := this.checkValueDepend.Value
             }
         }
     }

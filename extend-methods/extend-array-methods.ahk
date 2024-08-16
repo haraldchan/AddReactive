@@ -10,6 +10,7 @@ defineArrayMethods(arr) {
     arr.Prototype.toReversed := toReversed
     arr.Prototype.unique := unique
     arr.Prototype.find := find
+    arr.Prototype.findIndex := findIndex
 
     some(arr, fn) {
         for item in arr {
