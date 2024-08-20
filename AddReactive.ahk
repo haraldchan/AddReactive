@@ -298,13 +298,12 @@ class AddReactive {
     filterDepends(depend) {
         if (depend is Array) {
             checkValueObject := depend.find(d => d is Object && d.HasOwnProp("checkValue"))
-
             if (checkValueObject != "") {
                 this.checkValueDepend := (depend.RemoveAt(depend.findIndex(d => d is Object && d.HasOwnProp("checkValue")))).checkValue
                 this.checkValueDepend.addSub(this)
             }
-
             return depend
+
         } else if (depend is Object && depend.HasOwnProp("checkValue")) {
             this.checkValueDepend := depend.checkValue
             this.checkValueDepend.addSub(this)
