@@ -47,7 +47,7 @@ defineArrayMethods(arr) {
             }
         }
 
-        return false
+        return ""
     }
 
     findIndex(arr, fn) {
