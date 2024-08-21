@@ -1,0 +1,92 @@
+class shareCheckStatus2 {
+    /**
+     * Bind values of CheckBox and ListView for check-all status.
+     * @param ARCheckBox AddReactive CheckBox.
+     * @param ARListView AddReactive Control.
+     * @param {Object} options Additional options.
+     * 
+     * @example shareCheckStatus(cb, lv, {CheckBox: (*) => {...}, ListView: (*) => {...}, checkStatus: isCheckedSignal})
+     */
+    __New(CheckBox, ListView, options := { CheckBox: (*) => {}, ListView: (*) => {} }) {
+        ; param type checking
+        checkType(CheckBox, [Gui.CheckBox, AddReactiveCheckBox], "First parameter is not a Gui.CheckBox or AddReactiveCheckBox")
+        checkType(ListView, [Gui.ListView, AddReactiveListView], "Second parameter is not a Gui.ListView or AddReactiveListView")
+        if (!(CheckBox is Gui.CheckBox && ListView is Gui.ListView)
+            || !(CheckBox is AddReactiveCheckBox && ListView is AddReactiveListView)
+        ) {
+            Throw TypeError("CheckBox and ListView control have to be both navive or AddReactive controls.")
+        }
+        checkType(options, Object, "Third parameter is not an Object")
+        if options.hasOwnProp("CheckBox") {
+            checkType(options.CheckBox, Func, "This property must be a callback function")
+        }
+        if options.hasOwnProp("ListView") {
+            checkType(options.ListView, Func, "This property must be a callback function")
+        }
+        if options.hasOwnProp("checkValue") {
+            checkType(options.checkStatus, signal, "checkStatus must be a signal")
+        }
+
+        this.cb := CheckBox
+        this.lv := ListView
+        this.cbFn := options.CheckBox
+        this.lvFn := options.ListView
+        this.checkStatusDepend := options.checkValue
+
+        ; diversing native/AR control
+        if (this.cb is AddReactiveCheckBox && this.lv is AddReactiveListView) {
+            checkType(options.checkStatus, signal, "checkStatus is not a signal.")
+            ; add checkStatusDepend, sub signal
+            CheckBox.checkStatusDepend := options.checkStatus
+            options.checkStatus.addSub(CheckBox)
+            ListView.checkStatusDepend := options.checkStatus
+            options.checkStatus.addSub(ListView)
+
+            CheckBox.ctrl.OnEvent("Click", (ctrl, _) => this.handleCheckAll(ctrl, ListView.ctrl))
+            ListView.ctrl.OnEvent("ItemCheck", (LV, item, isChecked) => this.handleItemCheck(CheckBox.ctrl, LV, item, isChecked))
+        } else {
+            CheckBox.OnEvent("Click", (ctrl, _) => this.handleCheckAll(CheckBox, ListView))
+            ListView.OnEvent("ItemCheck", (LV, item, isChecked) => this.handleItemCheck(CheckBox, LV, item, isChecked))
+        }
+    }
+
+    handleCheckAll(CB, LV) {
+        if (this.cb is AddReactiveCheckBox && this.lv is AddReactiveListView) {
+            this.checkStatusDepend.set(cur => !cur)
+            LV.Modify(0, this.checkStatusDepend.value = true ? "Check" : "-Check")
+        } else {
+            LV.Modify(0, CB.Value = true ? "Check" : "-Check")
+        }
+        this.runCustomFn(this.cbFn)
+    }
+
+    handleItemCheck(CB, LV, item, isChecked) {
+        ; multi-check
+        focusedRows := LV.getFocusedRowNumbers()
+        for focusedRow in focusedRows {
+            LV.Modify(focusedRow, isChecked ? "Check" : "-Check")
+        }
+
+        if (this.checkStatusDepend = "") {
+            setTimer(() => CB.Value := (LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
+        } else {
+            setTimer(() => this.checkStatusDepend.set(LV.getCheckedRowNumbers().Length = LV.GetCount()), -1)
+        }
+        this.runCustomFn(this.lvFn)
+    }
+
+
+    runCustomFn(userFunctions) {
+        checkType(userFunctions, [Func, Array], "Parameter is not a Function or Array")
+
+        if (userFunctions is Func) {
+            userFunctions()
+
+        } else if (userFunctions is Array) {
+            for fn in userFunctions {
+                checkType(fn, Func, "Parameter is not a Function")
+                fn()
+            }
+        }
+    }
+}
