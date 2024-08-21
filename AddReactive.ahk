@@ -197,14 +197,6 @@ class AddReactive {
      * @returns {AddReactive} 
      */
     __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0, event := 0) {
-        ; params type checking
-        checkType(GuiObject, Gui, "Second(GuiObject) param is not a Gui Object.")
-        if (controlType != "ListView") {
-            checkType(options, String, "First(options) param is not a String.")
-        }
-        ; checkTypeDepend(depend)
-        ; checkTypeEvent(event)
-
         this.GuiObject := GuiObject
         this.ctrlType := controlType
         this.options := this.handleArcName(options)
@@ -259,14 +251,8 @@ class AddReactive {
 
         ; add event
         if (event != 0) {
-            if (event.every(item => item is Array)) {
-                ; multiple events
-                for e in event {
-                    this.ctrl.OnEvent(e[1], e[2])
-                }
-            } else {
-                ; single event
-                this.ctrl.OnEvent(event[1], event[2])
+            for e, cb in event {
+                this.ctrl.OnEvent(e, cb)
             }
         }
     }
@@ -315,7 +301,6 @@ class AddReactive {
         }
     }
         
-
     handleFormatStr(formatStr, depend, key) {
         vals := []
 
@@ -379,6 +364,7 @@ class AddReactive {
         this.ctrl.Focus()
     }
 
+    ; updating subs
     update() {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
@@ -428,112 +414,6 @@ class AddReactive {
     setFont(options := "", fontName := "") {
         this.ctrl.SetFont(options, fontName)
     }
-
-    getValue() {
-        return this.ctrl.Value
-    }
-
-    setValue(newValue) {
-        this.ctrl.Value := newValue is Func
-            ? newValue(this.ctrl.Value)
-                : newValue
-    }
-
-    getInnerText() {
-        return this.ctrl.Text
-    }
-
-    setInnerText(newInnerText) {
-        this.ctrl.Text := newInnerText is Func
-            ? newInnerText(this.ctrl.Text)
-                : newInnerText
-    }
-
-    disable(state) {
-        this.ctrl.Enabled := state
-    }
-}
-
-class IndexList {
-    /**
-     * Creates a list of multiple reactive controls, ordered by index.
-     * @param {Gui} GuiObject The target Gui Object.
-     * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio.
-     * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
-     * @param {signal} depend Subscribed signal
-     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
-     * @return {Gui.Control[]}
-     */
-    __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
-        loop depend.value.length {
-            guiObj.AddReactive(controlType, options, innerText, depend, A_Index, event)
-        }
-    }
-}
-
-class KeyList {
-    /**
-     * Creates a list of multiple reactive controls, render each item by keys.
-     * @param {Gui} GuiObject The target Gui Object.
-     * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio.
-     * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
-     * @param {signal} depend Subscribed signal
-     * @param {array} key the keys of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
-     * @return {Gui.Control[]}
-     */
-    __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
-        loop depend.value.length {
-            guiObj.AddReactive(controlType, options, innerText, depend, [[A_Index], key*], event)
-        }
-    }
 }
 
 Gui.Prototype.AddReactive := AddReactive
-Gui.Prototype.IndexList := IndexList
-Gui.Prototype.KeyList := KeyList
-
-; for lsp {
-; revue.ahk
-; /**
-;  *D
-;  */
-; AddReactive(controlType[, options, textString, depend, key, event]) => Gui.Control
-
-; /**
-;  *
-;  */
-; AddReactiveText([options, textString, depend, key, event]) => Gui.Text
-
-; /**
-;  *
-;  */
-; AddReactiveEdit([options, textString, depend, key, event]) => Gui.Edit
-
-; /**
-;  *
-;  */
-; AddReactiveButton([options, textString, depend, key, event]) => Gui.Button
-
-; /**
-;  *
-;  */
-; AddReactiveCheckBox([options, textString, depend, key, event]) => Gui.CheckBox
-
-; /**
-;  *
-;  */
-; AddReactiveRadio([options, textString, depend, key, event]) => Gui.Radio
-
-; /**
-;  *
-;  */
-; AddReactiveDropDownList([options, mapObject, depend, key, event]) => Gui.DDL
-
-; /**
-;  *
-;  */
-; AddReactiveComboBox([options, mapObject, depend, key, event]) => Gui.ComboBox
-; }
