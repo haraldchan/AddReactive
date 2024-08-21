@@ -38,7 +38,7 @@ class signal {
 
         ; notify all subscribers to update
         for ctrl in this.subs {
-            ctrl.update()
+            ctrl.update(this)
         }
 
         ; notify all computed signals
@@ -202,6 +202,7 @@ class AddReactive {
         this.options := this.handleArcName(options)
         this.formattedString := textString
         this.depend := this.filterDepends(depend)
+        this.checkStatusDepend := ""
         this.key := key
 
         ; ListView options
@@ -225,8 +226,7 @@ class AddReactive {
         ; add control
         if (controlType = "ListView") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
-            this.handleListViewUpdate(true)
-
+            this.handleListViewUpdate()
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
@@ -352,7 +352,7 @@ class AddReactive {
         return Format(formatStr, vals*)
     }
 
-    handleListViewUpdate(isFirst := false) {
+    handleListViewUpdate() {
         this.ctrl.Delete()
         for item in this.depend.value {
             itemIn := item
@@ -365,7 +365,7 @@ class AddReactive {
     }
 
     ; updating subs
-    update() {
+    update(signal) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
@@ -377,11 +377,21 @@ class AddReactive {
         }
 
         if (this.ctrl is Gui.ListView) {
+            ; update from checkStatusDepend
+            if (this.checkStatusDepend = signal) {
+                this.ctrl.Modify(0, this.checkStatusDepend.value = true ? "-Checked" : "+Checked")
+                return
+            }
             ; update list items
             this.handleListViewUpdate()
         }
 
         if (this.ctrl is Gui.CheckBox) {
+            ; update from checkStatusDepend
+            if (this.checkStatusDepend = signal) {
+                this.ctrl.Value := this.CheckStatusDepend.value
+                return
+            }
             ; update text label
             this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
             if (this.HasOwnProp("checkValueDepend")) {
