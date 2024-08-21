@@ -24,7 +24,7 @@ checkTypeDepend(depend) {
     if (depend = 0) {
         return
     }
-    errMsg := "Forth(depend signal) parameter is not a Signal or an array containing Signals"
+    errMsg := "Parameter #3 (depend) is not a signal or an array containing signals"
     if (depend is Array) {
          for item in depend {
             if (!(item is signal || item is computed)) {
