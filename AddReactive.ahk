@@ -289,14 +289,11 @@ class AddReactive {
                 this.checkValueDepend.addSub(this)
             }
             return depend
-
         } else if (depend is Object && depend.HasOwnProp("checkValue")) {
             this.checkValueDepend := depend.checkValue
             this.checkValueDepend.addSub(this)
-            
             return 0
         } else {
-
             return depend
         }
     }
