@@ -126,11 +126,6 @@ class AddReactiveDropDownList extends AddReactive {
         }
         super.__New(GuiObject, "DropDownList", options, this.text, depend, key, event)
     }
-
-    ; overiding the getValue() of ReactiveControl. Returning the value of mapObj instead.
-    getValue() {
-        return this.vals[this.ctrl.Value]
-    }
 }
 
 class AddReactiveComboBox extends AddReactive {
@@ -150,10 +145,6 @@ class AddReactiveComboBox extends AddReactive {
             this.text.Push(text)
         }
         super.__New(GuiObject, "ComboBox", options, this.text, depend, key, event)
-    }
-
-    getValue() {
-        return this.vals[this.ctrl.Value]
     }
 }
 
