@@ -11,7 +11,7 @@ class AddReactiveText extends AddReactive {
      */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, String, "Parameter #2 (innerText) is not a String")
+        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
         checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
@@ -33,7 +33,7 @@ class AddReactiveEdit extends AddReactive {
      */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, String, "Parameter #2 (innerText) is not a String")
+        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
         checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
@@ -55,7 +55,7 @@ class AddReactiveButton extends AddReactive {
      */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, String, "Parameter #2 (innerText) is not a String")
+        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
         checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
@@ -77,7 +77,7 @@ class AddReactiveCheckBox extends AddReactive {
      */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, String, "Parameter #2 (innerText) is not a String")
+        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
         checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
@@ -99,7 +99,7 @@ class AddReactiveRadio extends AddReactive {
      */
     __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, String, "Parameter #2 (innerText) is not a String")
+        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
         checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
