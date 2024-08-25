@@ -19,7 +19,7 @@ oGui.AddReactiveCheckBox("...", "{1}", [label, {checkValue: isChecked}])
 
 ### ‼️ 注意点
  
-使用 `signal` 控制复选框值时，控件的 `Change` 事件会被占用，因此直接在 CheckBox 控件上添加新的 `Change` 事件将会令响应同步失效。如果需要添加事件，可以使用 `effect()` 实现：
+使用 `signal` 控制复选框值时，控件的 `Click` 事件会被占用，因此直接在 CheckBox 控件上添加新的 `Click` 事件将会令响应同步失效。如果需要添加事件，可以使用 `effect()` 实现：
 ```go
 // 根据复选框的值 (绑定 isChecked.value ) 更新 CheckBox 文本
 effect(isChecked, new => 
