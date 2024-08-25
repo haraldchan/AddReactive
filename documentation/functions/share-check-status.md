@@ -111,4 +111,4 @@ App(gui) {
 
 > **‼️ 注意点**
 >
-> 因 `shareCheckStatus()` 是类，因此 `customFn` 中的函数对象第一参数为 `shareCheckStatus()` 本身。
+> 因 `shareCheckStatus()` 是类，因此 `options` 中的函数对象第一参数为 `shareCheckStatus()` 本身。
