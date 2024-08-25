@@ -1,10 +1,10 @@
 # shareCheckStatus
 
-使用 `shareCheckStatus()` 可以关联 `CheckBox` 和 带有复选框 (Checked) 选项的 `ListView`，共享选中状态。
+使用 `shareCheckStatus()` 可以关联 `CheckBox` 和 带有复选框 (Checked) 选项的 `ListView`，共享选中状态。被关联的控件必须同时为 **原生控件** 或 **AddReactive 控件**。
 <br>
 <br>
 
-### 关联控件
+### 关联控件（原生控件）
 
 向 `shareCheckStatus()` 传入 `CheckBox` 和 `ListView` 控件，即可关联：
 
@@ -46,11 +46,39 @@ App(gui) {
 
 <br>
 
+### 关联控件（AddReactive 控件）
+
+当需要使用 `signal` 来关联控件复选状态时，可使用 `AddReactiveCheckBox` 和 `AddReactiveListView` 实现。此使用模式下，AddReactive 控件必须具名，并需在 `checkShareStatus()` 传入第三个参数 `options`：
+
+```go
+App(gui) {
+    isCheckedAll := signal(false)
+
+    return (
+        // ...
+        // 必须为具名"$"控件
+        gui.AddReactiveCheckBox("$cb ..."),
+        gui.AddListView("$lv ..."),
+        // ...
+
+        shareCheckStatus(
+            gui.getCtrlByName("$cb"),
+            gui.getCtrlByName("$lv"),
+            // 在第三参数中将关联的 signal 以 checkStatus 属性值的形式传入
+            { checkStatus: isCheckedAll }
+        )
+    )
+}
+```
+
+<br>
+
 ### 添加事件
 
 需要留意的是，`shareCheckStatus()` 会占用 `CheckBox` 的 "Click" 事件和 `ListView` 的 "ItemCheck" 事件。如果往控件上添加同类型事件将会覆盖 `shareCheckStatus()` ，令其失效。
 
-需要为这两个事件添加额外行为时，可以向 `checkShareStatus()` 传入第三个参数 `customFn`。
+需要为这两个事件添加额外行为时，可以向 `checkShareStatus()` 传入第三个参数 `options`。
+
 ```go
 App(gui) {
 
@@ -64,7 +92,7 @@ App(gui) {
         shareCheckStatus(
             gui.getCtrlByName("cb"),
             gui.getCtrlByName("lv"),
-            // 允许 customFn 对象只包含 CheckBox 或 ListView，但属性名称必须为 CheckBox、ListView。
+            // 允许 options 对象只包含 CheckBox 或 ListView，但属性名称必须为 CheckBox、ListView。
             {
                 CheckBox: (*) => MsgBox("Checked"),
                 // 属性值也可以接收包含多个函数对象的数组
@@ -78,6 +106,7 @@ App(gui) {
 }
 
 ```
+
 <br>
 
 > **‼️ 注意点**
