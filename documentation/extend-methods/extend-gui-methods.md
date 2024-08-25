@@ -34,6 +34,17 @@ oGui.getCtrlByName("$arText").OnEvent(Map(
 
 <br>
 
+如需获取获取到控件本身而非 AddReactive 控件实例，可以访问 `.ctrl` 属性：
+
+```go
+oGui.AddReactiveText("$arText vTextCtrl w300 h25", "A reactive text control.")
+
+textCtrl := oGui.getCtrlByName("$arText").ctrl
+// 等效于：oGui.getCtrlByName("TextCtrl")，因此应用中只需使用"$"命名
+```
+
+<br>
+
 ### Gui.getCtrlByType / Gui.getCtrlByTypeAll
 
 使用 `.getCtrlByType()` 可以通过传入一个字符串，获取与它类型相同的控件。此方法只能获取到 Gui 中第一个匹配类型的控件，适合获取如 `DateTime`、`MonthCal` 和 `ListView` 等通常只会在 Gui 中存在一个的控件：
