@@ -1,19 +1,20 @@
-defineGuiMethods(guiProto) {
-    guiProto.Prototype.getCtrlByName := getCtrlByName
-    guiProto.Prototype.getCtrlByType := getCtrlByType
-    guiProto.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
-    guiProto.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
-    guiProto.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
-    guiProto.Prototype.arcs := []
+defineGuiMethods(gui) {
+    gui.Prototype.getCtrlByName := getCtrlByName
+    gui.Prototype.getCtrlByType := getCtrlByType
+    gui.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
+    gui.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
+    gui.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
+    gui.Prototype.arcs := []
+    gui.Prototype.arcGroups := []
 
-    getCtrlByName(guiProto, name) {
-        for ctrl in guiProto {
+    getCtrlByName(gui, name) {
+        for ctrl in gui {
             if (ctrl.Name = name) {
                 return ctrl
             }
         }
 
-        for arc in guiProto.arcs {
+        for arc in gui.arcs {
             if (arc.name = name) {
                 return arc
             }
@@ -22,8 +23,8 @@ defineGuiMethods(guiProto) {
         throw ValueError("Name not found.")
     }
 
-    getCtrlByType(guiProto, ctrlType) {
-        for ctrl in guiProto {
+    getCtrlByType(gui, ctrlType) {
+        for ctrl in gui {
             if (ctrl.Type = ctrlType) {
                 return ctrl
             }
@@ -31,10 +32,10 @@ defineGuiMethods(guiProto) {
         throw TypeError("Control type not found.")
     }
 
-    getCtrlByTypeAll(guiProto, ctrlType) {
+    getCtrlByTypeAll(gui, ctrlType) {
         ctrlArray := []
 
-        for ctrl in guiProto {
+        for ctrl in gui {
             if (ctrl.Type = ctrlType) {
                 ctrlArray.Push(ctrl)
             }
