@@ -1,8 +1,7 @@
 class Component {
     __New(name) {
-        checkType(name, String, "Parameter #1 is not a signal")
+        checkType(name, String, "Parameter #1 is not a string")
         this.name := name
-        this.arcs := []
         this.ctrls := []
     }
     
@@ -10,6 +9,10 @@ class Component {
         ctrls := []
 
         for control in controls {
+            if (control is Array) {
+                this.Add(control*)
+            }
+
             control.groupName := "$$" . this.name
             
             if (InStr(Type(Control), "AddReactive")) {
@@ -18,8 +21,8 @@ class Component {
                 ctrls.Push(control)
             }
         }
-
-        this.ctrls := ctrls
+        
+        this.ctrls.Push(ctrls*)
     }
 
     visible(bool) {
