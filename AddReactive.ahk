@@ -1,8 +1,6 @@
 #Include "./JSON.ahk"
 #Include "./type-checker.ahk"
 #Include "./AddReactive-Ctrls.ahk"
-#Include "./Component.ahk"
-#Include "./Dynamic.ahk"
 #Include "./functions/function-index.ahk"
 #Include "./extend-methods/extend-methods-index.ahk"
 
@@ -414,14 +412,17 @@ class AddReactive {
         } else {
             this.ctrl.OnEvent(event, fn)
         }
+        return this
     }
 
     setOptions(newOptions) {
         this.ctrl.Opt(newOptions)
+        return this
     }
 
     setFont(options := "", fontName := "") {
         this.ctrl.SetFont(options, fontName)
+        return this
     }
 }
 
