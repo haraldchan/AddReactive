@@ -240,6 +240,13 @@ class AddReactive {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
         }
 
+        ; add event
+        if (event != 0) {
+            for e, cb in event {
+                this.ctrl.OnEvent(e, cb)
+            }
+        }
+
         ; add subscribe
         if (this.depend = 0) {
             return
@@ -249,13 +256,6 @@ class AddReactive {
             }
         } else {
             this.depend.addSub(this)
-        }
-
-        ; add event
-        if (event != 0) {
-            for e, cb in event {
-                this.ctrl.OnEvent(e, cb)
-            }
         }
     }
 
