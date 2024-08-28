@@ -2,25 +2,33 @@ class Dynamic {
     /**
      * Render class component dynamically base on signal.
      * @param _signal Depend signal.
-     * @param componentSets A Map or Array with option values and related class components
+     * @param valueComponentPairs A Map or Array with option values and related class components
      */
-    __New(_signal, componentSets) {
+    __New(_signal, valueComponentPairs) {
         checkType(_signal, signal, "Parameter #1 is not a signal")
-        checkType(componentSets, [Array, Map], "Parameter #1 is not a Array or Map")
-        for val, componentSet in componentSets {
+        checkType(valueComponentPairs, [Array, Map], "Parameter #1 is not a Array or Map")
+        for val, componentSet in valueComponentPairs {
             checkType(componentSet, Map, "Values of component sets must be a Map")
             for component, params in componentSet {
                 checkType(component, Class, "Dynamic can only use with class components")
-                checkType(params[1], Gui, "Parameter #1 is not a Gui object")
-                checkType(params[2], [String, Number], "Parameter #2 is not a String")
+                checkType(params, [Gui, Array], "Parameter #1 is not a Gui object or array")
             }
         }
 
         this.signal := _signal
-        this.componentSets := componentSets
+        this.valueComponentPairs := valueComponentPairs
+        this.componentSets := valueComponentPairs.values()
+        this.componentInstances := []
+
+        ; mount components
+        for componentSet in this.componentSets {
+            for component, props in componentSet {
+                this.componentInstances.Push(component.Call(props is Gui ? props : props*))
+            }
+        }
 
         ; hide components
-        for val, component in this.componentSets {
+        for component in this.componentInstances {
             component.visible(false)
         }
 
@@ -30,8 +38,8 @@ class Dynamic {
     }
 
     renderDynamic(currentValue) {
-        for val, component in this.componentSets {
-            if (this.signal.value = val) {
+        for component in this.componentInstances {
+            if (this.valueComponentPairs[currentValue].values()[1][2] = component.name) {
                 component.visible(true)
             } else {
                 component.visible(false)
