@@ -39,7 +39,7 @@ class Dynamic {
 
     renderDynamic(currentValue) {
         for component in this.componentInstances {
-            if (this.valueComponentPairs[currentValue].values()[1][2] = component.name) {
+            if (this.valueComponentPairs[currentValue].keys()[1].name = component.name) {
                 component.visible(true)
             } else {
                 component.visible(false)
