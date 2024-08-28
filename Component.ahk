@@ -1,30 +1,30 @@
 class Component {
-    __New(gui, name) {
-        this.gui := gui
+    __New(name) {
+        checkType(name, String, "Parameter #1 is not a signal")
         this.name := name
+        this.arcs := []
+        this.ctrls := []
     }
     
-    Add(arcs*) {
-        for arc in arcs {
-            arc.groupName := "$$" . this.name
+    Add(controls*) {
+        ctrls := []
+
+        for control in controls {
+            control.groupName := "$$" . this.name
+            
+            if (InStr(Type(Control), "AddReactive")) {
+                ctrls.Push(control.ctrl)
+            } else {
+                ctrls.Push(control)
+            }
         }
-        
-        this.arcs := this.getComponentByName(gui, "$$" . this.name)
-        this.ctrls := this.arcs.map(arc => arc.ctrl)
+
+        this.ctrls := ctrls
     }
 
     visible(bool) {
         for ctrl in this.ctrls {
             ctrl.visible := bool
         }
-    }
-
-    getComponentByName(gui, name) {
-        componentArcs := []
-        for arc in gui.arcs {
-            if (arc.groupName = name)
-                componentArcs.Push(arc)
-        }
-        return componentArcs
     }
 }
