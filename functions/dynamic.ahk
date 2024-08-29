@@ -11,7 +11,7 @@ class Dynamic {
             checkType(componentSet, Map, "Values of component sets must be a Map")
             for component, params in componentSet {
                 checkType(component, Class, "Dynamic can only use with class components")
-                checkType(params, [Gui, Array], "Parameter #1 is not a Gui object or array")
+                checkType(params, [Array, Gui], "Parameter #1 is not a Gui object or array")
             }
         }
 
@@ -23,7 +23,11 @@ class Dynamic {
         ; mount components
         for componentSet in this.componentSets {
             for component, props in componentSet {
-                this.componentInstances.Push(component.Call(props is Gui ? props : props*))
+                if (props is Gui) {
+                    this.componentInstances.Push(component.Call(props))
+                } else {
+                    this.componentInstances.Push(component.Call(props*))
+                }
             }
         }
 
