@@ -20,7 +20,7 @@ defineGuiMethods(gui) {
             }
         }
 
-        throw ValueError("Name not found.")
+        throw ValueError(Format("Control name ({1}) not found.", name))
     }
 
     getCtrlByType(gui, ctrlType) {
@@ -29,7 +29,7 @@ defineGuiMethods(gui) {
                 return ctrl
             }
         }
-        throw TypeError("Control type not found.")
+        throw TypeError(Format("Control type ({1}) not found.", ctrlType))
     }
 
     getCtrlByTypeAll(gui, ctrlType) {
