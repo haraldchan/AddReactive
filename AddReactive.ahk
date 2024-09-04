@@ -32,7 +32,7 @@ class signal {
         this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
 
         ; change to Map()
-        if (!(newSignalValue is Class) && newSignalValue is Object) {
+        if (!(newSignalValue is Func) &&!(newSignalValue is Class) && newSignalValue is Object) {
             this.value := this.mapify(this.value)
         }
 
@@ -141,7 +141,7 @@ class computed {
 
         ; notify all subscribers to update
         for ctrl in this.subs {
-            ctrl.update()
+            ctrl.update(this)
         }
 
         ; notify all computed signals
@@ -352,7 +352,7 @@ class AddReactive {
     handleListViewUpdate() {
         this.ctrl.Delete()
         for item in this.depend.value {
-            itemIn := item
+            itemIn := !(item is Map) ? JSON.parse(JSON.stringify(item)) : item
             rowData := this.titleKeys.map(key => itemIn[key])
             this.ctrl.Add(this.itemOptions, rowData*)
         }
@@ -412,6 +412,7 @@ class AddReactive {
         } else {
             this.ctrl.OnEvent(event, fn)
         }
+
         return this
     }
 
