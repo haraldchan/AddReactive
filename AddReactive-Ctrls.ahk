@@ -182,6 +182,16 @@ class AddReactiveListView extends AddReactive {
         this.key := key
         super.__New(GuiObject, "ListView", options, columnDetails, depend, key, event)
     }
+
+    setColumndDetails(newColumnDetails, columnOptions := "") {
+        this.titleKeys := newColumnDetails.keys
+        this.innerText := newColumnDetails.HasOwnProp("titles") ? newColumnDetails.titles : this.titleKeys
+        this.colWidths := newColumnDetails.HasOwnProp("widths") ? newColumnDetails.widths : this.titleKeys.map(item => "AutoHdr")
+    
+        for title in this.innerText {
+            this.ctrl.ModifyCol(A_Index, columnOptions, title)
+        }
+    }
 }
 
 class IndexList {
