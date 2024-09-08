@@ -29,6 +29,10 @@ oGui.AddReactiveText("w300 h20", "Hello World!")
 
 <br>
 
+> 相对 `.AddReactive("Text")` 的方式，更推荐通过 `.AddReactiveText()` 的方式添加控件。后者可以获得参数类型检查提示以及一些控件类型独有的方法，比前者有更大的使用便利。
+
+<br>
+
 ### 响应式 AddReactive 控件
 
 如果只是像上面例子一样添加控件，其本质与 ahk 原生控件别无二致。要令 AddReactive 控件具备响应式动态更新的能力，需要添加订阅 `signal` 或 `computed` ：
