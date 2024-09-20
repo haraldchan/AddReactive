@@ -1,3 +1,9 @@
+/**
+ * Checks the type of a value.
+ * @param {any} val Value to be checked
+ * @param {any|Array} typeChecking A type or multiple types to check
+ * @param {String} errMsg Error message to show
+ */
 checkType(val, typeChecking, errMsg := 0) {
     if (val = 0 || val = "") {
         return
