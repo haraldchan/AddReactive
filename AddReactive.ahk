@@ -429,3 +429,5 @@ class AddReactive {
 }
 
 Gui.Prototype.AddReactive := AddReactive
+gui.Prototype.arcs := []
+gui.Prototype.arcGroups := []
