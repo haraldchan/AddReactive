@@ -1,6 +1,7 @@
 #Include "./JSON.ahk"
 #Include "./type-checker.ahk"
 #Include "./AddReactive-Ctrls.ahk"
+#Include "./Component.ahk"
 #Include "./functions/function-index.ahk"
 #Include "./extend-methods/extend-methods-index.ahk"
 
