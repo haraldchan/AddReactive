@@ -3,11 +3,13 @@ class Component {
      * Create a component instance.
      * @param {String} name The unique name of the component
      */
-    __New(name, props := {}) {
+    __New(GuiObj, name, props := {}) {
         checkType(name, String, "Parameter #1 is not a string")
         this.name := name
         this.props := props
         this.ctrls := []
+
+        GuiObj.components.Push(this)
     }
 
     /**
@@ -82,3 +84,6 @@ class Component {
         return formData
     }
 }
+
+Gui.Prototype.Component := Component
+Gui.Prototype.components := []

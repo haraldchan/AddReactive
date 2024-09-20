@@ -2,10 +2,9 @@ defineGuiMethods(gui) {
     gui.Prototype.getCtrlByName := getCtrlByName
     gui.Prototype.getCtrlByType := getCtrlByType
     gui.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
+    gui.Prototype.getComponent := getComponent
     gui.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
     gui.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
-    gui.Prototype.arcs := []
-    gui.Prototype.arcGroups := []
 
     getCtrlByName(gui, name) {
         for ctrl in gui {
@@ -44,7 +43,16 @@ defineGuiMethods(gui) {
         return ctrlArray
     }
 
-    static getCheckedRows(LV) {
+    getComponent(gui, componentName) {
+        for component in gui.components {
+            if (component.name = componentName) {
+                return component
+            }
+        }
+        throw TypeError(Format("Component({1}) not found.", componentName))
+    }
+
+    getCheckedRows(LV) {
         checkedRowNumbers := []
         loop LV.GetCount() {
             curRow := LV.GetNext(A_Index - 1, "Checked")
@@ -59,7 +67,7 @@ defineGuiMethods(gui) {
         return checkedRowNumbers
     }
 
-    static getFocusedRows(LV) {
+    getFocusedRows(LV) {
         focusedRows := []
         rowNumber := 0  
         loop {
