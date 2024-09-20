@@ -187,7 +187,7 @@ class AddReactiveListView extends AddReactive {
         this.titleKeys := newColumnDetails.keys
         this.innerText := newColumnDetails.HasOwnProp("titles") ? newColumnDetails.titles : this.titleKeys
         this.colWidths := newColumnDetails.HasOwnProp("widths") ? newColumnDetails.widths : this.titleKeys.map(item => "AutoHdr")
-    
+
         for title in this.innerText {
             this.ctrl.ModifyCol(A_Index, columnOptions, title)
         }
@@ -231,6 +231,39 @@ class KeyList {
     }
 }
 
+class AddIndexList {
+    __New(guiObj, renderFn, _signal, keys) {
+        checkType(renderFn, Func, "Parameter #2 is not a function.")
+        checkType(_signal, [signal, computed], "Parameter #1 is not a signal/computed.")
+        checkType(keys, Array, "Parameter #2 is not an Array.")
+
+        this.renderFn := renderFn
+        this.signal := _signal
+        this.keys := keys
+        this.ctrlGroups := []
+
+        loop this.signal.value.Length {
+            this.ctrlGroups.Push([this.renderFn()])
+        }
+        this.updateListContent(this.signal.value)
+        effect(this.signal, new => this.updateListContent(new))
+    }
+
+    updateListContent(newValue) {
+        for ctrlGroup in this.ctrlGroups {
+            values := this.keys.map(key => newValue[A_Index][key])
+            for ctrl in ctrlGroup {
+                if (ctrl is Gui.Control) {
+                    ctrl.Text := Format(ctrl.Text, values*)
+                }
+                if (ctrl is AddReactive) {
+                    ctrl.ctrl.Text := Format(ctrl.Text, values*)
+                }
+            }
+        }
+    }
+}
+
 ; mount to Gui.Prototype
 Gui.Prototype.AddReactiveText := AddReactiveText
 Gui.Prototype.AddReactiveEdit := AddReactiveEdit
@@ -241,4 +274,5 @@ Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
 Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
 Gui.Prototype.AddReactiveListView := AddReactiveListView
 Gui.Prototype.IndexList := IndexList
+Gui.Prototype.AddIndexList := AddIndexList
 Gui.Prototype.KeyList := KeyList
