@@ -54,7 +54,7 @@ class Component {
      */
     defineProps(props) {
         for name, val in props.OwnProps() {
-            this.DefineProp(name, {Value: val})
+            this.DefineProp(name, { Value: val })
         }
     }
 
