@@ -194,23 +194,23 @@ class AddReactiveListView extends AddReactive {
     }
 }
 
-class IndexList {
-    /**
-     * Creates a list of multiple reactive controls, ordered by index.
-     * @param {Gui} GuiObject The target Gui Object.
-     * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio.
-     * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
-     * @param {signal} depend Subscribed signal
-     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
-     * @return {Gui.Control[]}
-     */
-    __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
-        loop depend.value.length {
-            guiObj.AddReactive(controlType, options, innerText, depend, A_Index, event)
-        }
-    }
-}
+; class IndexList {
+;     /**
+;      * Creates a list of multiple reactive controls, ordered by index.
+;      * @param {Gui} GuiObject The target Gui Object.
+;      * @param {string} controlType Control type to create. Available: Text, Edit, CheckBox, Radio.
+;      * @param {string} options Options apply to the control, same as Gui.Add.
+;      * @param {string} innerText Text or formatted text to hold signal values.
+;      * @param {signal} depend Subscribed signal
+;      * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
+;      * @return {Gui.Control[]}
+;      */
+;     __New(guiObj, controlType, options, innerText, depend := 0, key := 0, event := 0) {
+;         loop depend.value.length {
+;             guiObj.AddReactive(controlType, options, innerText, depend, A_Index, event)
+;         }
+;     }
+; }
 
 class KeyList {
     /**
@@ -231,8 +231,8 @@ class KeyList {
     }
 }
 
-class AddIndexList {
-    __New(guiObj, renderFn, _signal, keys) {
+class IndexList {
+    __New(guiObj, renderFn, _signal, keys := []) {
         checkType(renderFn, Func, "Parameter #2 is not a function.")
         checkType(_signal, [signal, computed], "Parameter #1 is not a signal/computed.")
         checkType(keys, Array, "Parameter #2 is not an Array.")
@@ -241,23 +241,40 @@ class AddIndexList {
         this.signal := _signal
         this.keys := keys
         this.ctrlGroups := []
+        this.templates := []
 
         loop this.signal.value.Length {
             this.ctrlGroups.Push([this.renderFn()])
         }
+        this.saveTemplates(this.ctrlGroups[1])
         this.updateListContent(this.signal.value)
         effect(this.signal, new => this.updateListContent(new))
+
+        return this.ctrlGroups
+    }
+
+    saveTemplates(controlGroup) {
+        for control in controlGroup {
+            if (control is Array) {
+                this.saveTemplates(control)
+            } else {
+                this.templates.Push(control.Text)
+            }
+        }
     }
 
     updateListContent(newValue) {
         for ctrlGroup in this.ctrlGroups {
             values := this.keys.map(key => newValue[A_Index][key])
+            index := A_Index
+
             for ctrl in ctrlGroup {
+                updatedText := Format(this.templates[A_Index], this.keys.Length = 0 ? newValue[index] : (values*))
                 if (ctrl is Gui.Control) {
-                    ctrl.Text := Format(ctrl.Text, values*)
+                    ctrl.Text := updatedText
                 }
                 if (ctrl is AddReactive) {
-                    ctrl.ctrl.Text := Format(ctrl.Text, values*)
+                    ctrl.ctrl.Text := updatedText
                 }
             }
         }
@@ -274,5 +291,4 @@ Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
 Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
 Gui.Prototype.AddReactiveListView := AddReactiveListView
 Gui.Prototype.IndexList := IndexList
-Gui.Prototype.AddIndexList := AddIndexList
 Gui.Prototype.KeyList := KeyList
