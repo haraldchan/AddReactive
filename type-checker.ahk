@@ -9,7 +9,7 @@ checkType(val, typeChecking, errMsg := 0) {
         return
     }
 
-    if(typeChecking is Array) {
+    if (typeChecking is Array) {
         for t in typeChecking {
             if (val is t) {
                 return
@@ -18,11 +18,17 @@ checkType(val, typeChecking, errMsg := 0) {
             }
         }
 
-        throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val)))
+        throw TypeError(errMsg != 0
+            ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
+            : Format("Expect Type: {1}. Current Type: {2}", Type(typeChecking), Type(val))
+        )
     }
 
     if (!(val is typeChecking)) {
-        throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val)))
+        throw TypeError(errMsg != 0
+            ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
+            : Format("Expect Type: {1}. Current Type: {2}", Type(typeChecking), Type(val))
+        )
     }
 }
 
@@ -32,7 +38,7 @@ checkTypeDepend(depend) {
     }
     errMsg := "Parameter #3 (depend) is not a signal or an array containing signals"
     if (depend is Array) {
-         for item in depend {
+        for item in depend {
             if (!(item is signal || item is computed)) {
                 throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
             }
@@ -45,7 +51,7 @@ checkTypeDepend(depend) {
 checkTypeEvent(e) {
     if (e = 0) {
         return
-    } 
+    }
     errMsg := "Fifth(event) parameter is not an [ event, callback ] array."
     if (e is Array && e.Length != 2) {
         throw TypeError(errMsg)
