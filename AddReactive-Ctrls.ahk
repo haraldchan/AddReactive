@@ -249,8 +249,6 @@ class IndexList {
         this.saveTemplates(this.ctrlGroups[1])
         this.updateListContent(this.signal.value)
         effect(this.signal, new => this.updateListContent(new))
-
-        return this.ctrlGroups
     }
 
     saveTemplates(controlGroup) {

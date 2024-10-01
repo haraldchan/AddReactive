@@ -29,23 +29,39 @@ class Component {
         }
 
         ctrls := []
+        this.saveControls(ctrls, controls)
 
-        for control in controls {
-            if (control is Array) {
-                this.Add(control*)
-            }
-
-            if (InStr(Type(Control), "AddReactive")) {
-                control.ctrl.groupName := "$$" . this.name
-                ctrls.Push(control.ctrl)
-            } else {
-                control.groupName := "$$" . this.name
-                ctrls.Push(control)
-            }
-        }
         this.ctrls.Push(ctrls*)
 
         return this
+    }
+
+    saveControls(ctrlsArray, controls) {
+        for control in controls {
+            ; native control
+            if (control is Gui.Control) {
+                control.groupName := "$$" . this.name
+                ctrlsArray.Push(control)
+            }
+
+            ; AddReactive control
+            if (InStr(Type(Control), "AddReactive")) {
+                control.ctrl.groupName := "$$" . this.name
+                ctrlsArray.Push(control.ctrl)
+            }
+
+            ; Array
+            if (control is Array) {
+                this.saveControls(ctrlsArray, control*)
+            }
+
+            ; IndexList
+            if (control is IndexList) {
+                for listControl in control.ctrlGroups {
+                    this.saveControls(ctrlsArray, listControl*)
+                }
+            }
+        }
     }
 
     /**
