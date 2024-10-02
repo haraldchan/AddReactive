@@ -244,10 +244,12 @@ class IndexList {
         this.templates := []
 
         loop this.signal.value.Length {
-            this.ctrlGroups.Push([this.renderFn()])
+            this.ctrlGroups.Push(renderFn())
         }
+
         this.saveTemplates(this.ctrlGroups[1])
         this.updateListContent(this.signal.value)
+
         effect(this.signal, new => this.updateListContent(new))
     }
 
@@ -263,11 +265,17 @@ class IndexList {
 
     updateListContent(newValue) {
         for ctrlGroup in this.ctrlGroups {
-            values := this.keys.map(key => newValue[A_Index][key])
             index := A_Index
+            values := this.keys.map(key => newValue[index][key])
 
             for ctrl in ctrlGroup {
-                updatedText := Format(this.templates[A_Index], this.keys.Length = 0 ? newValue[index] : (values*))
+                updatedText := ""
+                if (this.keys.length = 0) {
+                    updatedText := Format(this.templates[A_Index], newValue[index])
+                } else {
+                    updatedText := Format(this.templates[A_Index], values*)
+                }
+                
                 if (ctrl is Gui.Control) {
                     ctrl.Text := updatedText
                 }

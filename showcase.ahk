@@ -1,7 +1,8 @@
 #SingleInstance Force
 #Include "./AddReactive.ahk"
+#Include "./useDebug.ahk"
 
-TEST := Gui(, "AddReactive")
+TEST := Gui("+Resize", "AddReactive")
 ShowCase(TEST)
 TEST.Show()
 
@@ -11,27 +12,27 @@ ShowCase(App) {
     staff := signal([
         { name: "Amy", pos: "manager", age:30 },
         { name: "Chloe", pos: "supervisor", age:24 },
-        { name: "Elody", pos: "attendent", age:20 }
+        { name: "Elody", pos: "attendant", age:20 }
     ])
 
     ageAverage := computed(staff, cur => 
-        cur.map(s => s["age"]).reduce((acc, cur) => acc + cur, 0) / cur.Length
+        Round(cur.map(s => s["age"]).reduce((acc, cur) => acc + cur, 0) / cur.Length)
     )
 
     this.render := render
     render(this){
         return (
             this.Add(
-                App.IndexList(() => (
+                App.IndexList(() => [
                     App.AddEdit("w200 h20", "Staff Name: {1}, age: {2}"),
-                    App.AddText("w200 h20", "Staff Position: {3}"),
-                ), staff, ["name", "age", "pos"]),
+                    App.AddText("w200 h20", "Staff Position: {3}")
+                ], staff, ["name", "age", "pos"]),
                 App.AddReactiveText("w200 h20", "Average age: {1}", ageAverage)
             )
         )
     }
 
-    return this
+    return this.render()
 }
 
 F12:: Reload

@@ -18,19 +18,18 @@ class Component {
      * @returns {Component}
      */
     Add(controls*) {
-        for item in controls {
-            if (item is Array) {
-                for c in item {
-                    checkType(item, Gui.Control, "Parameter is not Gui.Control or Array of Gui.Control")
-                }
-            } else {
-                checkType(item, Gui.Control, "Parameter is not Gui.Control or Array of Gui.Control")
-            }
-        }
+        ; for item in controls {
+        ;     if (item is Array) {
+        ;         for c in item {
+        ;             checkType(item, Gui.Control, "Parameter is not Gui.Control or Array of Gui.Control")
+        ;         }
+        ;     } else {
+        ;         checkType(item, Gui.Control, "Parameter is not Gui.Control or Array of Gui.Control")
+        ;     }
+        ; }
 
         ctrls := []
         this.saveControls(ctrls, controls)
-
         this.ctrls.Push(ctrls*)
 
         return this
@@ -52,13 +51,13 @@ class Component {
 
             ; Array
             if (control is Array) {
-                this.saveControls(ctrlsArray, control*)
+                this.saveControls(ctrlsArray, control)
             }
 
             ; IndexList
             if (control is IndexList) {
                 for listControl in control.ctrlGroups {
-                    this.saveControls(ctrlsArray, listControl*)
+                    this.saveControls(ctrlsArray, listControl)
                 }
             }
         }
