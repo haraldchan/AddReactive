@@ -11,6 +11,7 @@ defineArrayMethods(arr) {
     arr.Prototype.unique := unique
     arr.Prototype.find := find
     arr.Prototype.findIndex := findIndex
+    arr.Prototype.flat := flat
 
     some(arr, fn) {
         for item in arr {
@@ -155,6 +156,24 @@ defineArrayMethods(arr) {
             newArray := newArray.filter(item => item != curItem)
             newArray.Push(curItem)
         }
+
+        return newArray
+    }
+
+    flat(arr) {
+        newArray := []
+
+        flatInner(arr){
+            for item in arr {
+                if (item is Array) {
+                    flatInner(item)
+                } else {
+                    newArray.Push(item)
+                }
+            }
+        }
+
+        flatInner(arr)
 
         return newArray
     }
