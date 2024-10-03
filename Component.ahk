@@ -2,11 +2,13 @@ class Component {
     /**
      * Create a component instance.
      * @param {String} name The unique name of the component
+     * @param {Object} props 
      */
     __New(GuiObj, name, props := {}) {
         checkType(name, String, "Parameter #1 is not a string")
         this.name := name
-        this.props := props
+        this.props := {}
+        this.defineProps(props)
         this.ctrls := []
 
         GuiObj.components.Push(this)
@@ -28,39 +30,39 @@ class Component {
         ;     }
         ; }
 
-        ctrls := []
-        this.saveControls(ctrls, controls)
-        this.ctrls.Push(ctrls*)
+        saveControls(ctrlsArray, controls) {
+            for control in controls {
+                ; native control
+                if (control is Gui.Control) {
+                    control.groupName := "$$" . this.name
+                    ctrlsArray.Push(control)
+                }
 
-        return this
-    }
+                ; AddReactive control
+                if (InStr(Type(Control), "AddReactive")) {
+                    control.ctrl.groupName := "$$" . this.name
+                    ctrlsArray.Push(control.ctrl)
+                }
 
-    saveControls(ctrlsArray, controls) {
-        for control in controls {
-            ; native control
-            if (control is Gui.Control) {
-                control.groupName := "$$" . this.name
-                ctrlsArray.Push(control)
-            }
+                ; Array
+                if (control is Array) {
+                    saveControls(ctrlsArray, control)
+                }
 
-            ; AddReactive control
-            if (InStr(Type(Control), "AddReactive")) {
-                control.ctrl.groupName := "$$" . this.name
-                ctrlsArray.Push(control.ctrl)
-            }
-
-            ; Array
-            if (control is Array) {
-                this.saveControls(ctrlsArray, control)
-            }
-
-            ; IndexList
-            if (control is IndexList) {
-                for listControl in control.ctrlGroups {
-                    this.saveControls(ctrlsArray, listControl)
+                ; IndexList
+                if (control is IndexList) {
+                    for listControl in control.ctrlGroups {
+                        saveControls(ctrlsArray, listControl)
+                    }
                 }
             }
         }
+
+        ctrls := []
+        saveControls(ctrls, controls)
+        this.ctrls.Push(ctrls*)
+
+        return this
     }
 
     /**
@@ -69,7 +71,7 @@ class Component {
      */
     defineProps(props) {
         for name, val in props.OwnProps() {
-            this.DefineProp(name, { Value: val })
+            this.props.DefineProp(name, { Value: val })
         }
     }
 
