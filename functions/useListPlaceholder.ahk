@@ -16,10 +16,10 @@ class useListPlaceholder {
             : columnDetails
         this.placeHolder := placeholder
 
-        _signal.set([this.setLoadingValue()])
+        _signal.set([this._setLoadingValue()])
     }
 
-    setLoadingValue(){
+    _setLoadingValue(){
         loadingValue := Map()
 
         for key in this.columnKeys {
