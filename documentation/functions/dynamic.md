@@ -14,8 +14,11 @@ App(gui){
         "Blue", Blue(gui),
         "Green", Green(gui),
     )
-
-    Dynamic(color, colorComponents)
+    
+    return (
+        gui.AddText("...", "Dynamic"),
+        Dynamic(color, colorComponents)
+    )
 }
 
 // Dynamic 动态渲染必须使用有状态组件
