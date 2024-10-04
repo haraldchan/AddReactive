@@ -42,7 +42,7 @@ Green(App) {
 
 `Dynamic` 接收 `color` 和 `colorComponent` 两个参数作为 **状态** 和 **组件索引** 。
 
-`Dynamic` 的第二参数为组件实例，需要传入额外参数时，与调用组件时相同即可：g
+`Dynamic` 的第二参数为组件实例，需要传入额外参数时，与调用组件时相同即可：
 ```go
 App(gui){
     template := "Current color: {1}"
