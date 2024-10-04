@@ -173,8 +173,76 @@ Increment(gui, number) {
     return i
 }
 ```
+
 <br>
 
 > **‼️ 注意点**
 >
 > 因 `Component.Add()` 方法只接收控件实例作为参数，链式调用原生控件的 `.OnEvent()` 方法将返回空字符串，因此如果想使用 OnEvent 直接绑定事件，只能使用 AddReactive 控件。
+
+<br>
+
+### 其他 `Component` 方法
+
+`Component` 实例除了 `Add()` 以外，还具备更多的方法。
+
+#### `visible()`
+
+`visible()` 可以在 `Dynamic` 或其他需要动态显示/隐藏的的场景下使用：
+```go
+App(gui) {
+    ...
+
+    isShow := singal(true)
+
+    handleVisible(ctrl, _){
+        isShow.set(s => !s)
+        gui.getComponent("Increment").visible(isShow.value)
+    }
+
+    return (
+        Increment(gui, initNumber)
+        gui.AddButton("...", "show/hide").OnEvent("Click", handleVisible)
+    )
+}
+
+Increment(gui, number) {
+    i := Component(gui, A_ThisFunc)
+    ...
+
+    return i
+}
+```
+
+<br>
+
+#### `submit()`
+
+与原生 `Gui` 的 `Submit()` 方法类似，`Component` 的 `submit()` 方法可以收集组件内具名控件的值并返回一个对象：
+```go
+PersonalInfo(gui) {
+    pi := Component(gui, A_ThisFunc)
+
+    showInfo(*) {
+        form := pi.submit()
+        // form : { name: "John Doe", age: "30", tel: "888-88888888" }
+    }
+
+    pi.render := (this) => this.Add(
+        gui.AddText("...", "name"),
+        gui.AddEdit("...", "John Doe"),
+
+        gui.AddText("...", "age"),
+        gui.AddEdit("...", "30"),
+
+        gui.AddText("...", "tel"),
+        gui.AddEdit("...", "888-88888888"),
+
+        gui.AddButton("...", "show info").OnEvent("Click", showInfo)
+    )
+
+    return pi
+}
+```
+
+ <br>
