@@ -51,7 +51,7 @@ Increment(gui) {
 
 组件可以在 Gui 对象或其他组件函数中嵌套调用：
 
-```js
+```go
 oGui := Gui(, "Ahk is awesome!")
 App(oGui)
 oGui.Show()
@@ -79,7 +79,7 @@ AddReactive 组件化提倡 **单向数据流**，即组件函数除了返回一
 
 当嵌套的组件形成父子关系时，便可通过在父组件中为子组件传递参数的形式实现：
 
-```js
+```go
 // 父组件
 App(gui) {
     initNumber := 5
@@ -105,7 +105,7 @@ Increment(gui, number) {
 
 当多个子组件依赖同一份数据时，单向数据流将显得更加重要（如果子组件各自返回、互相读取数据，行为和数据流将混乱不堪）。在这种情况下可以将 `signal` 提升放置于父组件内，并作为参数传递给各个子组件：
 
-```js
+```go
 App(gui) {
     num := signal(5)
 
@@ -139,35 +139,42 @@ Triple(gui, num) {
 
 <br>
 
-## 类组件
+## 有状态组件 (Stateful component)
 
-函数组件的使用简单直接，但在条件渲染组件等需要同时控制组件内所有控件状态时，则需要以类的形式编写组件：
+函数组件的使用简单直接，但在条件渲染组件等需要同时控制组件内所有控件状态时，则需要使用 `Component` 类并返回它的实例：
 
-```js
-// 类组件继承内置类 Component 的形式声明
-class Increment extends Component {
-    // 组件必须具备属性 name
-    static name := "Increment"
+```go
+Increment(gui, number) {
+    // 使用  Component 类创建一个组件实例。需要传入的参数未 Gui 和 组件名称
+    i := Component(gui, A_ThisFunc)
+    num := signal(number)
 
-    __New(gui){
-        // 在构造方法中调用父类 (Component) 的构造器，作为组件内控件的共同命名
-        super.__New("Increment")
-        
-        this.num := signal(1)
-        this.render(gui)
-    }
-
-    // 声明一个方法用于实例化时挂载组件内的控件
-    render(gui) {
-        // 与函数组件直接 return 不同，类函数的 render 方法中需要调用 super.Add 方法添加控件，才能令控件被识别为组件内的一员
-        super.Add(
-            gui.AddReactiveText("w300 h25", "counter: {1}", num),
-            gui.AddReactiveButton("w300 h30", "++")
-               .OnEvent("Click", (*) => num.set(n => n + 1))
-        )
-    }
+    ...
 }
 ```
+
+<br>
+
+使用有状态组件时，挂载组件内部的控件应使用命名为 `render` 的函数进行添加。添加时使用 `Add` 方法：
+
+```go
+Increment(gui, number) {
+    i := Component(gui, A_ThisFunc)
+    num := signal(number)
+
+    // render 函数应添加到组件实例 `i` 上，因此第一个参数为实例自身
+    i.render := (this) => this.Add(
+        gui.AddReactiveText("w300 h25", "counter: {1}", num),
+        gui.AddButton("w300 h30", "++")
+           .OnEvent("Click", (*) => num.set(n => n + 1))
+    )
+
+    // 返回时不在返回控件，而是组件实例。如果添加组件时需要立即渲染，应返回 i.render()
+    return i
+}
+```
+<br>
+
 > **‼️ 注意点**
 >
 > 因 `Component.Add()` 方法只接收控件实例作为参数，链式调用原生控件的 `.OnEvent()` 方法将返回空字符串，因此如果想使用 OnEvent 直接绑定事件，只能使用 AddReactive 控件。
