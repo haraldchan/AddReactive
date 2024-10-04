@@ -1,44 +1,37 @@
 # Dynamic
 
-`Dynamic` 是 AddReactive 的内置类组件。搭配 `signal` 和一个作为数据索引的 `Map` 对象使用可以实现 **子组件** 的动态渲染：
+`Dynamic` 是 AddReactive 的内置组件。搭配 `signal` 和一个作为数据索引的 `Map` 对象使用可以实现 **子组件** 的动态渲染：
 
-```js
+```go
 oGui := Gui(,"Dynamic Rendering")
 App(oGui)
 oGui.Show()
 
 App(gui){
-    color := signal("red")
+    color := signal("Red")
     colorComponents := Map(
-        "red", Map(Red, gui),
-        "blue", Map(Blue, gui),
-        "green", Map(Green, gui),
+        "Red", Red(gui),
+        "Blue", Blue(gui),
+        "Green", Green(gui),
     )
 
     Dynamic(color, colorComponents)
 }
 
-// Dynamic 动态渲染只能使用类组件
-class Red extends Component {
-    static name := "Red"
+// Dynamic 动态渲染必须使用有状态组件
+Red(gui) {
+    r := Component(gui, A_ThisFunc)
 
-    __New(gui){
-        super.__New(gui)
-        this.render(gui)
-    }
+    r.render := (this) => this.Add(gui.AddText(...))
 
-    render(gui){
-        super.Add(
-            gui.AddText("...")
-        )
-    }
+    return r
 }
 
-class Blue extends Component {
+Blue(App) {
     ...
 }
 
-class Green extends Component {
+Green(App) {
     ...
 }
 ```
@@ -49,35 +42,36 @@ class Green extends Component {
 
 `Dynamic` 接收 `color` 和 `colorComponent` 两个参数作为 **状态** 和 **组件索引** 。
 
-`Dynamic` 的第二参数必须是一个 `Map` 对象，其中的键应为第一参数 `signal` 将会出现的值，值则为另一个 `Map` 对象，键值分别为需要被呈现的子组件以及组件参数。如果需要传入额外的参数，则子组件对应的值需要以数组形式传入：
-```js
+`Dynamic` 的第二参数为组件实例，需要传入额外参数时，与调用组件时相同即可：g
+```go
 App(gui){
     template := "Current color: {1}"
 
-    color := signal("red")
+    color := signal("Red")
     colorComponents := Map(
-        "red", Map(Red, [gui, template]),
-        "blue", Map(Blue, [gui, template]),
-        "green", Map(Green, [gui, template]),
+        "Red", Red(gui, template),
+        "Blue", Blue(gui, template),
+        "Green", Green(gui, template),
     )
 
     Dynamic(color, colorComponents)
 }
 
-class Red extends Component {
-    static name := "Red"
+Red(gui) {
+    r := Component(gui, A_ThisFunc)
 
-    __New(gui, template){
-        super.__New(gui)
-        this.template := template
-        this.render(gui)
-    }
+    r.render := (this) => this.Add(
+        gui.AddText("...", Format(template, A_ThisFunc))
+    )
 
-    render(gui){
-        super.Add(
-            gui.AddText("...", Format(this.template, this.name))
-        )
-    }
+    return r
 }
-// ...
+
+Blue(App, template) {
+    ...
+}
+
+Green(App, template) {
+    ...
+}
 ```
