@@ -1,18 +1,6 @@
 defineArrayMethods(arr) {
+    
     arr.Prototype.some := some
-    arr.Prototype.every := every
-    arr.Prototype.filter := filter
-    arr.Prototype.map := map
-    arr.Prototype.reduce := reduce
-    arr.Prototype.with := with
-    arr.Prototype.concat := concat
-    arr.Prototype.unshift := unshift
-    arr.Prototype.toReversed := toReversed
-    arr.Prototype.unique := unique
-    arr.Prototype.find := find
-    arr.Prototype.findIndex := findIndex
-    arr.Prototype.flat := flat
-
     some(arr, fn) {
         for item in arr {
             if (fn(item)) {
@@ -22,6 +10,7 @@ defineArrayMethods(arr) {
         return false
     }
 
+    arr.Prototype.every := every
     every(arr, fn) {
         for item in arr {
             if (!fn(item))
@@ -30,6 +19,7 @@ defineArrayMethods(arr) {
         return true
     }
 
+    arr.Prototype.filter := filter
     filter(arr, fn) {
         newArray := []
 
@@ -41,6 +31,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.find := find
     find(arr, fn) {
         for item in arr {
             if (fn(item)) {
@@ -51,6 +42,7 @@ defineArrayMethods(arr) {
         return ""
     }
 
+    arr.Prototype.findIndex := findIndex
     findIndex(arr, fn) {
         for item in arr {
             if (fn(item)) {
@@ -59,6 +51,7 @@ defineArrayMethods(arr) {
         }
     }
 
+    arr.Prototype.map := map
     map(arr, fn) {
         newArray := []
 
@@ -75,6 +68,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.reduce := reduce
     reduce(arr, fn, initialValue) {
         initIsSet := !(initialValue = 0)
         accumulator := initIsSet ? initialValue : arr[1]
@@ -96,6 +90,7 @@ defineArrayMethods(arr) {
         return result
     }
 
+    arr.Prototype.with := with
     with(arr, index, newValue) {
         if (index > arr.Length) {
             throw ValueError("Index out of range")
@@ -109,6 +104,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.concat := concat
     concat(arr, val) {
         newArray := arr
 
@@ -122,6 +118,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.unshift := unshift
     unshift(arr, val) {
         newArray := arr
 
@@ -136,6 +133,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.toReversed := toReversed
     toReversed(arr) {
         newArray := []
         index := arr.Length
@@ -148,6 +146,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.unique := unique
     unique(arr) {
         newArray := arr
 
@@ -160,10 +159,11 @@ defineArrayMethods(arr) {
         return newArray
     }
 
+    arr.Prototype.flat := flat
     flat(arr) {
         newArray := []
 
-        flatInner(arr){
+        flatInner(arr) {
             for item in arr {
                 if (item is Array) {
                     flatInner(item)
@@ -180,66 +180,3 @@ defineArrayMethods(arr) {
 }
 
 defineArrayMethods(Array)
-
-
-; LSP syntax fragments for vscode-autohotkey2-lsp
-;#defineArrayMethods.ahk
-; /**
-;  * Returns true if, in the array, it finds an element for which the provided function returns true;
-;  * otherwise it returns false. It doesn't modify the array.
-;  */
-; some(callbackFn) => Boolean
-
-; /**
-;  * Tests whether all elements in the array pass the test implemented by the provided function.
-;  */
-; every(callbackFn) => Boolean
-
-; /**
-;  * Creates a shallow copy of a portion of a given array, filtered down to just the elements from the given array that pass the test implemented by the provided function.
-;  */
-; filter(callbackFn) => Array
-
-; /**
-;  * Executes a user-supplied "reducer" callback function on each element of the array, in order, passing in the return value from the calculation on the preceding element. The final result of running the reducer across all elements of the array is a single value.
-;  * @param callbackFn
-;  * A function to execute for each element in the array. Its return value becomes the value of the accumulator parameter on the next invocation of callbackFn.
-;  * For the last invocation, the return value becomes the return value of reduce(). The function is called with arguments: accumulator, currentValue.
-;  * @param accumulator
-;  * The value resulting from the previous call to callbackFn. On the first call, its value is initialValue if the latter is specified; otherwise its value is array[1]
-;  * @param currentValue
-;  * The index position of currentValue in the array. On the first call, its value is 0 if initialValue is specified, otherwise 1.
-;  */
-; reduce(callbackFn) => Any
-
-; /**
-;  * Creates a new array populated with the results of calling a provided function on every element in the calling array.
-;  * @param callbackFn A function to execute for each element in the array. Its return value is added as a single element in the new array. The function is called with arguments: element [, index]
-;  * @param element
-;  * The current element being processed in the array.
-;  * @param index
-;  * The index of the current element being processed in the array.
-;  */
-; map(callbackFn) => Array
-
-; /**
-;  * Returns a new array with the element at the given index replaced with the given value.
-;  */
-; with(index, newValue) => Array
-
-; /**
-;  * Adds the specified elements to the end of an array and returns the new concatenated array.
-;  * @param element Can be an array or a single value.
-;  */
-; concat(element) => Array
-
-; /**
-;  * Adds the specified elements to the beginning of an array and returns the new concatenated array.
-;  * @param element Can be an array or a single value.
-;  */
-; unshift(element) => Array
-
-; /**
-;  * returns a new array with the elements in reversed order.
-;  */
-; toReversed() => Array

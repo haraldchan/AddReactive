@@ -1,9 +1,10 @@
 defineMapMethods(_map) {
-    _map.Prototype.keys := keys
-    _map.Prototype.values := values
-    _map.Prototype.getKey := getKey
-    _map.Prototype.deepClone := deepClone
 
+    _map.Prototype.keys := keys
+    /**
+     * Returns keys of a Map.
+     * @returns {Array} 
+     */
     keys(_map) {
         newArray := []
 
@@ -14,6 +15,11 @@ defineMapMethods(_map) {
         return newArray
     }
 
+    _map.Prototype.values := values
+    /**
+     * Returns values of a Map.
+     * @returns {Array} 
+     */
     values(_map) {
         newArray := []
 
@@ -24,6 +30,15 @@ defineMapMethods(_map) {
         return newArray
     }
 
+    _map.Prototype.getKey := getKey
+    /**
+     * Returns a key of a given value.
+     * ```
+     * cls := Map("red", "apple")
+     * cls.getKey("Apple") ; -> "red"
+     * ```
+     * @param value 
+     */
     getKey(_map, value) {
         for k, v in _map {
             if (v = value) {
@@ -32,6 +47,11 @@ defineMapMethods(_map) {
         }
     }
 
+    _map.Prototype.deepClone := deepClone
+    /**
+     * Returns a deep copy of a Map.
+     * @returns {Map} 
+     */
     deepClone(_map) {
         newMap := Map()
 

@@ -1,6 +1,9 @@
 class Component {
     /**
      * Create a component instance.
+     * ```
+     * comp := Component(guiObj, "componentName")
+     * ```
      * @param {String} name The unique name of the component
      * @param {Object} props 
      */
@@ -80,8 +83,11 @@ class Component {
      * @param {boolean} isShow 
      */
     visible(isShow) {
+        state := isShow is Func
+            ? isShow()
+            : isShow
         for ctrl in this.ctrls {
-            ctrl.visible := isShow
+            ctrl.visible := state
         }
     }
 

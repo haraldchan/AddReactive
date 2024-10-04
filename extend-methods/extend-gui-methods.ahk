@@ -1,11 +1,11 @@
 defineGuiMethods(gui) {
-    gui.Prototype.getCtrlByName := getCtrlByName
-    gui.Prototype.getCtrlByType := getCtrlByType
-    gui.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
-    gui.Prototype.getComponent := getComponent
-    gui.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
-    gui.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
 
+    gui.Prototype.getCtrlByName := getCtrlByName
+    /**
+     * Returns a Gui.Control or AddReactive Control instance
+     * @param {String} name the name of a Gui.Control or AddReactive control
+     * @returns {Gui.Control|AddReactive}
+     */
     getCtrlByName(gui, name) {
         for ctrl in gui {
             if (ctrl.Name = name) {
@@ -22,6 +22,12 @@ defineGuiMethods(gui) {
         throw ValueError(Format("Control name ({1}) not found.", name))
     }
 
+    gui.Prototype.getCtrlByType := getCtrlByType
+    /**
+     * Returns a Gui.Control instance
+     * @param {String} ctrlType the type of a Gui.Control
+     * @returns {Gui.Control}
+     */
     getCtrlByType(gui, ctrlType) {
         for ctrl in gui {
             if (ctrl.Type = ctrlType) {
@@ -31,6 +37,12 @@ defineGuiMethods(gui) {
         throw TypeError(Format("Control type ({1}) not found.", ctrlType))
     }
 
+    gui.Prototype.getCtrlByTypeAll := getCtrlByTypeAll
+    /**
+     * Returns an array of Gui.Control instances
+     * @param {String} ctrlType the type of Gui.Controls
+     * @returns {Gui.Control[]}
+     */
     getCtrlByTypeAll(gui, ctrlType) {
         ctrlArray := []
 
@@ -38,11 +50,17 @@ defineGuiMethods(gui) {
             if (ctrl.Type = ctrlType) {
                 ctrlArray.Push(ctrl)
             }
-        } 
+        }
 
         return ctrlArray
     }
 
+    gui.Prototype.getComponent := getComponent
+    /**
+     * Returns a Component instace
+     * @param {String} componentName the name of a component
+     * @returns {Component}
+     */
     getComponent(gui, componentName) {
         for component in gui.components {
             if (component.name = componentName) {
@@ -52,6 +70,12 @@ defineGuiMethods(gui) {
         throw TypeError(Format("Component({1}) not found.", componentName))
     }
 
+    gui.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
+    /**
+     * Returns an array of checked row numbers of a ListView
+     * @param LV the Gui.ListView
+     * @returns {Array} 
+     */
     getCheckedRows(LV) {
         checkedRowNumbers := []
         loop LV.GetCount() {
@@ -67,12 +91,18 @@ defineGuiMethods(gui) {
         return checkedRowNumbers
     }
 
+    gui.ListView.Prototype.getFocusedRowNumbers := getFocusedRows
+    /**
+     * Returns an array of focused row numbers of a ListView
+     * @param LV the Gui.ListView
+     * @returns {Array} 
+     */
     getFocusedRows(LV) {
         focusedRows := []
-        rowNumber := 0  
+        rowNumber := 0
         loop {
-            rowNumber := LV.GetNext(RowNumber)  
-            if(!rowNumber) {
+            rowNumber := LV.GetNext(RowNumber)
+            if (!rowNumber) {
                 break
             }
             focusedRows.Push(rowNumber)
