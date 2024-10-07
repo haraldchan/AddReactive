@@ -5,29 +5,30 @@ class Dynamic {
      * @param {Map} componentPairs A Map  with option values and related class components
      * @param {Object} props additional props
      */
-    __New(_signal, componentPairs, props := 0) {
+    __New(_signal, componentPairs, props := {}) {
         checkType(_signal, signal, "Parameter #1 is not a signal")
-        checkType(componentPairs, Map, "Parameter #2 is not a Array or Map")
+        checkType(componentPairs, [Map, OrderedMap], "Parameter #2 is not a Array or Map")
         for val, componentInstance in componentPairs {
             checkType(componentInstance, Component, "Value of componentPairs must be a component instance")
         }
-        if (props != 0) {
-            checkType(props, Object, "Parameter #3 is not an Object")
-        }
+        ; if (props != 0) {
+        ;     checkType(props, Object, "Parameter #3 is not an Object")
+        ; }
 
         this.signal := _signal
         this.componentPairs := componentPairs
         this.props := props
-        if (this.props != 0) {
-            for val, componentInstance in componentPairs {
-                componentInstance.defineProps(this.props)
-            }
-        }
-
+        this.options := this.props.HasOwnProp("options") ? this.props.options : ""
+        this.position := this.props.HasOwnProp("position") ? this.props.position : ""
+        
         ; mount components
         for val, componentInstance in componentPairs {
             componentInstance.render()
             componentInstance.visible(false)
+            
+            for ctrl in componentInstance.ctrls {
+                ctrl.Opt(this.options)
+            }
         }
 
         ; show components conditionally
