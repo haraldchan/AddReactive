@@ -65,3 +65,42 @@ defineMapMethods(_map) {
 }
 
 defineMapMethods(Map)
+
+class OrderedMap {
+    __New(keyValues*) {
+        this.keys := []
+        this.values := []
+        this.entries := []
+        this.__Item := Map(keyValues*)
+
+        for i, item in keyValues {
+            if (Mod(i, 2) != 0) {
+                this.keys.Push(item)
+            } else {
+                this.values.Push(item)
+            }
+        }
+
+        for key in this.keys {
+            this.entries.Push([key, this.values[A_Index]])
+        }
+    }
+
+    getKey(val) {
+        return this.keys[this.values.findIndex(item => item = val)]
+    }
+
+    __Enum(nov){
+        return Enum3
+
+        Enum3(&key, &value, &index := 0) {
+            if (A_Index > this.keys.Length) {
+                return false
+            }
+
+            index := A_Index
+            key := this.keys[index]
+            value := this.values[index]
+        }
+    }
+}
