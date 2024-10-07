@@ -1,6 +1,14 @@
+
 class OrderedMap {
-    __New(keyValues*) {
-        if (Mod(keyValues.Length, 2) != 0) {
+    /**
+     * OrderedMap holds key-value pairs and remembers the original insertion order of the keys.
+     * ```
+     * For key, val [, index] in OrderedMap
+     * ```
+     * @param {...Any} items Key, values to be set 
+     */
+    __New(items*) {
+        if (Mod(items.Length, 2) != 0) {
             throw ValueError("Parameters must be key-value pairs.")
         }
 
@@ -8,7 +16,7 @@ class OrderedMap {
         this._values := []
         this._entries := []
 
-        for i, item in keyValues {
+        for i, item in items {
             if (Mod(i, 2) != 0) {
                 this._keys.Push(item)
             } else {
