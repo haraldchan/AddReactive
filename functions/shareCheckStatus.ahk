@@ -1,3 +1,4 @@
+; An AddReactive function that helps you binding check status between a CheckBox and a ListView control.
 class shareCheckStatus {
     /**
      * Bind values of CheckBox and ListView for check-all status.

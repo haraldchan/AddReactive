@@ -1,3 +1,4 @@
+; An AddReactive component to loop over signal.value and render multiple control groups accordingly.
 class IndexList {
     /**
      * A looping component allows render controls base on signal
