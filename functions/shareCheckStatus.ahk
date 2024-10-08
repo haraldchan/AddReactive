@@ -1,11 +1,12 @@
 class shareCheckStatus {
     /**
      * Bind values of CheckBox and ListView for check-all status.
-     * @param ARCheckBox AddReactive CheckBox.
-     * @param ARListView AddReactive Control.
+     * ```
+     * shareCheckStatus(cb, lv, {CheckBox: (*) => {...}, ListView: (*) => {...}, checkStatus: isCheckedSignal})
+     * ```
+     * @param CheckBox AddReactive CheckBox.
+     * @param ListView AddReactive Control.
      * @param {Object} options Additional options.
-     * 
-     * @example shareCheckStatus(cb, lv, {CheckBox: (*) => {...}, ListView: (*) => {...}, checkStatus: isCheckedSignal})
      */
     __New(CheckBox, ListView, options := { CheckBox: (*) => {}, ListView: (*) => {} }) {
         ; param type checking
@@ -72,8 +73,7 @@ class shareCheckStatus {
         } else {
             SetTimer(() => (
                 prevCheckedRows := LV.getCheckedRowNumbers(),
-                this.checkStatusDepend.set(LV.getCheckedRowNumbers().Length = LV.GetCount())
-            ), -1)
+                this.checkStatusDepend.set(LV.getCheckedRowNumbers().Length = LV.GetCount())), -1)
             Sleep 30
             if (isChecked = false) {
                 for row in prevCheckedRows {

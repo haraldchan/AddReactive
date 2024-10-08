@@ -2,7 +2,7 @@ class Dynamic {
     /**
      * Render class component dynamically base on signal.
      * @param {signal} _signal Depend signal.
-     * @param {Map} componentPairs A Map  with option values and related class components
+     * @param {Map|OrderedMap} componentPairs A Map  with option values and related class components
      * @param {Object} props additional props
      */
     __New(_signal, componentPairs, props := {}) {

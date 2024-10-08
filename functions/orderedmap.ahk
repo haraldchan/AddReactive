@@ -1,8 +1,11 @@
-
 class OrderedMap {
     /**
      * OrderedMap holds key-value pairs and remembers the original insertion order of the keys.
      * ```
+     * ; Create
+     * om := OrderedMap(key1, value1, key2, value2, ...)
+     * 
+     * ; Enumerate
      * For key, val [, index] in OrderedMap
      * ```
      * @param {...Any} items Key, values to be set 
@@ -49,26 +52,43 @@ class OrderedMap {
     }
 
     ; methods
+    /**
+     * Returns an Array that contains all keys in insertion order.
+     * @returns {Array} 
+     */
     keys() {
         return this._keys
     }
 
+    /**
+     * Returns an Array that contains all values in insertion order.
+     * @returns {Array} 
+     */
     values() {
         return this._values
     }
 
+    /**
+     * Returns an Array of all [key, value] pairs in insertion order.
+     * @returns {Array} [[key, value], [key, value] ...]
+     */
     entries() {
         return this._entries
     }
 
-    set(key, newValue) {
+    /**
+     * Adds or updates an entry in this map with a specified key and a value.
+     * @param key The key of the element to add to the OrderedMap object.
+     * @param value The value of the element to add to the OrderedMap object.
+     */
+    set(key, value) {
         ; key not exist
         if (this._keys.find(item => item = key) = "") {
             this._keys.Push(key)
-            this._values.Push(newValue)
-            this._entries.Push([key, newValue])
+            this._values.Push(value)
+            this._entries.Push([key, value])
         } else {
-            this._values := this._values.with(this._keys.findIndex(item => item = key), newValue)
+            this._values := this._values.with(this._keys.findIndex(item => item = key), value)
             this._entries := []
             for key in this._keys {
                 this._entries.Push([key, this._values[A_Index]])
@@ -77,18 +97,24 @@ class OrderedMap {
     }
 
     /**
-     * Returns the key of a certain value.
-     * @param value search by value
+     * Returns the specified key from OrderedMap by value.
+     * @param value The value to search.
      * @returns {Any} 
      */
     keyOf(value) {
-        return this._keys[this._values.findIndex(item => item = value)]
+        foundIndex := this._values.findIndex(item => item = value)
+        
+        if (foundIndex = "") {
+            throw Error("Value not found.", value)
+        }
+
+        return this._keys[foundIndex]
     }
 
     /**
-     * 
-     * @param key 
-     * @returns {Integer} 
+     * Returns a boolean indicating whether an element with the specified key exists in this map or not.
+     * @param key The key of the element to test for presence in the OrderedMap object.
+     * @returns {Boolean} true if an element with the specified key exists in the OrderedMap object; otherwise false.
      */
     has(key) {
         return this._keys.find(item => item = key) != "" ? true : false
@@ -104,12 +130,18 @@ class OrderedMap {
     }
 
     /**
-     * Removes a key-value pair.
+     * Removes the specified element from OrderedMap by key.
+     * @param key The key of the element to remove from the OrderedMap object.
+     * @returns {Any} The removed [key, value] pair.
      */
     delete(key) {
         index := this._keys.findIndex(item => item = key)
+        target := this._entries[index]
+
         this._keys.RemoveAt(index)
         this._values.RemoveAt(index)
         this._entries.RemoveAt(index)
+
+        return target
     }
 }
