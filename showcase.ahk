@@ -7,7 +7,7 @@ TEST.Show()
 
 App(App){
     colors := signal("red")
-    colorComponents := Map(
+    colorComponents := OrderedMap(
         "red", RedText(App),
         "blue", BlueEdit(App),
         "green", GreenRadio(App)
@@ -16,8 +16,8 @@ App(App){
     return (
         ShowCase(App),
         Dynamic(colors, colorComponents),
-        App.AddButton("w200 h30", "Change color!")
-           .OnEvent("Click", (*) => colors.set("blue"))
+        App.AddDDL("w200 Choose1", colorComponents.keys())
+           .OnEvent("Change", (ctrl, _) => colors.set(ctrl.Text))
     )
 }
 
@@ -47,7 +47,7 @@ RedText(App) {
     rt := Component(App, A_ThisFunc)
     
     rt.render := (this) => this.Add(
-        App.AddText("w200 h30", "Red Text")
+        App.AddText("x10 y200 w200 h30", "Red Text")
     )
 
     return rt
@@ -57,7 +57,7 @@ BlueEdit(App) {
     be := Component(App, A_ThisFunc)
 
     be.render := (this) => this.Add(
-        App.AddEdit("w200 h30", "Blue Edit")
+        App.AddEdit("x10 y200 w200 h30", "Blue Edit")
     )
 
     return be
@@ -67,11 +67,10 @@ GreenRadio(App) {
     gr := Component(App, A_ThisFunc)
 
     gr.render := (this) => this.Add(
-        App.AddRadio("w200 h30", "Green Radio")
+        App.AddRadio("x10 y200 w200 h30", "Green Radio")
     )
 
     return gr
 }
-
 
 F12:: Reload
