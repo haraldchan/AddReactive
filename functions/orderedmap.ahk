@@ -63,12 +63,16 @@ class OrderedMap {
 
     set(key, newValue) {
         ; key not exist
-        if (this._keys.find(key) != "") {
+        if (this._keys.find(item => item = key) = "") {
             this._keys.Push(key)
             this._values.Push(newValue)
             this._entries.Push([key, newValue])
         } else {
-            this._values.with(this._keys.findIndex(item => item = key), newValue)
+            this._values := this._values.with(this._keys.findIndex(item => item = key), newValue)
+            this._entries := []
+            for key in this._keys {
+                this._entries.Push([key, this._values[A_Index]])
+            }
         }
     }
 
