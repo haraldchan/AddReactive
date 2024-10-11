@@ -16,26 +16,44 @@ class OrderedMap {
             throw ValueError("Parameters must be key-value pairs.")
         }
 
-        this._keys := []
-        this._values := []
         this._entries := []
-
-        for i, item in items {
-            if (Mod(i, 2) != 0) {
-                this._keys.Push(item)
-            } else {
-                this._values.Push(item)
+        loop items.Length {
+            if (Mod(A_Index, 2) = 0) {
+                continue
             }
+
+            k := items[A_Index]
+            v := items[A_Index + 1]
+            this._entries.Push([k, v])
         }
 
-        for key in this._keys {
-            this._entries.Push([key, this._values[A_Index]])
-        }
+        this._keys := this._entries.map(entry => entry[1])
+        this._values := this._entries.map(entry => entry[2])
     }
 
     __Item[key] {
         get => this._values[this._keys.findIndex(item => item = key)]
         set => this.set(key, value)
+    }
+
+    /**
+     * Adds or updates an entry in this map with a specified key and a value.
+     * @param key The key of the element to add to the OrderedMap object.
+     * @param value The value of the element to add to the OrderedMap object.
+     */
+    set(key, value) {
+        ; key not exist
+        if (this._keys.find(item => item = key) = "") {
+            this._keys.Push(key)
+            this._values.Push(value)
+            this._entries.Push([key, value])
+        } else {
+            this._values := this._values.with(this._keys.findIndex(item => item = key), value)
+            this._entries := []
+            for key in this._keys {
+                this._entries.Push([key, this._values[A_Index]])
+            }
+        }
     }
 
     __Enum(nov) {
@@ -78,38 +96,37 @@ class OrderedMap {
     }
 
     /**
-     * Adds or updates an entry in this map with a specified key and a value.
-     * @param key The key of the element to add to the OrderedMap object.
-     * @param value The value of the element to add to the OrderedMap object.
-     */
-    set(key, value) {
-        ; key not exist
-        if (this._keys.find(item => item = key) = "") {
-            this._keys.Push(key)
-            this._values.Push(value)
-            this._entries.Push([key, value])
-        } else {
-            this._values := this._values.with(this._keys.findIndex(item => item = key), value)
-            this._entries := []
-            for key in this._keys {
-                this._entries.Push([key, this._values[A_Index]])
-            }
-        }
-    }
-
-    /**
      * Returns the specified key from OrderedMap by value.
      * @param value The value to search.
      * @returns {Any} 
      */
     keyOf(value) {
         foundIndex := this._values.findIndex(item => item = value)
-        
+
         if (foundIndex = "") {
             throw Error("Value not found.", value)
         }
 
         return this._keys[foundIndex]
+    }
+
+    /**
+     * Insert an [key, value] pair entry in OrderedMap.
+     * @param {Array} entry a [key, value] pair
+     * @param {Integer} index The position to insert the entry at.
+     */
+    insert(entry, index) {
+        checkType(entry, Array)
+        checkType(index, Integer)
+
+        key := entry[1], value := entry[2]
+        if (this._keys.find(eKey => eKey = key) != "") {
+            throw Error("Key already exist.")
+        }
+
+        this._entries.InsertAt(index, [key, value])
+        this._keys.InsertAt(index, key)
+        this._values.InsertAt(index, value)
     }
 
     /**
