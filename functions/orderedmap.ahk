@@ -33,7 +33,7 @@ class OrderedMap {
 
     __Item[key] {
         get => this._values[this._keys.findIndex(item => item = key)]
-        set => this.set(key, value)
+        set => this.setOne(key, value)
     }
 
     /**
@@ -41,7 +41,7 @@ class OrderedMap {
      * @param key The key of the element to add to the OrderedMap object.
      * @param value The value of the element to add to the OrderedMap object.
      */
-    set(key, value) {
+    setOne(key, value) {
         ; key not exist
         if (this._keys.find(item => item = key) = "") {
             this._keys.Push(key)
@@ -54,6 +54,37 @@ class OrderedMap {
                 this._entries.Push([key, this._values[A_Index]])
             }
         }
+    }
+
+    /**
+     * Set one or more key-value pair.
+     * @param {key, value, ...} keyValues 
+     */
+    set(keyValues*) {
+        if (Mod(keyValues.Length, 2) != 0) {
+            throw ValueError("Parameters must be key-value pairs.")
+        }
+
+        entriesToSet := []
+        loop keyValues.Length {
+            if (Mod(A_Index, 2) = 0) {
+                continue
+            }
+
+            k := keyValues[A_Index]
+            if (this._keys.find(eKey => eKey = k) != "") {
+                throw Error("Key already exist.")
+            }
+            v := keyValues[A_Index + 1]
+            entriesToSet.Push([k, v])
+        }
+
+        keysToSet := entriesToSet.map(entry => entry[1])
+        valuesToSet := entriesToSet.map(entry => entry[2])
+
+        this._entries.Push(entriesToSet*)
+        this._keys.Push(keysToSet*)
+        this._values.Push(valuesToSet*)
     }
 
     __Enum(nov) {
