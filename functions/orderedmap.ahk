@@ -142,6 +142,21 @@ class OrderedMap {
     }
 
     /**
+     * Returns the index of specified key from OrderedMap.
+     * @param key The key to search.
+     * @returns {Integer} 
+     */
+    indexOf(key) {
+        foundIndex := this._keys.findIndex(item => item = key)
+
+        if (foundIndex = "") {
+            throw Error("Key not found.", key)
+        }
+
+        return foundIndex
+    }
+
+    /**
      * Insert an [key, value] pair entry in OrderedMap.
      * @param {Array} entry a [key, value] pair
      * @param {Integer} index The position to insert the entry at.
