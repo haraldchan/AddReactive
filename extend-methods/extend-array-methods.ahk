@@ -177,6 +177,22 @@ defineArrayMethods(arr) {
 
         return newArray
     }
+
+    arr.Prototype.join := join
+    join(arr, separator := ",") {
+        joined := ""
+
+        for item in arr {
+            if (A_Index = arr.Length) {
+                    joined .= item
+                } else {
+                    joined .= item . separator
+                }
+
+        }
+
+        return joined
+    }
 }
 
 defineArrayMethods(Array)
