@@ -1,76 +1,31 @@
 #SingleInstance Force
 #Include "./AddReactive.ahk"
+#Include "./useDebug.ahk"
 
-TEST := Gui("+Resize", "AddReactive")
-App(TEST)
-TEST.Show()
+Person := Struct({
+    name: String,
+    age: Number,
+    fn: Func
+})
 
-App(App){
-    colors := signal("red")
-    colorComponents := OrderedMap(
-        "red", RedText(App),
-        "blue", BlueEdit(App),
-        "green", GreenRadio(App)
-    )
 
-    return (
-        ShowCase(App),
-        Dynamic(colors, colorComponents),
-        App.AddDDL("w200 Choose1", colorComponents.keys())
-           .OnEvent("Change", (ctrl, _) => colors.set(ctrl.Text))
-    )
+user := Map(
+    "name", "hc", 
+    "age", 35, 
+    "fn", ()=>{} 
+)
+
+user2 := {
+	name: "john", 
+    age: 40, 
+    fn: ()=>[] 
 }
 
-ShowCase(App) {
-    staff := signal([
-        { name: "Amy", pos: "manager", age: 30 }, 
-        { name: "Chloe", pos: "supervisor", age: 24 }, 
-        { name: "Elody", pos: "attendant", age: 20 }
-    ])
+p := Person.new(user)
+p2 := Person.new(user2)
 
-    ageAverage := computed(staff, cur =>
-        Round(cur.map(s => s["age"]).reduce((acc, cur) => acc + cur, 0) / cur.Length)
-    )
+msgbox p.name
+msgbox p2.age
 
-    return (
-        IndexList(() => [
-            App.AddEdit("w200 h20", "Staff Name: {1}, age: {2}"),
-            App.AddText("w200 h20", "Staff Position: {3}")
-        ], staff, ["name", "age", "pos"]),
-        App.AddReactiveText("w200 h20", "Average age: {1}", ageAverage)
-    )
-}
-
-
-
-RedText(App) {
-    rt := Component(App, A_ThisFunc)
-    
-    rt.render := (this) => this.Add(
-        App.AddText("x10 y200 w200 h30", "Red Text")
-    )
-
-    return rt
-}
-
-BlueEdit(App) {
-    be := Component(App, A_ThisFunc)
-
-    be.render := (this) => this.Add(
-        App.AddEdit("x10 y200 w200 h30", "Blue Edit")
-    )
-
-    return be
-}
-
-GreenRadio(App) {
-    gr := Component(App, A_ThisFunc)
-
-    gr.render := (this) => this.Add(
-        App.AddRadio("x10 y200 w200 h30", "Green Radio")
-    )
-
-    return gr
-}
 
 F12:: Reload
