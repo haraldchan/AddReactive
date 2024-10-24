@@ -1,5 +1,6 @@
 #Include "./dynamic.ahk"
 #Include "./indexlist.ahk"
 #Include "./orderedmap.ahk"
+#Include "./struct.ahk"
 #Include "./shareCheckStatus.ahk"
 #Include "./useListPlaceholder.ahk"
