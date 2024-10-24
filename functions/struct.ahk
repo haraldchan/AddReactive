@@ -11,26 +11,16 @@ class Struct {
     new(newObject) {
         return StructInstance(newObject, this.typeMap)
     }
-
-
 }
 
-class StructInstance extends Struct {
-    __New(newObject, typeMap) {
-        for key, val in newObject.OwnProps() {
+class StructInstance {
+    __New(data, typeMap) {
+        for key, val in (data is Map ? data : data.OwnProps()) {
             if (!(val is typeMap[key])) {
-                throw TypeError("Expect Type: {1}. Current Type: {2}", Type(typeMap[key]), Type(val))
+                throw TypeError(Format("Expected value type of key:{1} does not match.", key))
             }
 
             this.DefineProp(key, { Value: val })
         }
     }
 }
-
-Person := Struct({
-    name: String,
-    age: Number,
-    fn: Func
-})
-
-p := Person.new({ name: "hc", age: 35, fn: () => {} })
