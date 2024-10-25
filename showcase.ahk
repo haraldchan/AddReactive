@@ -1,31 +1,24 @@
 #SingleInstance Force
 #Include "./AddReactive.ahk"
-#Include "./useDebug.ahk"
+
+Contact := Struct({
+    tel: Integer,
+    email: String
+})
 
 Person := Struct({
     name: String,
-    age: Number,
-    fn: Func
+    age: Integer,
+    contact: Contact
 })
 
-
-user := Map(
-    "name", "hc", 
-    "age", 35, 
-    "fn", ()=>{} 
-)
-
-user2 := {
-	name: "john", 
-    age: 40, 
-    fn: ()=>[] 
-}
-
-p := Person.new(user)
-p2 := Person.new(user2)
-
-msgbox p.name
-msgbox p2.age
-
+john := Person.new({
+    name: "John",
+    age: 30,
+    contact: {
+        tel: 8888888,
+        email: "johndoe@gmail.com"
+    }
+})
 
 F12:: Reload
