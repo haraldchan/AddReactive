@@ -6,19 +6,42 @@ Contact := Struct({
     email: String
 })
 
+Grand := Struct({
+    grandfather: String
+})
+
+Family := Struct({
+    father: String,
+    mother: String,
+    grandparents: Grand
+})
+
 Person := Struct({
     name: String,
     age: Integer,
-    contact: Contact
+    contact: Contact,
+    family: Family
 })
 
 john := Person.new({
     name: "John",
     age: 30,
+    ; new: "new"
     contact: {
         tel: 8888888,
         email: "johndoe@gmail.com"
+    },
+    family: {
+        father: "Jonny",
+        mother: "Dolores",
+        grandparents : {
+            grandfather: "Johaness"
+        }
     }
 })
+
+
+
+msgbox john["family"]["grandparents"]["grandfather"]
 
 F12:: Reload
