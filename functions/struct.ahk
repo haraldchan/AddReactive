@@ -51,8 +51,7 @@ class Struct {
                     continue
                 }
 
-
-                if (!(Type(val) = this.getTypeName(typeMap[key]))) {
+                if (Type(val) != this.getTypeName(typeMap[key])) {
                     throw TypeError(Format(
                         "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}", 
                         key, 
@@ -61,7 +60,7 @@ class Struct {
                     ))
                 }
 
-                this._values.Push((val is Struct) ? Struct.StructInstance(val, val.typeMap) : val)
+                this._values.Push(val)
             }
         }
 
