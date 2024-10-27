@@ -20,7 +20,8 @@ Person := Struct({
     name: String,
     age: Integer,
     contact: Contact,
-    family: Family
+    family: Family,
+    hobby: [String]
 })
 
 john := Person.new({
@@ -37,7 +38,8 @@ john := Person.new({
         grandparents : {
             grandfather: "Johaness"
         }
-    }
+    },
+    hobbies: ["tennis", "game", "code"]
 })
 
 
