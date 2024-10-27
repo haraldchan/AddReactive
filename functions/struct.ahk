@@ -38,26 +38,36 @@ class Struct {
             this.validateFields(data, typeMap)
 
             for key, val in ((data is Map || data is OrderedMap) ? data : data.OwnProps()) {
-                ; key existence check
-                if (!typeMap.has(key)) {
-                    throw ValueError(Format("Unknown key:{1}.", key))
-                }
-
                 this._keys.Push(key)
 
                 ; value type check
-                if (val is Object) {
+                ; objects
+                if (val.Prototype == Object.Prototype || val is Map || val is OrderedMap || val is Object) {
                     this._values.Push(Struct.StructInstance(val, typeMap[key].typeMap))
                     continue
                 }
 
+                ; primitives
                 if (Type(val) != this.getTypeName(typeMap[key])) {
                     throw TypeError(Format(
-                        "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}", 
-                        key, 
+                        "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
+                        key,
                         this.getTypeName(typeMap[key]),
                         Type(val)
                     ))
+                }
+
+                ; array
+                if (val is Array) {
+                    k := key
+                    if (!val.every(item => item is typeMap[k][1])) {
+                        throw TypeError(Format(
+                            "Expected item type of index:{1} does not match.`n Expected: {2}, Current: {3}",
+                            val.findIndex(item => Type(item) != typeMap[key][1]),
+                            this.getTypeName(typeMap[key][1]),
+                            Type(val.find(item => Type(item) != typeMap[key][1]))
+                        ))
+                    }
                 }
 
                 this._values.Push(val)
@@ -95,9 +105,14 @@ class Struct {
             }
         }
 
-        getTypeName(classType){
+        getTypeName(classType) {
             if (classType is Struct) {
                 return "Struct"
+            }
+
+            if (classType is Array) {
+                itemType := this.getTypeName(classType[1])
+                return "Array of " . itemType . "s"
             }
 
             switch classType {
@@ -110,7 +125,7 @@ class Struct {
                     return "Float"
                 case String:
                     return "String"
-                
+
                 ; objects
                 case Func:
                     return "Func"
@@ -118,24 +133,30 @@ class Struct {
                     return "Enumerator"
                 case Closure:
                     return "Closure"
-                case class:
+                case Class:
                     return "Class"
                 case Map:
                     return "Map"
                 case Array:
                     return "Array"
+                case Buffer:
+                    return "Buffer"
+                case ComObject:
+                    return "ComObject"
+                case Gui:
+                    return "Gui"
 
-                ; AddReactives
+                ; AddReactive funcs
                 case OrderedMap:
                     return "OrderedMap"
 
                 ; Object
                 case Object:
-                    return "Object"  
+                    return "Object"
             }
         }
 
-        validateFields(data, typeMap){
+        validateFields(data, typeMap) {
             errMsg := "Struct fields not match, {1}: {2}"
             dataKeys := []
 
@@ -155,9 +176,9 @@ class Struct {
             }
 
             ; missing field
-            for k, v in typeMap {
-                key := k
-                if (dataKeys.find(dKey => dKey = key) = "") {
+            for key, type in typeMap {
+                k := key
+                if (dataKeys.find(dKey => dKey = k) = "") {
                     throw ValueError(Format(errMsg, "missing", key))
                 }
             }
