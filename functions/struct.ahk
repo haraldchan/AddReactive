@@ -183,5 +183,30 @@ class Struct {
                 }
             }
         }
+
+        /**
+         * Returns a Map of converted StructInstance.
+         * @returns {Map} 
+         */
+        mapify(){
+            resMap := Map()
+
+            for index, key in this._keys {
+                val := this._values[index]
+                    resMap[key] := val is Struct.StructInstance
+                    ? val.mapify()
+                    : val
+            }
+
+            return resMap
+        }
+
+        /**
+         * Returns a JSON format string of converted StructInstance.
+         * @returns {String} 
+         */
+        stringify(){
+            return JSON.stringify(this.mapify())
+        }
     }
 }
