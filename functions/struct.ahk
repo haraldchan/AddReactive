@@ -42,19 +42,9 @@ class Struct {
 
                 ; value type check
                 ; objects
-                if (val.Prototype == Object.Prototype || val is Map || val is OrderedMap || val is Object) {
+                if (val.base == Object.Prototype || val is Map || val is OrderedMap) {
                     this._values.Push(Struct.StructInstance(val, typeMap[key].typeMap))
                     continue
-                }
-
-                ; primitives
-                if (Type(val) != this.getTypeName(typeMap[key])) {
-                    throw TypeError(Format(
-                        "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
-                        key,
-                        this.getTypeName(typeMap[key]),
-                        Type(val)
-                    ))
                 }
 
                 ; array
@@ -63,11 +53,19 @@ class Struct {
                     if (!val.every(item => item is typeMap[k][1])) {
                         throw TypeError(Format(
                             "Expected item type of index:{1} does not match.`n Expected: {2}, Current: {3}",
-                            val.findIndex(item => Type(item) != typeMap[key][1]),
-                            this.getTypeName(typeMap[key][1]),
-                            Type(val.find(item => Type(item) != typeMap[key][1]))
+                            val.findIndex(item => Type(item) != typeMap[k][1]),
+                            this.getTypeName(typeMap[k][1]),
+                            Type(val.find(item => Type(item) != typeMap[k][1]))
                         ))
                     }
+                ; primitives
+                } else if (Type(val) != this.getTypeName(typeMap[key])) {
+                    throw TypeError(Format(
+                        "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
+                        key,
+                        this.getTypeName(typeMap[key]),
+                        Type(val)
+                    ))
                 }
 
                 this._values.Push(val)
