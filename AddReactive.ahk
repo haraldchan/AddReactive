@@ -33,7 +33,7 @@ class signal {
         this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
 
         ; change to Map()
-        if (!(newSignalValue is Func) &&!(newSignalValue is Class) && newSignalValue is Object) {
+        if (!(newSignalValue is Func) && !(newSignalValue is Class) && newSignalValue is Object) {
             this.value := this.mapify(this.value)
         }
 
@@ -218,7 +218,9 @@ class AddReactive {
             this.innerText := textString
         } else if (controlType = "ListView") {
             this.titleKeys := textString.keys
-            this.innerText := textString.HasOwnProp("titles") ? textString.titles : this.titleKeys
+            this.innerText := textString.HasOwnProp("titles") 
+                ? textString.titles 
+                : this.titleKeys.map(key => (key is Array) ? key[key.Length] : key)
             this.colWidths := textString.HasOwnProp("widths") ? textString.widths : this.titleKeys.map(item => "AutoHdr")
         } else {
             this.innerText := RegExMatch(textString, "\{\d+\}") ? this.handleFormatStr(textString, depend, key) : textString
@@ -258,7 +260,7 @@ class AddReactive {
         }
     }
 
-    handleArcName(options){
+    handleArcName(options) {
         optionsString := this.ctrlType = "ListView" ? options.lvOptions : options
 
         optionsArr := StrSplit(optionsString, " ")
@@ -298,7 +300,7 @@ class AddReactive {
             return depend
         }
     }
-        
+
     handleFormatStr(formatStr, depend, key) {
         vals := []
 
@@ -352,9 +354,34 @@ class AddReactive {
 
     handleListViewUpdate() {
         this.ctrl.Delete()
+
         for item in this.depend.value {
-            itemIn := !(item is Map) ? JSON.parse(JSON.stringify(item)) : item
-            rowData := this.titleKeys.map(key => itemIn[key])
+            ; item -> Object || Map || OrderedMap
+            if (item.base == Object.Prototype) {
+                itemIn := JSON.parse(JSON.stringify(item))
+            } else if (item is Map || item is OrderedMap) {
+                itemIn := item
+            }
+
+            rowData := this.titleKeys.map(key => getRowData(key, itemIn))
+            getRowData(key, itemIn, layer := 1) {
+                if (key is String) {
+                    return itemIn[key]
+                } 
+
+                if (key is Array) {
+                    return getNested(key, itemIn, 1)    
+                }
+            }
+
+            getNested(keys, item, index) {
+                if !(item is Map) {
+                    return item
+                }
+
+                return getNested(keys, item[keys[index]], index+1)
+            }
+
             this.ctrl.Add(this.itemOptions, rowData*)
         }
 
