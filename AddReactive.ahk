@@ -366,20 +366,16 @@ class AddReactive {
             rowData := this.titleKeys.map(key => getRowData(key, itemIn))
             getRowData(key, itemIn, layer := 1) {
                 if (key is String) {
-                    return itemIn[key]
-                } 
+                    if (itemIn.Has(key)) {
+                        return itemIn[key]
+                    } else {
+                        return getFirstMatch(key, itemIn)
+                    }
+                }
 
                 if (key is Array) {
-                    return getNested(key, itemIn, 1)    
+                    return getExactMatch(key, itemIn, 1)    
                 }
-            }
-
-            getNested(keys, item, index) {
-                if !(item is Map) {
-                    return item
-                }
-
-                return getNested(keys, item[keys[index]], index+1)
             }
 
             this.ctrl.Add(this.itemOptions, rowData*)
@@ -387,6 +383,31 @@ class AddReactive {
 
         this.ctrl.Modify(1, "Select")
         this.ctrl.Focus()
+
+        ; find nested key by exact query path
+        getExactMatch(keys, item, index) {
+            if !(item is Map) {
+                return item
+            }
+
+            return getExactMatch(keys, item[keys[index]], index+1)
+        }
+
+        ; find the first matching key
+        getFirstMatch(key, item){
+            if (item.Has(key)) {
+                return item[key]
+            }
+
+            for k, v in item {
+                if (v is Map) {
+                    res := getFirstMatch(key, v)
+                    if (res != ""){
+                        return res
+                    }
+                }
+            }
+        }
     }
 
     ; updating subs
