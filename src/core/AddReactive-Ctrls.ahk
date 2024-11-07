@@ -19,6 +19,9 @@ class AddReactiveText extends AddReactive {
         super.__New(GuiObject, "Text", options, innerText, depend, key, event)
     }
 }
+class ARText extends AddReactiveText {
+    ; alias
+}
 
 class AddReactiveEdit extends AddReactive {
     /**
@@ -40,6 +43,9 @@ class AddReactiveEdit extends AddReactive {
         this.key := key
         super.__New(GuiObject, "Edit", options, innerText, depend, key, event)
     }
+}
+class AREdit extends AddReactiveEdit {
+    ; alias
 }
 
 class AddReactiveButton extends AddReactive {
@@ -63,6 +69,9 @@ class AddReactiveButton extends AddReactive {
         super.__New(GuiObject, "Button", options, innerText, depend, key, event)
     }
 }
+class ARButton extends AddReactiveButton {
+    ; alias
+}
 
 class AddReactiveCheckBox extends AddReactive {
     /**
@@ -84,6 +93,9 @@ class AddReactiveCheckBox extends AddReactive {
         this.key := key
         super.__New(GuiObject, "CheckBox", options, innerText, depend, key, event)
     }
+}
+class ARCheckBox extends AddReactiveCheckBox {
+    ; alias
 }
 
 class AddReactiveRadio extends AddReactive {
@@ -107,6 +119,9 @@ class AddReactiveRadio extends AddReactive {
         super.__New(GuiObject, "Radio", options, innerText, depend, key, event)
     }
 }
+class ARRadio extends AddReactiveRadio {
+    ; alias
+}
 
 class AddReactiveDropDownList extends AddReactive {
     __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
@@ -126,6 +141,12 @@ class AddReactiveDropDownList extends AddReactive {
         }
         super.__New(GuiObject, "DropDownList", options, this.text, depend, key, event)
     }
+}
+class ARDropDownList extends AddReactiveDropDownList {
+    ; alias
+}
+class ARDDL extends AddReactiveDropDownList {
+    ; alias
 }
 
 class AddReactiveComboBox extends AddReactive {
@@ -147,6 +168,9 @@ class AddReactiveComboBox extends AddReactive {
         super.__New(GuiObject, "ComboBox", options, this.text, depend, key, event)
     }
 }
+class ARComboBox extends AddReactiveComboBox {
+    ; alias
+}
 
 class AddReactiveListView extends AddReactive {
     /**
@@ -161,13 +185,13 @@ class AddReactiveListView extends AddReactive {
      */
     __New(GuiObject, options, columnDetails, depend := 0, key := 0, event := 0) {
         ; options type checking
-        checkType(options, Object, "Parameter #1 (options) is not an Object")
+        checkType(options, Object.Prototype, "Parameter #1 (options) is not an Object")
         checkType(options.lvOptions, String, "options.lvOptions is not a string")
         if (options.HasOwnProp("itemOptions")) {
             checkType(options.itemOptions, String, "options.itemOptions is not a string")
         }
         ; colTitleGrid type checking
-        checkType(columnDetails, Object, "Parameter #2 is (columnDetails) is not an Object")
+        checkType(columnDetails, Object.Prototype, "Parameter #2 is (columnDetails) is not an Object")
         checkType(columnDetails.keys, Array, "columnDetails.keys is not an Array")
         if (columnDetails.HasOwnProp("titles")) {
             checkType(columnDetails.titles, Array, "columnDetails.titles is not an Array")
@@ -193,13 +217,25 @@ class AddReactiveListView extends AddReactive {
         }
     }
 }
+class ARListView extends AddReactiveListView {
+    ; alias
+}
 
 ; mount to Gui.Prototype
 Gui.Prototype.AddReactiveText := AddReactiveText
+Gui.Prototype.ARText := ARText
 Gui.Prototype.AddReactiveEdit := AddReactiveEdit
+Gui.Prototype.AREdit := AREdit
 Gui.Prototype.AddReactiveButton := AddReactiveButton
+Gui.Prototype.ARButton := ARButton
 Gui.Prototype.AddReactiveCheckBox := AddReactiveCheckBox
+Gui.Prototype.ARCheckBox := ARCheckBox
 Gui.Prototype.AddReactiveRadio := AddReactiveRadio
+Gui.Prototype.ARRadio := ARRadio
 Gui.Prototype.AddReactiveComboBox := AddReactiveComboBox
+Gui.Prototype.ARComboBox := ARComboBox
 Gui.Prototype.AddReactiveDropDownList := AddReactiveDropDownList
+Gui.Prototype.ARDropDownList := ARDropDownList
+Gui.Prototype.ARDDL := ARDDL
 Gui.Prototype.AddReactiveListView := AddReactiveListView
+Gui.Prototype.ARListView := ARListView
