@@ -28,7 +28,6 @@ class Struct {
         return Struct.StructInstance(data, this.typeMap)
     }
 
-
     class StructInstance {
         __New(data, typeMap) {
             this.data := data
@@ -42,7 +41,7 @@ class Struct {
 
                 ; value type check
                 ; objects
-                if (val.base == Object.Prototype || val is Map || val is OrderedMap) {
+                if (isPlainObject(val) || val is Map || val is OrderedMap) {
                     this._values.Push(Struct.StructInstance(val, typeMap[key].typeMap))
                     continue
                 }
@@ -160,7 +159,7 @@ class Struct {
 
             if (data is Map || data is OrderedMap) {
                 dataKeys := data.keys()
-            } else if (data is Object) {
+            } else if (isPlainObject(data)) {
                 for key in data.OwnProps() {
                     dataKeys.Push(key)
                 }
@@ -186,12 +185,12 @@ class Struct {
          * Returns a Map of converted StructInstance.
          * @returns {Map} 
          */
-        mapify(){
+        mapify() {
             resMap := Map()
 
             for index, key in this._keys {
                 val := this._values[index]
-                    resMap[key] := val is Struct.StructInstance
+                resMap[key] := val is Struct.StructInstance
                     ? val.mapify()
                     : val
             }
@@ -203,7 +202,7 @@ class Struct {
          * Returns a JSON format string of converted StructInstance.
          * @returns {String} 
          */
-        stringify(){
+        stringify() {
             return JSON.stringify(this.mapify())
         }
     }
