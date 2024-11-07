@@ -5,10 +5,11 @@ class signal {
      * @return {Signal}
      */
     __New(val) {
-        this.value := (val is Object && !(val is Func) && !(val is Class)) ? this.mapify(val) : val
+        this.value := isPlainObject(val) ? this.mapify(val) : val
         this.subs := []
         this.comps := []
         this.effects := []
+        this.type := ""
     }
 
     /**
@@ -17,16 +18,23 @@ class signal {
      * @returns {void} 
      */
     set(newSignalValue) {
+        if (this.type is Struct) {
+            validateInstance := this.type.new(this.value.mapify())
+            validateInstance := ""
+        } else if (this.type != "") {
+            checkType(newSignalValue, this.type)
+        }
+
         prevValue := this.value
 
-        if (newSignalValue = this.value) {
+        if (newSignalValue == this.value) {
             return
         }
 
         this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
 
         ; change to Map()
-        if (!(newSignalValue is Func) && !(newSignalValue is Class) && newSignalValue is Object) {
+        if (newSignalValue.base == Object.Prototype) {
             this.value := this.mapify(this.value)
         }
 
@@ -52,6 +60,11 @@ class signal {
         }
     }
 
+    /**
+     * Updates a specific field of Object/Map value.
+     * @param key index/key of the field.
+     * @param newValue New value to assign.
+     */
     update(key, newValue) {
         if (!(this.value is Object)) {
             throw TypeError(Format("update can only handle Array/Object/Map; `n`nCurrent Type: {2}", Type(newValue)))
@@ -67,6 +80,28 @@ class signal {
         updater[key] := newValue
 
         this.set(updater)
+    }
+
+    /**
+     * Sets the type of value.
+     * ```
+     * num := signal(0).as(Integer)
+     * 
+     * str := signal("").as(String)
+     * ```
+     * @param {Class|Struct} type Classes or Struct to set.
+     */
+    as(type) {
+        if (type is Struct) {
+            ; try creating the same struct, not matching, it will throw error.
+            validateInstance := type.new(this.value.mapify())
+            validateInstance := ""
+        } else {
+            checkType(this.value, type)
+        }
+        
+        this.type := type
+        return this
     }
 
     addSub(controlInstance) {
