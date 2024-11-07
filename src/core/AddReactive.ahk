@@ -13,9 +13,9 @@ class AddReactive {
     __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0, event := 0) {
         this.GuiObject := GuiObject
         this.ctrlType := controlType
-        this.options := this.handleArcName(options)
+        this.options := this._handleArcName(options)
         this.formattedString := textString
-        this.depend := this.filterDepends(depend)
+        this.depend := this._filterDepends(depend)
         this.checkStatusDepend := ""
         this.key := key
 
@@ -36,13 +36,13 @@ class AddReactive {
                 : this.titleKeys.map(key => (key is Array) ? key[key.Length] : key)
             this.colWidths := textString.HasOwnProp("widths") ? textString.widths : this.titleKeys.map(item => "AutoHdr")
         } else {
-            this.innerText := RegExMatch(textString, "\{\d+\}") ? this.handleFormatStr(textString, depend, key) : textString
+            this.innerText := RegExMatch(textString, "\{\d+\}") ? this._handleFormatStr(textString, depend, key) : textString
         }
 
         ; add control
         if (controlType = "ListView") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
-            this.handleListViewUpdate()
+            this._handleListViewUpdate()
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
@@ -73,7 +73,7 @@ class AddReactive {
         }
     }
 
-    handleArcName(options) {
+    _handleArcName(options) {
         optionsString := this.ctrlType = "ListView" ? options.lvOptions : options
 
         optionsArr := StrSplit(optionsString, " ")
@@ -97,7 +97,7 @@ class AddReactive {
         return formattedOptions
     }
 
-    filterDepends(depend) {
+    _filterDepends(depend) {
         if (depend is Array) {
             checkValueObject := depend.find(d => d is Object && d.HasOwnProp("checkValue"))
             if (checkValueObject != "") {
@@ -114,7 +114,7 @@ class AddReactive {
         }
     }
 
-    handleFormatStr(formatStr, depend, key) {
+    _handleFormatStr(formatStr, depend, key) {
         vals := []
 
         if (key = 0) {
@@ -165,7 +165,7 @@ class AddReactive {
         return Format(formatStr, vals*)
     }
 
-    handleListViewUpdate() {
+    _handleListViewUpdate() {
         this.ctrl.Delete()
 
         for item in this.depend.value {
@@ -227,12 +227,12 @@ class AddReactive {
     update(signal) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
-            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
+            this.ctrl.Text := this._handleFormatStr(this.formattedString, this.depend, this.key)
         }
 
         if (this.ctrl is Gui.Edit) {
             ; update text value
-            this.ctrl.Value := this.handleFormatStr(this.formattedString, this.depend, this.key)
+            this.ctrl.Value := this._handleFormatStr(this.formattedString, this.depend, this.key)
         }
 
         if (this.ctrl is Gui.ListView) {
@@ -242,7 +242,7 @@ class AddReactive {
                 return
             }
             ; update list items
-            this.handleListViewUpdate()
+            this._handleListViewUpdate()
         }
 
         if (this.ctrl is Gui.CheckBox) {
@@ -252,7 +252,7 @@ class AddReactive {
                 return
             }
             ; update text label
-            this.ctrl.Text := this.handleFormatStr(this.formattedString, this.depend, this.key)
+            this.ctrl.Text := this._handleFormatStr(this.formattedString, this.depend, this.key)
             if (this.HasOwnProp("checkValueDepend")) {
                 this.ctrl.Value := this.checkValueDepend.Value
             }
