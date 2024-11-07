@@ -13,6 +13,10 @@ checkType(val, typeChecking, errMsg := 0) {
         for t in typeChecking {
             if (val is t) {
                 return
+            } else if (t == Object.Prototype) {
+                if (isPlainObject(val)) {
+                    return
+                }
             } else {
                 continue
             }
@@ -22,6 +26,15 @@ checkType(val, typeChecking, errMsg := 0) {
             ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
             : Format("Expect Type: {1}. Current Type: {2}", Type(typeChecking), Type(val))
         )
+    }
+
+    if (typeChecking == Object.Prototype) {
+        if (!isPlainObject(val)) {
+            throw TypeError(errMsg != 0
+                ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
+                : Format("Expect Type: {1}. Current Type: {2}", "plain ", Type(val))
+            )    
+        }
     }
 
     if (!(val is typeChecking)) {
@@ -58,4 +71,8 @@ checkTypeEvent(e) {
     } else {
         checkType(e, Array, errMsg)
     }
+}
+
+isPlainObject(obj) {
+    return obj.base == Object.Prototype ? true : false
 }
