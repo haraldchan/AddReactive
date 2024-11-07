@@ -23,16 +23,6 @@ class Component {
      * @returns {Component}
      */
     Add(controls*) {
-        ; for item in controls {
-        ;     if (item is Array) {
-        ;         for c in item {
-        ;             checkType(item, Gui.Control, "Parameter is not Gui.Control or Array of Gui.Control")
-        ;         }
-        ;     } else {
-        ;         checkType(item, Gui.Control, "Parameter is not Gui.Control or Array of Gui.Control")
-        ;     }
-        ; }
-
         saveControls(ctrlsArray, controls) {
             for control in controls {
                 ; native control

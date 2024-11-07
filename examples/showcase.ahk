@@ -1,5 +1,5 @@
 #SingleInstance Force
-#Include "./AddReactive.ahk"
+#Include "../useAddReactive.ahk"
 
 Contact := Struct({
     tel: Integer,
