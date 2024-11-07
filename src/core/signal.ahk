@@ -91,16 +91,16 @@ class signal {
      * ```
      * @param {Class|Struct} type Classes or Struct to set.
      */
-    as(type) {
-        if (type is Struct) {
+    as(datatype) {
+        if (datatype is Struct) {
             ; try creating the same struct, not matching, it will throw error.
-            validateInstance := type.new(this.value.mapify())
+            validateInstance := datatype.new(this.value.mapify())
             validateInstance := ""
         } else {
-            checkType(this.value, type)
+            checkType(this.value, datatype)
         }
         
-        this.type := type
+        this.type := datatype
         return this
     }
 
