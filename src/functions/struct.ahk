@@ -57,7 +57,7 @@ class Struct {
                             Type(val.find(item => Type(item) != typeMap[k][1]))
                         ))
                     }
-                ; primitives
+                    ; primitives
                 } else if (Type(val) != this.getTypeName(typeMap[key])) {
                     throw TypeError(Format(
                         "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
@@ -90,9 +90,17 @@ class Struct {
         }
 
         __Enum(NumberOfVars) {
-            return enum
+            return NumberOfVars == 1 ? enumK : enumKV
 
-            enum(&key, &value) {
+            enumK(&key) {
+                if (A_Index > this._keys.Length) {
+                    return false
+                }
+
+                key := this._keys[A_Index]
+            }
+
+            enumKV(&key, &value) {
                 if (A_Index > this._keys.Length) {
                     return false
                 }
@@ -123,7 +131,7 @@ class Struct {
                 case String:
                     return "String"
 
-                ; objects
+                    ; objects
                 case Func:
                     return "Func"
                 case Enumerator:
@@ -143,11 +151,11 @@ class Struct {
                 case Gui:
                     return "Gui"
 
-                ; AddReactive funcs
+                    ; AddReactive funcs
                 case OrderedMap:
                     return "OrderedMap"
 
-                ; Object
+                    ; Object
                 case Object:
                     return "Object"
             }
@@ -192,7 +200,7 @@ class Struct {
                 val := this._values[index]
                 resMap[key] := val is Struct.StructInstance
                     ? val.mapify()
-                    : val
+                        : val
             }
 
             return resMap
