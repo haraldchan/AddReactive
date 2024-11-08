@@ -31,9 +31,11 @@ jeff := {
     }
 }
 
-j := signal(jeff).as(Person) 
+staff1 := signal(jeff).as(Person) 
 ; casts as type, uses checkType() for normal things,
-; creates new instance of this object/map,
+; creates new instance of this object/map
+
+staff2 := signal(john).as(Person)
 ; if it is a struct already, validates it.
 
-signal.set("str") ; gets type error
+staff1.set("str") ; gets type error
