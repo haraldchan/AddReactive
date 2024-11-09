@@ -21,21 +21,8 @@ john := Person.new({
     }
 })
 
-jeff := {
-    name: "Jeff",
-    age: 22,
-    new: "new",
-    contact: {
-        tel: 4432133,
-        email: "jeff-nelson@gmail.com"
-    }
-}
+staffname := signal("john").as(String)
 
-staff1 := signal(jeff).as(Person) 
-; casts as type, uses checkType() for normal things,
-; creates new instance of this object/map
-
-staff2 := signal(john).as(Person)
-; if it is a struct already, validates it.
-
-staff1.set("str") ; gets type error
+oGui := Gui()
+oGui.ARText("w500", "current staff: {1}", staffname)
+oGui.Show()
