@@ -18,9 +18,13 @@ class signal {
      * @returns {void} 
      */
     set(newSignalValue) {
+        ; validates new value if it matches the Struct
         if (this.type is Struct) {
-            validateInstance := this.type.new(this.value.mapify())
+            validateInstance := newSignalValue is Struct.StructInstance
+                ? this.type.new(newSignalValue.mapify())
+                : this.type.new(newSignalValue)
             validateInstance := ""
+        ; other type checking
         } else if (this.type != "") {
             checkType(newSignalValue, this.type)
         }
