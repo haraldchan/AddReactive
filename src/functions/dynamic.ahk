@@ -3,12 +3,12 @@ class Dynamic {
     /**
      * Render stateful component dynamically base on signal.
      * @param {signal} _signal Depend signal.
-     * @param {Map|OrderedMap} componentPairs A Map  with option values and related class components
+     * @param {Map} componentPairs A Map  with option values and related class components
      * @param {Object} props additional props
      */
     __New(_signal, componentPairs, props := {}) {
         checkType(_signal, signal, "Parameter #1 is not a signal")
-        checkType(componentPairs, [Map, OrderedMap], "Parameter #2 is not a Array or Map")
+        checkType(componentPairs, Map, "Parameter #2 is not a Map")
         for val, componentInstance in componentPairs {
             checkType(componentInstance, Component, "Value of componentPairs must be a component instance")
         }

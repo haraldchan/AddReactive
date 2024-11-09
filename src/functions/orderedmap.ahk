@@ -1,5 +1,5 @@
 ; The OrderedMap object holds key-value pairs and remembers the original insertion order of the keys.
-class OrderedMap {
+class OrderedMap extends Map {
     /**
      * OrderedMap holds key-value pairs and remembers the original insertion order of the keys.
      * ```

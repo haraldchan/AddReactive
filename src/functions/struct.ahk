@@ -36,12 +36,12 @@ class Struct {
 
             this.validateFields(data, typeMap)
 
-            for key, val in ((data is Map || data is OrderedMap) ? data : data.OwnProps()) {
+            for key, val in (data is Map ? data : data.OwnProps()) {
                 this._keys.Push(key)
 
                 ; value type check
                 ; objects
-                if (isPlainObject(val) || val is Map || val is OrderedMap) {
+                if (isPlainObject(val) || val is Map) {
                     this._values.Push(Struct.StructInstance(val, typeMap[key].typeMap))
                     continue
                 }
