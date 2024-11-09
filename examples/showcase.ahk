@@ -12,17 +12,16 @@ Person := Struct({
     contact: Contact
 })
 
-john := Person.new({
+john := {
     name: "John",
     age: 30,
     contact: {
         tel: 8888888,
         email: "johndoe@gmail.com"
     }
-})
+}
 
-staffname := signal("john").as(String)
+staff := signal(john).as(Person)
 
-oGui := Gui()
-oGui.ARText("w500", "current staff: {1}", staffname)
-oGui.Show()
+staff.update(["contact", "tel"], 12349)
+staff.update("email", "jonny@hotmail.com")
