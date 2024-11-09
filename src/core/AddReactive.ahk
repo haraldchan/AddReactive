@@ -172,7 +172,7 @@ class AddReactive {
             ; item -> Object || Map || OrderedMap
             if (item.base == Object.Prototype) {
                 itemIn := JSON.parse(JSON.stringify(item))
-            } else if (item is Map || item is OrderedMap) {
+            } else if (item is Map) {
                 itemIn := item
             }
 
