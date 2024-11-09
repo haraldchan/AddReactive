@@ -67,7 +67,7 @@ class signal {
     /**
      * Updates a specific field of Object/Map value.
      * @param {Array|any} key index/key of the field.
-     * @param newValue New value to assign.
+     * @param newValue New value to assign of mutation function.
      */
     update(key, newValue) {
         if (!(this.value is Object)) {
@@ -89,7 +89,7 @@ class signal {
     ; find nested key by exact query path
     _setExactMatch(keys, item, newValue, index := 1) {
         if (item.has(keys[index])) {
-            item[keys[index]] := newValue
+            item[keys[index]] := newValue is Func ? newValue(item[keys[index]]) : newValue
             return
         }
 
@@ -99,7 +99,7 @@ class signal {
     ; find the first matching key
     _setFirstMatch(key, item, newValue) {
         if (item.Has(key)) {
-            item[key] := newValue
+            item[key] := newValue is Func ? newValue(item[key]) : newValue
             return
         }
 
