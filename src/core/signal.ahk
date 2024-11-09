@@ -5,7 +5,7 @@ class signal {
      * @return {Signal}
      */
     __New(val) {
-        this.value := isPlainObject(val) ? this.mapify(val) : val
+        this.value := isPlainObject(val) ? this._mapify(val) : val
         this.subs := []
         this.comps := []
         this.effects := []
@@ -24,7 +24,7 @@ class signal {
                 ? this.type.new(newSignalValue.mapify())
                 : this.type.new(newSignalValue)
             validateInstance := ""
-        ; other type checking
+            ; other type checking
         } else if (this.type != "") {
             checkType(newSignalValue, this.type)
         }
@@ -39,7 +39,7 @@ class signal {
 
         ; change to Map()
         if (newSignalValue.base == Object.Prototype) {
-            this.value := this.mapify(this.value)
+            this.value := this._mapify(this.value)
         }
 
         ; notify all subscribers to update
@@ -66,7 +66,7 @@ class signal {
 
     /**
      * Updates a specific field of Object/Map value.
-     * @param key index/key of the field.
+     * @param {Array|any} key index/key of the field.
      * @param newValue New value to assign.
      */
     update(key, newValue) {
@@ -81,9 +81,33 @@ class signal {
         }
 
         updater := this.value
-        updater[key] := newValue
+        (key is Array) ? this._setExactMatch(key, updater, newValue) : this._setFirstMatch(key, updater, newValue)
 
         this.set(updater)
+    }
+
+    ; find nested key by exact query path
+    _setExactMatch(keys, item, newValue, index := 1) {
+        if (item.has(keys[index])) {
+            item[keys[index]] := newValue
+            return
+        }
+
+        return this._setExactMatch(keys, item[keys[index]], index + 1, newValue)
+    }
+
+    ; find the first matching key
+    _setFirstMatch(key, item, newValue) {
+        if (item.Has(key)) {
+            item[key] := newValue
+            return
+        }
+
+        for k, v in item {
+            if (v is Map) {
+                return this._setFirstMatch(key, v, newValue)
+            }
+        }
     }
 
     /**
@@ -98,12 +122,12 @@ class signal {
     as(datatype) {
         if (datatype is Struct) {
             ; try creating the same struct, not matching, it will throw error.
-            validateInstance := datatype.new(this.value.mapify())
+            validateInstance := datatype.new(this.value._mapify())
             validateInstance := ""
         } else {
             checkType(this.value, datatype)
         }
-        
+
         this.type := datatype
         return this
     }
@@ -120,7 +144,7 @@ class signal {
         this.effects.Push(effectFn)
     }
 
-    mapify(obj) {
+    _mapify(obj) {
         if (!(obj is Object)) {
             return obj
         }
