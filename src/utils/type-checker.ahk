@@ -24,7 +24,7 @@ checkType(val, typeChecking, errMsg := 0) {
 
         throw TypeError(errMsg != 0
             ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
-            : Format("Expect Type: {1}. Current Type: {2}", Type(typeChecking), Type(val))
+            : Format("Expect Type: {1}. Current Type: {2}", getTypeName(typeChecking), Type(val))
         )
     }
 
@@ -40,7 +40,7 @@ checkType(val, typeChecking, errMsg := 0) {
     if (!(val is typeChecking)) {
         throw TypeError(errMsg != 0
             ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
-            : Format("Expect Type: {1}. Current Type: {2}", Type(typeChecking), Type(val))
+            : Format("Expect Type: {1}. Current Type: {2}", getTypeName(typeChecking), Type(val))
         )
     }
 }
@@ -75,4 +75,56 @@ checkTypeEvent(e) {
 
 isPlainObject(obj) {
     return obj.base == Object.Prototype ? true : false
+}
+
+
+getTypeName(classType) {
+    if (classType is Struct) {
+        return "Struct"
+    }
+
+    if (classType is Array) {
+        itemType := getTypeName(classType[1])
+        return "Array of " . itemType . "s"
+    }
+
+    switch classType {
+        ; primitives
+        case Number:
+            return "Number"
+        case Integer:
+            return "Integer"
+        case Float:
+            return "Float"
+        case String:
+            return "String"
+
+        ; objects
+        case Func:
+            return "Func"
+        case Enumerator:
+            return "Enumerator"
+        case Closure:
+            return "Closure"
+        case Class:
+            return "Class"
+        case Map:
+            return "Map"
+        case Array:
+            return "Array"
+        case Buffer:
+            return "Buffer"
+        case ComObject:
+            return "ComObject"
+        case Gui:
+            return "Gui"
+
+        ; AddReactive funcs
+        case OrderedMap:
+            return "OrderedMap"
+
+        ; Object
+        case Object:
+            return "Object"
+    }
 }
