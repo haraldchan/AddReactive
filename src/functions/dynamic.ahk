@@ -20,12 +20,14 @@ class Dynamic {
         this.componentPairs := componentPairs
         this.props := props
         this.options := this.props.HasOwnProp("options") ? this.props.options : ""
-        this.position := this.props.HasOwnProp("position") ? this.props.position : ""
         
         ; mount components
         for val, componentInstance in componentPairs {
             componentInstance.render()
             componentInstance.visible(false)
+            for key, val in this.props.OwnProps() {
+                componentInstance.defineProps(this.props)
+            }
             
             for ctrl in componentInstance.ctrls {
                 ctrl.Opt(this.options)
