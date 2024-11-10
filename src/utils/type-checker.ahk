@@ -73,10 +73,14 @@ checkTypeEvent(e) {
     }
 }
 
+/**
+ * Check if the object is plain and returns true or false
+ * @param {Object} obj Object to check.
+ * @returns {Boolean} 
+ */
 isPlainObject(obj) {
     return obj.base == Object.Prototype ? true : false
 }
-
 
 getTypeName(classType) {
     if (classType is Struct) {
