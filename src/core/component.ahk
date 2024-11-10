@@ -63,6 +63,7 @@ class Component {
      * @param {Object} props props Object
      */
     defineProps(props) {
+        checkType(props, Object.Prototype)
         for name, val in props.OwnProps() {
             this.props.DefineProp(name, { Value: val })
         }
