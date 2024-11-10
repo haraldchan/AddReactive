@@ -18,6 +18,10 @@ class signal {
      * @returns {void} 
      */
     set(newSignalValue) {
+        if (newSignalValue == this.value) {
+            return
+        }
+
         ; validates new value if it matches the Struct
         if (this.type is Struct) {
             validateInstance := newSignalValue is Struct.StructInstance
@@ -30,10 +34,6 @@ class signal {
         }
 
         prevValue := this.value
-
-        if (newSignalValue == this.value) {
-            return
-        }
 
         this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
 
@@ -125,15 +125,15 @@ class signal {
      */
     as(datatype) {
         this.type := datatype
+
         if (datatype is Struct) {
-            ; try creating the same struct, not matching, it will throw error.
+            ; try creating the same struct instance for validate.
             validateInstance := this.value is Struct.StructInstance
                 ? this.type.new(this.value.mapify())
                 : this.type.new(this.value)
         } else {
             checkType(this.value, datatype)
         }
-
 
         return this
     }
