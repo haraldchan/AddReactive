@@ -88,12 +88,16 @@ class signal {
 
     ; find nested key by exact query path
     _setExactMatch(keys, item, newValue, index := 1) {
-        if (item.has(keys[index])) {
+        if (index == keys.Length) {
             item[keys[index]] := newValue is Func ? newValue(item[keys[index]]) : newValue
             return
         }
 
-        return this._setExactMatch(keys, item[keys[index]], index + 1, newValue)
+        for k, v in item {
+            if (k == keys[index]) {
+                this._setExactMatch(keys, v, newValue, index + 1)
+            }
+        }
     }
 
     ; find the first matching key
@@ -104,8 +108,8 @@ class signal {
         }
 
         for k, v in item {
-            if (v is Map) {
-                return this._setFirstMatch(key, v, newValue)
+            if (v is Map || v is Struct.StructInstance) {
+                this._setFirstMatch(key, v, newValue)
             }
         }
     }
@@ -120,15 +124,17 @@ class signal {
      * @param {Class|Struct} type Classes or Struct to set.
      */
     as(datatype) {
+        this.type := datatype
         if (datatype is Struct) {
             ; try creating the same struct, not matching, it will throw error.
-            validateInstance := datatype.new(this.value._mapify())
-            validateInstance := ""
+            validateInstance := this.value is Struct.StructInstance
+                ? this.type.new(this.value.mapify())
+                : this.type.new(this.value)
         } else {
             checkType(this.value, datatype)
         }
 
-        this.type := datatype
+
         return this
     }
 
