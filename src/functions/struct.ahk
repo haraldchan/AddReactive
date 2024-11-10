@@ -207,6 +207,15 @@ class Struct {
         }
 
         /**
+         * Returns a boolean indicating whether an element with the specified key exists in this struct instance or not.
+         * @param key The key of the element to test for presence in the struct instance.
+         * @returns {Boolean} true if an element with the specified key exists in the struct instance; otherwise false.
+         */
+        has(key) {
+            return this._keys.find(item => item = key) != "" ? true : false
+        }
+
+        /**
          * Returns a JSON format string of converted StructInstance.
          * @returns {String} 
          */
