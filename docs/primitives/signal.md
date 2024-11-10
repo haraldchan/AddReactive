@@ -42,9 +42,28 @@ count.set(val => val + 1) // count.value : 4
 
 <br>
 
+### 声明 `signal` 值类型
+
+`signal` 的值默认为动态类型。需要对值的类型进行约束时，可使用 `.as()` 方法：
+
+```go
+count := signal(1).as(Integer)
+
+name := signal("Thomas").as(String)
+
+
+count.set("John") 
+// TypeError: Expect Type: Integer. Current Type: String
+
+name.set(42)     
+// TypeError: Expect Type: String. Current Type: Integer
+```
+
+<br>
+
 ### 复杂数据类型的更新
 
-`signal` 的值可以是 `Array` 和 `Map` 对象：
+`signal` 的值可以是 `Array` 、 `Map` 或 `Struct` 对象：
 
 ```go
 numbers := signal([1, 2, 3])
@@ -68,26 +87,32 @@ apple.set(newApple) // apple.value => Map("color", "green", "amount", 5)
 
 <br>
 
-如果要局部更新复杂数据类型的 `signal` ，应使用 `.update()` 方法，传入键或索引和新的值进行更新：
+如果要局部更新复杂数据类型的 `signal` ，应使用 `.update()` 方法，传入参数 `key/index` 和 `newValue` 进行更新：
 
 ```go
 numbers.update(1, 9) // numbers.value : [9, 2, 3]
 
-apple.update("amount", 10) // apple.value : Map("color", "green", "amount", 10)
+apple.update("amount", 10) // apple.value["amount"] : 10
 ```
 
 <br>
 
-### 声明 `signal` 值类型
-
-`signal` 的值默认为动态类型。需要对值的类型进行约束时，可使用 `.as()` 方法：
-
+需要注意的是，如果值是多层嵌套的对象，传入单一属性键返回的是 **对象中第一个匹配的值** ，当需要更新 **指定某个属性** 的值，则应以数组形式传入第一参数：
 ```go
-count := signal(1).as(Integer)
+staff := signal({
+    name: "John",
+    age: 33,
+    contact: {
+        tel: 38573024,
+        email: "johndoe@gmail.com"
+    },
+    company: {
+        address: "xx street, no.xxx",
+        tel: 49573820
+    }
+})
 
-name := signal("Thomas").as(String)
+staff.update("tel", 13894769392) // 更新的是 staff.value["contact"]["tel"]
 
-
-count.set("John") // TypeError
-name.set(42)     // TypeError
+staff.update(["company", "tel"], 88683728) // 更新的是 staff.value["company"]["tel"]
 ```
