@@ -8,46 +8,48 @@ ogui.Show()
 App(App) {
     color := signal("Red")
     colorComponents := OrderedMap(
-        "Red", Red(App),
-        "Blue", Blue(App),
-        "Green", Red(App),
+        "Red", Red,
+        "Blue", Blue,
+        "Green", Green,
     )
 
     return (
-        App.AddDropDownList("w150", ["Red", "Blue", "Green"])
+        App.AddDropDownList("w150 Choose1", ["Red", "Blue", "Green"])
         .OnEvent("Change", (ctrl, _) => color.set(ctrl.Text)),
         
         Dynamic(
             color, 
             colorComponents, 
             ; pass in an object of props that use by all components in Dynamic
-            { style: "w200 h30" }
+            { app: App, style: "x20 y50 w200" }
         )
     )
 }
 
 
-Red(App) {
+Red(props) {
+    App := props.app
+
     R := Component(App, A_ThisFunc)
-    ; announce props as a receiver
-    R.defineProps({ style: "" })
-    R.render := (this) => this.Add(App.AddText(this.props.style, "RED TEXT"))
+    R.render := (this) => this.Add(App.AddText(props.style, "RED TEXT"))
     
     return R
 }
 
-Blue(App) {
+Blue(props) {
+    App := props.app
+
     B := Component(App, A_ThisFunc)
-    B.defineProps({ style: "" })
-    B.render := (this) => this.Add(App.AddEdit(this.props.style, "BLUE EDIT"))
+    B.render := (this) => this.Add(App.AddEdit(props.style, "BLUE EDIT"))
 
     return B
 }
 
-Green(App) {
+Green(props) {
+    App := props.app
+
     G := Component(App, A_ThisFunc)
-    G.defineProps({ style: "" })
-    G.render := (this) => this.Add(App.AddRadio(this.props.style, "GREEN RADIO"))
+    G.render := (this) => this.Add(App.AddRadio(props.style, "GREEN RADIO"))
 
     return G
 }
