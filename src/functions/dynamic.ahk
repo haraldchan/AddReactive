@@ -3,21 +3,21 @@ class Dynamic {
     /**
      * Render stateful component dynamically base on signal.
      * @param {signal} _signal Depend signal.
-     * @param {Map} componentPairs A Map  with option values and related class components
+     * @param {Map} componentEntries A Map  with option values and related class components
      * @param {Object} props additional props
      */
-    __New(_signal, componentPairs, props := {}) {
+    __New(_signal, componentEntries, props) {
         checkType(_signal, signal, "Parameter #1 is not a signal")
-        checkType(componentPairs, Map, "Parameter #2 is not a Map")
+        checkType(componentEntries, Map, "Parameter #2 is not a Map")
+        checkType(props, Object.Prototype, "Parameter #3 is not an Object")
 
         this.signal := _signal
-        this.componentPairs := componentPairs
+        this.componentEntries := componentEntries
         this.props := props
-        this.options := this.props.HasOwnProp("options") ? this.props.options : ""
         this.components := []
         
         ; mount components
-        for val, component in componentPairs {
+        for val, component in this.componentEntries {
             instance := component.Call(this.props)
             this.components.Push(instance)
 
@@ -31,7 +31,7 @@ class Dynamic {
 
     _renderDynamic(currentValue) {
         for component in this.components {
-            component.visible(this.componentPairs[currentValue].name == component.name)
+            component.visible(this.componentEntries[currentValue].name == component.name)
         }
     }
 }
