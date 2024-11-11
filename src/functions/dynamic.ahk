@@ -1,55 +1,37 @@
-#SingleInstance Force
-#Include "../useAddReactive.ahk"
+; An AddReactive component that allows you to render componeny dynamically based on signal and Map.
+class Dynamic {
+    /**
+     * Render stateful component dynamically base on signal.
+     * @param {signal} _signal Depend signal.
+     * @param {Map} componentPairs A Map  with option values and related class components
+     * @param {Object} props additional props
+     */
+    __New(_signal, componentPairs, props := {}) {
+        checkType(_signal, signal, "Parameter #1 is not a signal")
+        checkType(componentPairs, Map, "Parameter #2 is not a Map")
 
-oGui := Gui()
-App(oGui)
-ogui.Show()
-
-App(App) {
-    color := signal("Red")
-    colorComponents := OrderedMap(
-        "Red", Red,
-        "Blue", Blue,
-        "Green", Green,
-    )
-
-    return (
-        App.AddDropDownList("w150 Choose1", ["Red", "Blue", "Green"])
-        .OnEvent("Change", (ctrl, _) => color.set(ctrl.Text)),
+        this.signal := _signal
+        this.componentPairs := componentPairs
+        this.props := props
+        this.options := this.props.HasOwnProp("options") ? this.props.options : ""
+        this.components := []
         
-        Dynamic(
-            color, 
-            colorComponents, 
-            ; pass in an object of props that use by all components in Dynamic
-            { app: App, style: "x20 y50 w200" }
-        )
-    )
-}
+        ; mount components
+        for val, component in componentPairs {
+            instance := component.Call(this.props)
+            this.components.Push(instance)
 
+            instance.render()
+        }
 
-Red(props) {
-    App := props.app
+        ; show components conditionally
+        this._renderDynamic(this.signal.value)
+        effect(this.signal, cur => this._renderDynamic(cur))
+    }
 
-    R := Component(App, A_ThisFunc)
-    R.render := (this) => this.Add(App.AddText(props.style, "RED TEXT"))
-    
-    return R
-}
-
-Blue(props) {
-    App := props.app
-
-    B := Component(App, A_ThisFunc)
-    B.render := (this) => this.Add(App.AddEdit(props.style, "BLUE EDIT"))
-
-    return B
-}
-
-Green(props) {
-    App := props.app
-
-    G := Component(App, A_ThisFunc)
-    G.render := (this) => this.Add(App.AddRadio(props.style, "GREEN RADIO"))
-
-    return G
+    _renderDynamic(currentValue) {
+        for component in this.components {
+            component.visible(this.componentPairs[currentValue].name == component.name)
+        }
+    }
 }
