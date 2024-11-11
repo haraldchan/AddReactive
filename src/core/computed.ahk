@@ -1,6 +1,11 @@
 class computed {
     /**
      * Create a computed signal which derives a reactive value.
+     * ```
+     * count := signal(2)
+     * 
+     * doubled := computed(count, c => c * 2) ; doubled.value : 4
+     * ```
      * @param {signal | signal[]} depend The signal derives from.
      * @param {Func} mutation computation function expression.
      * @return {computed}

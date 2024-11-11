@@ -1,11 +1,19 @@
 class signal {
     /**
      * Creates a reactive signal variable.
+     * ```
+     * count := signal(0)
+     * current := count.value ; current: 0
+     * 
+     * ; change the value by .set(value) or .set(callback)
+     * count.set(3)
+     * count.set(cur => cur + 2)
+     * ```
      * @param {any} initialValue The initial value of the signal.This argument is ignored after the initial render.
      * @return {Signal}
      */
-    __New(val) {
-        this.value := isPlainObject(val) ? this._mapify(val) : val
+    __New(initialValue) {
+        this.value := isPlainObject(initialValue) ? this._mapify(initialValue) : initialValue
         this.subs := []
         this.comps := []
         this.effects := []

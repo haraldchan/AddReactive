@@ -3,6 +3,11 @@ class Component {
      * Create a component instance.
      * ```
      * comp := Component(guiObj, "componentName")
+     * 
+     * Comp(guiObj) {
+     *     c := Component(guiObj, A_ThisFunc)
+     *     ; ...
+     * }
      * ```
      * @param {String} name The unique name of the component
      * @param {Object} props 
