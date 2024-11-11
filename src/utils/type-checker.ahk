@@ -26,18 +26,14 @@ checkType(val, typeChecking, errMsg := 0) {
             ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
             : Format("Expect Type: {1}. Current Type: {2}", getTypeName(typeChecking), Type(val))
         )
-    }
-
-    if (typeChecking == Object.Prototype) {
+    } else if (typeChecking == Object.Prototype) {
         if (!isPlainObject(val)) {
             throw TypeError(errMsg != 0
                 ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
                 : Format("Expect Type: {1}. Current Type: {2}", "plain ", Type(val))
             )    
         }
-    }
-
-    if (!(val is typeChecking)) {
+    } else if (!(val is typeChecking)) {
         throw TypeError(errMsg != 0
             ? Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(val))
             : Format("Expect Type: {1}. Current Type: {2}", getTypeName(typeChecking), Type(val))
