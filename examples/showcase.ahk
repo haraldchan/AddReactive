@@ -15,14 +15,9 @@ App(App) {
 
     return (
         App.AddDropDownList("w150 Choose1", ["Red", "Blue", "Green"])
-        .OnEvent("Change", (ctrl, _) => color.set(ctrl.Text)),
+           .OnEvent("Change", (ctrl, _) => color.set(ctrl.Text)),
         
-        Dynamic(
-            color, 
-            colorComponents, 
-            ; pass in an object of props that use by all components in Dynamic
-            { app: App, style: "x20 y50 w200" }
-        )
+        Dynamic(color, colorComponents, { app: App, style: "x20 y50 w200" })
     )
 }
 
