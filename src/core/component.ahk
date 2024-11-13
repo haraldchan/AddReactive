@@ -5,8 +5,9 @@ class Component {
      * comp := Component(guiObj, "componentName")
      * 
      * Comp(guiObj) {
-     *     c := Component(guiObj, A_ThisFunc)
-     *     ; ...
+     *   c := Component(guiObj, A_ThisFunc)
+     *   ; ...
+     *   return c
      * }
      * ```
      * @param {String} name The unique name of the component
@@ -104,5 +105,4 @@ class Component {
     }
 }
 
-Gui.Prototype.Component := Component
 Gui.Prototype.components := []
