@@ -6,17 +6,15 @@ class AddReactiveText extends AddReactive {
      * @param {string} innerText Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
      * @returns {AddReactiveText}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         this.key := key
-        super.__New(GuiObject, "Text", options, innerText, depend, key, event)
+        super.__New(GuiObject, "Text", options, innerText, depend, key)
     }
 }
 class ARText extends AddReactiveText {
@@ -29,19 +27,17 @@ class AddReactiveEdit extends AddReactive {
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
      * @param {string} innerText Text or formatted text to hold signal values.
-     * @param {signal} [depend] Subscribed signal
-     * @param {array} [key] the keys or index of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
+     * @param {signal} [depend] Subscribed signal.
+     * @param {array} [key] the keys or index of the signal's value.
      * @returns {AddReactiveEdit}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         this.key := key
-        super.__New(GuiObject, "Edit", options, innerText, depend, key, event)
+        super.__New(GuiObject, "Edit", options, innerText, depend, key)
     }
 }
 class AREdit extends AddReactiveEdit {
@@ -56,17 +52,15 @@ class AddReactiveButton extends AddReactive {
      * @param {string} innerText Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
      * @returns {AddReactiveButton}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         this.key := key
-        super.__New(GuiObject, "Button", options, innerText, depend, key, event)
+        super.__New(GuiObject, "Button", options, innerText, depend, key)
     }
 }
 class ARButton extends AddReactiveButton {
@@ -81,17 +75,15 @@ class AddReactiveCheckBox extends AddReactive {
      * @param {string} innerText Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
      * @returns {AddReactiveCheckBox}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         this.key := key
-        super.__New(GuiObject, "CheckBox", options, innerText, depend, key, event)
+        super.__New(GuiObject, "CheckBox", options, innerText, depend, key)
     }
 }
 class ARCheckBox extends AddReactiveCheckBox {
@@ -106,17 +98,15 @@ class AddReactiveRadio extends AddReactive {
      * @param {string} innerText Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
      * @returns {AddReactiveRadio}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         this.key := key
-        super.__New(GuiObject, "Radio", options, innerText, depend, key, event)
+        super.__New(GuiObject, "Radio", options, innerText, depend, key)
     }
 }
 class ARRadio extends AddReactiveRadio {
@@ -124,11 +114,10 @@ class ARRadio extends AddReactiveRadio {
 }
 
 class AddReactiveDropDownList extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options, mapObj, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(mapObj, Map, "Parameter #2 (Map Object) is not a Map")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         ; mapObj: a Map(value, optionText) map object
         this.key := key
@@ -139,7 +128,7 @@ class AddReactiveDropDownList extends AddReactive {
             this.vals.Push(val)
             this.text.Push(text)
         }
-        super.__New(GuiObject, "DropDownList", options, this.text, depend, key, event)
+        super.__New(GuiObject, "DropDownList", options, this.text, depend, key)
     }
 }
 class ARDropDownList extends AddReactiveDropDownList {
@@ -150,11 +139,10 @@ class ARDDL extends AddReactiveDropDownList {
 }
 
 class AddReactiveComboBox extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options, mapObj, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkType(mapObj, Map, "Parameter #2 (Map Object) is not a Map")
         checkTypeDepend(depend)
-        checkType(event, event = 0 ? Number : Map, "Parameter 'Event' is not a Map")
 
         ; mapObj: a Map(value, optionText) map object
         this.key := key
@@ -165,7 +153,7 @@ class AddReactiveComboBox extends AddReactive {
             this.vals.Push(val)
             this.text.Push(text)
         }
-        super.__New(GuiObject, "ComboBox", options, this.text, depend, key, event)
+        super.__New(GuiObject, "ComboBox", options, this.text, depend, key)
     }
 }
 class ARComboBox extends AddReactiveComboBox {
@@ -177,13 +165,12 @@ class AddReactiveListView extends AddReactive {
      * Add a reactive ListView control to Gui
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {{keys: string[], titles: string[], width: number[]}} columnDetails Descriptor object contains keys of col value, column title texts and column width.
+     * @param { {keys: string[], titles: string[], width: number[]} } columnDetails Descriptor object contains keys of col value, column title texts and column width.
      * @param {signal} depend Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
-     * @param {[ event: Event, callback: ()=>void ]} [event] Events and callback function objects.
      * @returns {AddReactiveListView}     
      */
-    __New(GuiObject, options, columnDetails, depend := 0, key := 0, event := 0) {
+    __New(GuiObject, options, columnDetails, depend := 0, key := 0) {
         ; options type checking
         checkType(options, Object.Prototype, "Parameter #1 (options) is not an Object")
         checkType(options.lvOptions, String, "options.lvOptions is not a string")
@@ -204,7 +191,7 @@ class AddReactiveListView extends AddReactive {
         checkType(depend.value, Array, "Depend value of AddReactive ListView is not an Array")
 
         this.key := key
-        super.__New(GuiObject, "ListView", options, columnDetails, depend, key, event)
+        super.__New(GuiObject, "ListView", options, columnDetails, depend, key)
     }
 
     setColumndDetails(newColumnDetails, columnOptions := "") {
