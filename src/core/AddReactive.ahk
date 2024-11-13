@@ -254,7 +254,7 @@ class AddReactive {
     ; APIs
     /**
      * Registers one or more functions to be call when given event is raised. 
-     * @param {String | Map} event Event name | An Map contains key-value pairs of event-callback.
+     * @param {String|Map} event Event name | An Map contains key-value pairs of event-callback.
      * @param {Func} fn (optional) Event callback function.
      */
     OnEvent(event, fn := 0) {
@@ -269,17 +269,25 @@ class AddReactive {
         return this
     }
 
-    setOptions(newOptions) {
+    Opt(newOptions) {
         this.ctrl.Opt(newOptions)
         return this
     }
 
-    setFont(options := "", fontName := "") {
+    /**
+     * Sets the font typeface, size, style, and/or color for controls added to the window from this point onward.
+     * ```
+     * AddReactiveText("...", "Text").SetFont("cRed s12", "Arial")
+     * ```
+     * @param {String} options Font options. C: color, S: size, W: weight, Q: quality
+     * @param {String} fontName Name of font to set. 
+     */
+    SetFont(options := "", fontName := "") {
         this.ctrl.SetFont(options, fontName)
         return this
     }
 }
 
 Gui.Prototype.AddReactive := AddReactive
-gui.Prototype.arcs := []
-gui.Prototype.arcGroups := []
+Gui.Prototype.arcs := []
+Gui.Prototype.arcGroups := []
