@@ -2,9 +2,25 @@
 class IndexList {
     /**
      * A looping component allows render controls base on signal
-     * @param {Func: ()=>[...Gui.Control|...AddReactive]} renderCallback 
-     * @param {signal} _signal 
-     * @param {Array} keys 
+     * ```
+     * IndexList(() => [ 
+     *     oGui.AddText("...", "staff info"), 
+     *     oGui.AddEdit("...", "name: {1}"),
+     *     oGui.AddEdit("...", "title: {2}")
+     * ], staff, ["name", "title"])
+     * ```
+     * @param {Func: ()=>[...Gui.Control|...AddReactive]} renderCallback An func object returns an array of Gui.Control/AddReactive controls.
+     * ```
+     * () => [ oGui.AddText("...", "staff info"), ... ]
+     * ```
+     * @param {signal} _signal A signal with the value type of Map/Object.
+     * ```
+     * staff := signal({ name: "Amy", title: "Manager"})
+     * ```
+     * @param {Array} keys An array of keys to indicate value insert order.
+     * ```
+     * keys := ["name", "title"]
+     * ```
      * @returns {IndexList}
      */
     __New(renderCallback, _signal, keys := []) {

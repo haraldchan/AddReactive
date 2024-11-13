@@ -4,8 +4,8 @@ class Struct {
      * ```
      * Person := Struct({
      *  name: String,
-     *  age: Integer,
-     *  tel: Number
+     *  age:  Integer,
+     *  tel:  Number
      * })
      * ```
      * @param {Object} structObject An object defining the structure and data types for each field.
@@ -22,6 +22,13 @@ class Struct {
     /**
      * Returns a Struct instance fulfills predefined data structure.
      * @param {Object|Map|OrderedMap} data 
+     * ```
+     * staff := Person.new({ 
+     *   name: "Amy", 
+     *   age:   29, 
+     *   tel:   88372153
+     * })
+     * ```
      * @returns {StructInstance} 
      */
     new(data) {
