@@ -2,9 +2,26 @@
 class Dynamic {
     /**
      * Render stateful component dynamically base on signal.
+     * ```
+     * Dynamic(color, colorEntries, props)
+     * ```
      * @param {signal} _signal Depend signal.
+     * ```
+     * color := signal("Red")
+     * ```
      * @param {Map} componentEntries A Map  with option values and related class components
+     * ```
+     * Red(props) {
+     *     r := Component(props.oGui, A_ThisFuc)
+     *     return r
+     * }
+     * 
+     * colorEntries := Map("Red", Red, "Blue", Blue)
+     * ```
      * @param {Object} props additional props
+     * ```
+     * props := { gui: oGui, style: "w200 h30" }
+     * ```
      */
     __New(_signal, componentEntries, props) {
         checkType(_signal, signal, "Parameter #1 is not a signal")

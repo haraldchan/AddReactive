@@ -87,10 +87,10 @@ class OrderedMap extends Map {
         this._values.Push(valuesToSet*)
     }
 
-    __Enum(nov) {
+    __Enum(NumberOfVars) {
         return EnumKVI
 
-        EnumKVI(&key, &value, &index := 0) {
+        EnumKVI(&key, &value := 0, &index := 0) {
             if (A_Index > this._keys.Length) {
                 return false
             }
