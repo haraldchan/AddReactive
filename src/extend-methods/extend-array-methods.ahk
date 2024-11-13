@@ -1,5 +1,5 @@
 defineArrayMethods(arr) {
-    
+
     arr.Prototype.some := some
     some(arr, fn) {
         for item in arr {
@@ -184,10 +184,10 @@ defineArrayMethods(arr) {
 
         for item in arr {
             if (A_Index = arr.Length) {
-                    joined .= item
-                } else {
-                    joined .= item . separator
-                }
+                joined .= item
+            } else {
+                joined .= item . separator
+            }
 
         }
 
