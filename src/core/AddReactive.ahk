@@ -7,10 +7,9 @@ class AddReactive {
      * @param {string|Array|Object} content Text or formatted text for text, options for DDL/ComboBox, column option object for ListView.
      * @param {signal|Array|Object} depend Subscribed signal, or an array of signals. 
      * @param {string|number} key A key or index as render indicator.
-     * @param {[ event: Event, callback: ()=>void ]} event Events and callback function objects.
      * @returns {AddReactive} 
      */
-    __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0, event := 0) {
+    __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0) {
         this.GuiObject := GuiObject
         this.ctrlType := controlType
         this.options := this._handleArcName(options)
@@ -52,13 +51,6 @@ class AddReactive {
             this.ctrl.OnEvent("Click", (ctrl, *) => this.checkValueDepend.set(ctrl.Value))
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
-        }
-
-        ; add event
-        if (event != 0) {
-            for e, cb in event {
-                this.ctrl.OnEvent(e, cb)
-            }
         }
 
         ; add subscribe
