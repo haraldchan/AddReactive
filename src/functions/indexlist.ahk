@@ -15,7 +15,10 @@ class IndexList {
      * ```
      * @param {signal} _signal A signal with the value type of Map/Object.
      * ```
-     * staff := signal({ name: "Amy", title: "Manager"})
+     * staff := signal([
+     *   { name: "Amy", title: "Manager"},
+     *   { name: "Kevin", title: "Attendant"}
+     * ])
      * ```
      * @param {Array} keys An array of keys to indicate value insert order.
      * ```
