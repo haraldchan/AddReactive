@@ -22,7 +22,7 @@ App(App) {
         Dynamic(
             color, 
             colorComponents, 
-            ; pass in an object of props that use by all components in Dynamic
+            // 以对象形式传递组件共通的属性参数
             { app: App, style: "x20 y50 w200" }
         )
     )

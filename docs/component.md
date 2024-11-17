@@ -145,7 +145,7 @@ Triple(gui, num) {
 
 ```go
 Increment(gui, number) {
-    // 使用  Component 类创建一个组件实例。需要传入的参数未 Gui 和 组件名称
+    // 使用  Component 类创建一个组件实例。需要传入的参数未 Gui 和 组件名称 (使用 A_ThisFunc 最为便利)
     i := Component(gui, A_ThisFunc)
     num := signal(number)
 
