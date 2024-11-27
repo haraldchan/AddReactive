@@ -9,48 +9,55 @@ class AddReactive {
      * @param {string|number} key A key or index as render indicator.
      * @returns {AddReactive} 
      */
-    __New(GuiObject, controlType, options := "", textString := "", depend := 0, key := 0) {
+    __New(GuiObject, controlType, options := "", content := "", depend := 0, key := 0) {
         this.GuiObject := GuiObject
         this.ctrlType := controlType
         this.options := this._handleArcName(options)
-        this.formattedString := textString
+        this.content := content
         this.depend := this._filterDepends(depend)
         this.checkStatusDepend := ""
         this.key := key
 
         ; ListView options
-        if (controlType = "ListView") {
+        if (controlType == "ListView") {
             this.lvOptions := options.lvOptions
             this.itemOptions := options.HasOwnProp("itemOptions") ? options.itemOptions : ""
             this.checkedRows := []
         }
 
         ; textString handling
-        if (controlType = "ComboBox" || controlType = "DropDownList") {
-            this.innerText := textString
-        } else if (controlType = "ListView") {
-            this.titleKeys := textString.keys
-            this.innerText := textString.HasOwnProp("titles") 
-                ? textString.titles 
+        if (controlType == "ComboBox" || controlType == "DropDownList") {
+            if (content is Array) {
+                this.optionTexts := content
+            } else if (content is Map) {
+                this.optionTexts := content.keys()
+                this.optionsValues := content.values()
+            }
+        } else if (controlType == "ListView") {
+            this.titleKeys := content.keys
+            this.formattedContent := content.HasOwnProp("titles")
+                ? content.titles
                 : this.titleKeys.map(key => (key is Array) ? key[key.Length] : key)
-            this.colWidths := textString.HasOwnProp("widths") ? textString.widths : this.titleKeys.map(item => "AutoHdr")
+            this.colWidths := content.HasOwnProp("widths") ? content.widths : this.titleKeys.map(item => "AutoHdr")
         } else {
-            this.innerText := RegExMatch(textString, "\{\d+\}") ? this._handleFormatStr(textString, depend, key) : textString
+            this.formattedContent := RegExMatch(content, "\{\d+\}") ? this._handleFormatStr(content, depend, key) : content
         }
 
         ; add control
-        if (controlType = "ListView") {
-            this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.innerText)
+        if (controlType == "ListView") {
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.lvOptions, this.formattedContent)
             this._handleListViewUpdate()
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
-        } else if (controlType = "CheckBox" && this.HasOwnProp("checkValueDepend")) {
-            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
+        } else if (controlType == "CheckBox" && this.HasOwnProp("checkValueDepend")) {
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
             this.ctrl.Value := this.checkValueDepend.value
             this.ctrl.OnEvent("Click", (ctrl, *) => this.checkValueDepend.set(ctrl.Value))
+        } else if (controlType == "ComboBox" || controlType == "DropDownList") {
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.optionTexts)
         } else {
-            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.innerText)
+            this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
         }
 
         ; add subscribe
@@ -179,7 +186,7 @@ class AddReactive {
                 }
 
                 if (key is Array) {
-                    return getExactMatch(key, itemIn, 1)    
+                    return getExactMatch(key, itemIn, 1)
                 }
             }
 
@@ -195,11 +202,11 @@ class AddReactive {
                 return item
             }
 
-            return getExactMatch(keys, item[keys[index]], index+1)
+            return getExactMatch(keys, item[keys[index]], index + 1)
         }
 
         ; find the first matching key
-        getFirstMatch(key, item){
+        getFirstMatch(key, item) {
             if (item.Has(key)) {
                 return item[key]
             }
@@ -207,7 +214,7 @@ class AddReactive {
             for k, v in item {
                 if (v is Map) {
                     res := getFirstMatch(key, v)
-                    if (res != ""){
+                    if (res != "") {
                         return res
                     }
                 }
@@ -219,12 +226,12 @@ class AddReactive {
     update(signal) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
-            this.ctrl.Text := this._handleFormatStr(this.formattedString, this.depend, this.key)
+            this.ctrl.Text := this._handleFormatStr(this.content, this.depend, this.key)
         }
 
         if (this.ctrl is Gui.Edit) {
             ; update text value
-            this.ctrl.Value := this._handleFormatStr(this.formattedString, this.depend, this.key)
+            this.ctrl.Value := this._handleFormatStr(this.content, this.depend, this.key)
         }
 
         if (this.ctrl is Gui.ListView) {
@@ -244,26 +251,44 @@ class AddReactive {
                 return
             }
             ; update text label
-            this.ctrl.Text := this._handleFormatStr(this.formattedString, this.depend, this.key)
+            this.ctrl.Text := this._handleFormatStr(this.content, this.depend, this.key)
             if (this.HasOwnProp("checkValueDepend")) {
                 this.ctrl.Value := this.checkValueDepend.Value
             }
+        }
+
+        if (this.ctrl is Gui.ComboBox || this.ctrl is Gui.DDL) {
+            ; replace the list content
+            this.ctrl.Delete()
+            this.ctrl.Add(signal.value is Array ? signal.value : signal.value.keys())
+            this.content := signal.value
         }
     }
 
     ; APIs
     /**
      * Registers one or more functions to be call when given event is raised. 
-     * @param {String|Map} event Event name | An Map contains key-value pairs of event-callback.
-     * @param {Func} fn (optional) Event callback function.
+     * @param {Map<String, Func>|<String, Func>} event Event name | An Map contains key-value pairs of event-callback.
+     * ```
+     * ; single event
+     * AddReactive.OnEvent("Click", (arc, *) => (...)
+     * 
+     * ; multiple events
+     * AddReactive.OnEvent(Map(
+     *   "Click", (arc, ctrl, info) => (...), 
+     *   "DoubleClick", (arc, ctrl, info) => (...)
+     * )
+     * 
+     * ```
+     * @returns {AddReactive} 
      */
-    OnEvent(event, fn := 0) {
-        if (event is Map) {
-            for e, cb in event {
-                this.ctrl.OnEvent(e, cb)
+    OnEvent(event*){
+        if (event[1] is Map) {
+            for eventName, callbackFn in event[1] {
+                this.ctrl.OnEvent(eventName, (params*) => callbackFn(this, params*))
             }
         } else {
-            this.ctrl.OnEvent(event, fn)
+            this.ctrl.OnEvent(event[1], (params*) => event[2](this, params*))
         }
 
         return this
