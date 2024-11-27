@@ -29,7 +29,7 @@ ddlComboBox(App) {
         App.AddButton("x+10 w50", "添加").OnEvent("Click", handleAddToArr)
         
         ; combobox with map
-        App.ARComboBox("w150", mapList)
+        App.ARComboBox("w150", mapList).OnEvent("Change", (arc, ctrl, _) => MsgBox(arc.optionValues[ctrl.Text]))
         App.AddEdit("vaddToMK w50", "key"),
         App.AddEdit("vaddToMV w50 x+10", "val"),
         App.AddButton("x+10 w50", "添加").OnEvent("Click", handleAddToMap)
