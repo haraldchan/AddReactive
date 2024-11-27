@@ -114,13 +114,13 @@ class ARRadio extends AddReactiveRadio {
 }
 
 class AddReactiveDropDownList extends AddReactive {
-    __New(GuiObject, options, list, depend := 0, key := 0) {
+    __New(GuiObject, options, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(list, [Array, Map], "Parameter #2 (list) is not a Map or Array")
+        ; checkType(list, [Array, Map], "Parameter #2 (list) is not a Map or Array")
         checkTypeDepend(depend)
         this.key := key
 
-        super.__New(GuiObject, "DropDownList", options, list, depend, key)
+        super.__New(GuiObject, "DropDownList", options,, depend, key)
     }
 }
 class ARDropDownList extends AddReactiveDropDownList {
@@ -133,11 +133,11 @@ class ARDDL extends AddReactiveDropDownList {
 class AddReactiveComboBox extends AddReactive {
     __New(GuiObject, options, list, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(list, [Array, Map], "Parameter #2 (list) is not a Map or Array")
+        ; checkType(list, [Array, Map], "Parameter #2 (list) is not a Map or Array")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "ComboBox", options, list, depend, key)
+        super.__New(GuiObject, "ComboBox", options,, depend, key)
     }
 }
 class ARComboBox extends AddReactiveComboBox {
