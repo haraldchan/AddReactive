@@ -38,7 +38,13 @@ class signal {
                 ? this.type.new(newSignalValue.mapify())
                 : this.type.new(newSignalValue)
             validateInstance := ""
-            ; other type checking
+        } else if (this.type is Array && this.type[1] is Struct) {
+            for item in this.value {
+                validateInstance := this.value is Struct.StructInstance
+                    ? this.type.new(this.value.mapify())
+                    : this.type.new(this.value)
+                validateInstance := ""
+            }
         } else if (this.type != "") {
             checkType(newSignalValue, this.type)
         }
@@ -141,6 +147,15 @@ class signal {
             validateInstance := this.value is Struct.StructInstance
                 ? this.type.new(this.value.mapify())
                 : this.type.new(this.value)
+            validateInstance := ""
+            
+        } else if (datatype is Array && datatype[1] is Struct) {
+            for item in this.value {
+                validateInstance := this.value is Struct.StructInstance
+                    ? this.type.new(this.value.mapify())
+                    : this.type.new(this.value)
+                validateInstance := ""
+            }
         } else {
             checkType(this.value, datatype)
         }
