@@ -13,7 +13,9 @@ class signal {
      * @return {Signal}
      */
     __New(initialValue) {
-        this.value := isPlainObject(initialValue) ? this._mapify(initialValue) : initialValue
+        this.value := isPlainObject(initialValue) || initialValue is Array || initialValue is Map
+            ? this._mapify(initialValue) 
+            : initialValue
         this.subs := []
         this.comps := []
         this.effects := []
@@ -46,7 +48,7 @@ class signal {
         this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
 
         ; change to Map()
-        if (newSignalValue.base == Object.Prototype) {
+        if (isPlainObject(newSignalValue) || newSignalValue is Array || newSignalValue is Map) {
             this.value := this._mapify(this.value)
         }
 
