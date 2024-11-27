@@ -114,21 +114,13 @@ class ARRadio extends AddReactiveRadio {
 }
 
 class AddReactiveDropDownList extends AddReactive {
-    __New(GuiObject, options, mapObj, depend := 0, key := 0) {
+    __New(GuiObject, options, list, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(mapObj, Map, "Parameter #2 (Map Object) is not a Map")
+        checkType(list, [Array, Map], "Parameter #2 (list) is not a Map or Array")
         checkTypeDepend(depend)
-
-        ; mapObj: a Map(value, optionText) map object
         this.key := key
-        this.mapObj := mapObj
-        this.vals := []
-        this.text := []
-        for val, text in this.mapObj {
-            this.vals.Push(val)
-            this.text.Push(text)
-        }
-        super.__New(GuiObject, "DropDownList", options, this.text, depend, key)
+
+        super.__New(GuiObject, "DropDownList", options, list, depend, key)
     }
 }
 class ARDropDownList extends AddReactiveDropDownList {
@@ -141,9 +133,9 @@ class ARDDL extends AddReactiveDropDownList {
 class AddReactiveComboBox extends AddReactive {
     __New(GuiObject, options, list, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(list, [Array, Map], "Parameter #2 (Map Object) is not a Map")
+        checkType(list, [Array, Map], "Parameter #2 (list) is not a Map or Array")
         checkTypeDepend(depend)
-        
+
         this.key := key
         super.__New(GuiObject, "ComboBox", options, list, depend, key)
     }
