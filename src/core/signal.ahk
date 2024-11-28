@@ -40,9 +40,9 @@ class signal {
             validateInstance := ""
         } else if (this.type is Array && this.type[1] is Struct) {
             for item in this.value {
-                validateInstance := this.value is Struct.StructInstance
-                    ? this.type.new(this.value.mapify())
-                    : this.type.new(this.value)
+                validateInstance := item is Struct.StructInstance
+                    ? this.type[1].new(item.mapify())
+                    : this.type[1].new(item)
                 validateInstance := ""
             }
         } else if (this.type != "") {
@@ -151,9 +151,9 @@ class signal {
             
         } else if (datatype is Array && datatype[1] is Struct) {
             for item in this.value {
-                validateInstance := this.value is Struct.StructInstance
-                    ? this.type.new(this.value.mapify())
-                    : this.type.new(this.value)
+                validateInstance := item is Struct.StructInstance
+                    ? this.type[1].new(item.mapify())
+                    : this.type[1].new(item)
                 validateInstance := ""
             }
         } else {
