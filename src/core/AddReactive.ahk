@@ -27,13 +27,6 @@ class AddReactive {
 
         ; textString handling
         if (controlType == "ComboBox" || controlType == "DropDownList") {
-            ; if (content is Array) {
-                ; this.optionTexts := content
-                ; 
-            ; } else if (content is Map) {
-                ; this.optionTexts := content.keys()
-                ; this.optionsValues := content.values()
-                ; }
             if (depend.value is Array) {
                 this.optionTexts := depend.value
             } else if (depend.value is Map) {
@@ -268,8 +261,13 @@ class AddReactive {
             ; replace the list content
             this.ctrl.Delete()
             this.ctrl.Add(signal.value is Array ? signal.value : signal.value.keys())
-            this.optionsTexts := signal.value.keys()
-            this.optionsValues := signal.value.values()
+            this.ctrl.Choose(1)
+            if (signal.value is Array) {
+                this.optionTexts := signal.value
+            } else {
+                this.optionsTexts := signal.value.keys()
+                this.optionsValues := signal.value.values()
+            }
         }
     }
 
