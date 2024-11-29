@@ -11,7 +11,7 @@ ddlComboBox(App) {
 
     handleAddToArr(*) {
         item := App.getCtrlByName("addToArr").Value
-        arrList.set(([arrList.value*].concat(item)))
+        arrList.set(arrList.value.concat(item))
     }
     
     handleAddToMap(*) {
