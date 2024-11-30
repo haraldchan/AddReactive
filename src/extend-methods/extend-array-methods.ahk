@@ -104,7 +104,7 @@ defineArrayMethods(arr) {
         return newArray
     }
 
-    arr.Prototype.concat := append
+    arr.Prototype.append := append
     append(arr, val) {
         newArray := arr
 
