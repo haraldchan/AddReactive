@@ -277,12 +277,12 @@ class AddReactive {
      * @param {Map<String, Func>|<String, Func>} event Event name | An Map contains key-value pairs of event-callback.
      * ```
      * ; single event
-     * AddReactive.OnEvent("Click", (arc, *) => (...)
+     * AddReactive.OnEvent("Click", (*) => (...))
      * 
      * ; multiple events
      * AddReactive.OnEvent(Map(
-     *   "Click", (arc, ctrl, info) => (...), 
-     *   "DoubleClick", (arc, ctrl, info) => (...)
+     *   "Click", (*) => (...), 
+     *   "DoubleClick", (*) => (...)
      * )
      * 
      * ```
@@ -291,10 +291,10 @@ class AddReactive {
     OnEvent(event*){
         if (event[1] is Map) {
             for eventName, callbackFn in event[1] {
-                this.ctrl.OnEvent(eventName, (params*) => callbackFn(this, params*))
+                this.ctrl.OnEvent(eventName, callbackFn)
             }
         } else {
-            this.ctrl.OnEvent(event[1], (params*) => event[2](this, params*))
+            this.ctrl.OnEvent(event[1], event[2])
         }
 
         return this
