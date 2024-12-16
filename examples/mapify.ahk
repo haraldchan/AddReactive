@@ -11,7 +11,14 @@ obj := {
         },
         email: "233@gmail.com"
     },
-    hobbies: [ "coding", "driving", { sports: ["tennis", "swimming"] } ]
+    hobbies: [ "coding", "driving", { sports: ["tennis", "swimming"] } ],
+    family: Map(
+        "father", "jones",
+        "mother", "jane",
+        "grandparents", Map(
+            "grandfather", "johaness",
+        )
+    )
 }
 
 mapify(obj) {
