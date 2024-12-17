@@ -176,9 +176,34 @@ class signal {
     }
 
     _mapify(obj) {
-        if (!(obj is Object)) {
-            return obj
+        if (!isPlainObject(obj) && !(obj is Array) && !(obj is Map)) {
+            return
         }
-        return JSON.parse(JSON.stringify(obj))
+
+        if (isPlainObject(obj) || obj is Map) {
+            res := Map()
+            for key, val in (obj is Map ? obj : obj.OwnProps()) {
+                if (isPlainObject(val) || val is Array || val is Map) {
+                    res[key] := this._mapify(val)
+                } else {
+                    res[key] := val
+                }
+            }
+
+            return res
+        }
+
+        if (obj is Array) {
+            res := []
+            for item in obj {
+                if (isPlainObject(item) || item is Map) {
+                    res.Push(this._mapify(item))
+                } else {
+                    res.Push(item)
+                }
+            }
+
+            return res
+        }
     }
 }
