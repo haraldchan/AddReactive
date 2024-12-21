@@ -56,12 +56,12 @@ class Struct {
                 ; array
                 if (val is Array) {
                     k := key
-                    if (!val.every(item => item is typeMap[k][1])) {
+                    if (this.getTypeName(typeMap[k]) != "Array" && !val.every(item => item is typeMap[k][1])) {
                         throw TypeError(Format(
                             "Expected item type of index:{1} does not match.`n Expected: {2}, Current: {3}",
-                            val.findIndex(item => Type(item) != typeMap[k][1]),
+                            val.findIndex(item => !(item is typeMap[k][1])),
                             this.getTypeName(typeMap[k][1]),
-                            Type(val.find(item => Type(item) != typeMap[k][1]))
+                            Type(val.find(item => !(item is typeMap[k][1])))
                         ))
                     }
                     ; primitives
