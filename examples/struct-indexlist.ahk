@@ -15,13 +15,15 @@ StructTest(App) {
     staffList := signal([
         { name: "amy", age: 29, pos: "manager" },
         { name: "chloe", age: 20, pos: "supervisor" },
-        { name: "harald", age: 8, pos: "attendant" }
+        { name: "harald", age: 35, pos: "supervisor" }
     ]).as([Staff])
 
     handleChange(*) {
-        newList := [staffList.value*]
-        newList[3]["name"] := "hc"
-        staffList.set(newList)
+        ; newList := [staffList.value*]
+        ; newList[3] := { name: "Victoria", age: "awef", pos: "attendant" }
+        ; staffList.set(newList)
+
+        staffList.update(2, { name: "Victoria", age: 29, pos: "attendant" })
     }
 
     return (
