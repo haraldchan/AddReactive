@@ -53,15 +53,48 @@ defineMapMethods(_map) {
      * @returns {Map} 
      */
     deepClone(_map) {
-        newMap := Map()
+        if (_map is Map) {
+            res := _map is OrderedMap ? OrderedMap() : Map()
 
-        for k, v in _map {
-            newMap[k] := v
+            for key, val in _map {
+                if (isPlainObject(val) || val is Array || val is Map) {
+                    res[key] := deepClone(val)
+                } else {
+                    res[key] := val
+                }
+            }
+
+            return res
+        } 
+
+        if (isPlainObject(_map)) {
+            res := {}
+
+            for key, val in _map.OwnProps() {
+                if (isPlainObject(val) || val is Array || val is Map) {
+                    res.%key% := deepClone(val)
+                } else {
+                    res.%key% := val
+                }
+            }            
+
+            return res
         }
 
-        return newMap
-    }
+        if (_map is Array) {
+            res := []
 
+            for item in _map {
+                if (isPlainObject(item) || item is Map) {
+                    res.Push(deepClone(item))
+                } else {
+                    res.Push(item)
+                }
+            }
+
+            return res
+        }
+    }
 }
 
 defineMapMethods(Map)
