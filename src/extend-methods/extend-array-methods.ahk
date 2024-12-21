@@ -106,7 +106,7 @@ defineArrayMethods(arr) {
 
     arr.Prototype.append := append
     append(arr, val) {
-        newArray := arr
+        newArray := [arr*]
 
         if (val is Array) {
             for item in val {
@@ -120,7 +120,7 @@ defineArrayMethods(arr) {
 
     arr.Prototype.unshift := unshift
     unshift(arr, val) {
-        newArray := arr
+        newArray := [arr*]
 
         if (val is Array) {
 
