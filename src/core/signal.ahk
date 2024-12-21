@@ -39,7 +39,7 @@ class signal {
                 : this.type.new(newSignalValue)
             validateInstance := ""
         } else if (this.type is Array && this.type[1] is Struct) {
-            for item in this.value {
+            for item in newSignalValue {
                 validateInstance := item is Struct.StructInstance
                     ? this.type[1].new(item.mapify())
                     : this.type[1].new(item)
@@ -90,13 +90,9 @@ class signal {
             throw TypeError(Format("update can only handle Array/Object/Map; `n`nCurrent Type: {2}", Type(newValue)))
         }
 
-        if (this.value is Map) {
-            updater := Map()
-        } else if (this.value is Array) {
-            updater := []
-        }
 
-        updater := this.value
+
+        updater := this._mapify(this.value)
         (key is Array) ? this._setExactMatch(key, updater, newValue) : this._setFirstMatch(key, updater, newValue)
 
         this.set(updater)
