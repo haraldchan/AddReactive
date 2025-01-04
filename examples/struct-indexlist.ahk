@@ -2,10 +2,10 @@
 #Include "../useAddReactive.ahk"
 
 oGui := Gui()
-StructTest(oGui)
-ogui.Show()
+StructIndexListTest(oGui)
+oGui.Show()
 
-StructTest(App) {
+StructIndexListTest(App) {
     Staff := Struct({
         name: String,
         age: Integer,

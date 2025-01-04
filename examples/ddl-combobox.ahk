@@ -2,10 +2,10 @@
 #Include "../useAddReactive.ahk"
 
 oGui := Gui()
-ddlComboBox(oGui)
-ogui.Show()
+DdlComboBoxTest(oGui)
+oGui.Show()
 
-ddlComboBox(App) {
+DdlComboBoxTest(App) {
     arrList := signal(["amy", "chloe", "harald"])
     mapList := signal(Map("amy", 111, "chloe", 222, "harald", 333))
 

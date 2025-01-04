@@ -2,10 +2,10 @@
 #Include "../useAddReactive.ahk"
 
 oGui := Gui()
-App(oGui)
+DynamicComponent(oGui)
 ogui.Show()
 
-App(App) {
+DynamicComponent(App) {
     color := signal("Red")
     colorComponents := OrderedMap(
         "Red", Red,
