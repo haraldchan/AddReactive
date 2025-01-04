@@ -39,6 +39,7 @@ class Dynamic {
             this.components.Push(instance)
 
             instance.render()
+            this._handleNestedComponentRender(instance.childComponents)
         }
 
         ; show components conditionally
@@ -49,6 +50,19 @@ class Dynamic {
     _renderDynamic(currentValue) {
         for component in this.components {
             component.visible(this.componentEntries[currentValue].name == component.name)
+        }
+    }
+
+    _handleNestedComponentRender(childComponents){
+        if (childComponents.Length == 0) {
+            return
+        }
+
+        for childComponent in childComponents {
+            childComponent.render()
+            if (childComponent.childComponents.Length > 0) {
+                this._handleNestedComponentRender(childComponent.childComponents)
+            }
         }
     }
 }

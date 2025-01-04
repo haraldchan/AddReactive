@@ -1,7 +1,7 @@
 /************************************************************************
  * @description An AutoHotkey v2 lib focus on building reactive Gui.
  * @author haraldchan
- * @date 2024/11/11
+ * @date 2025/1/4
  * @version 0.0.1
  ***********************************************************************/
 

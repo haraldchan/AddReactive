@@ -15,10 +15,12 @@ class Component {
      */
     __New(GuiObj, name, props := {}) {
         checkType(name, String, "Parameter #1 is not a string")
+        this.GuiObj := GuiObj
         this.name := name
         this.props := {}
         this.defineProps(props)
         this.ctrls := []
+        this.childComponents := []
 
         GuiObj.components.Push(this)
     }
@@ -38,7 +40,7 @@ class Component {
                 }
 
                 ; AddReactive control
-                if (control is AddReactive) {
+                if (Control is AddReactive) {
                     control.ctrl.groupName := "$$" . this.name
                     ctrlsArray.Push(control.ctrl)
                 }
@@ -53,6 +55,11 @@ class Component {
                     for listControl in control.ctrlGroups {
                         saveControls(ctrlsArray, listControl)
                     }
+                }
+
+                ; nested component
+                if (control is Component) {
+                    this.childComponents.Push(control)
                 }
             }
         }
@@ -83,8 +90,26 @@ class Component {
         state := isShow is Func
             ? isShow()
             : isShow
+        
         for ctrl in this.ctrls {
             ctrl.visible := state
+        }
+
+        this._handleChildComponentVisible(state, this.childComponents)
+    }
+
+    _handleChildComponentVisible(state, childComponents){
+        if (childComponents.Length == 0) {
+            return
+        }
+        
+        for component in childComponents {
+            component.visible(state)
+            if (
+                ; component.HasOwnProp("childComponents") && 
+                component.childComponents.Length > 0) {
+                this._handleChildComponentVisible(state, component.childComponents)
+            }
         }
     }
 
@@ -92,7 +117,11 @@ class Component {
      * Collects the values from named controls of the component and composes them into an Object.
      * @returns {Object} 
      */
-    submit() {
+    submit(hide := false) {
+        if (hide == true) {
+            this.GuiObj.hide()
+        }
+
         formData := {}
 
         for ctrl in this.ctrls {
@@ -101,7 +130,25 @@ class Component {
             }
         }
 
+        this._handleChildComponentSubmit(formData, this.childComponents)
+
         return formData
+    }
+
+    _handleChildComponentSubmit(dataObj, childComponents) {
+        if (childComponents.Length == 0) {
+            return
+        }
+
+        for component in childComponents {
+            componentFormData := component.submit()
+            if (
+                ; component.HasOwnProp("childComponents") && 
+                component.childComponents.Length > 0) {
+                this._handleChildComponentSubmit(componentFormData, component.childComponents)
+            }
+            dataObj.DefineProp(component.name, { Value: componentFormData})
+        }
     }
 }
 
