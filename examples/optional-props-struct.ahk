@@ -32,10 +32,6 @@ StrictStaffComponent(App, props) {
         name: String,
         age:  Integer,
         tel:  Integer
-    }).new({
-        name: "John",
-        age:  35,
-        tel:  95737593
     }))
 
     return (

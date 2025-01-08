@@ -32,15 +32,11 @@ class shareCheckStatus {
         this.cb := CheckBox
         this.lv := ListView
 
-        o := optionalProps(options, Struct({
-            CheckBox: Func,
-            ListView: Func,
-            checkStatus: signal
-        }).new({
+        o := optionalProps(options, {
             CheckBox: (*) => {},
             ListView: (*) => {},
             checkStatus: signal(false)
-        }))
+        })
 
         ; this.cbFn := options.hasOwnProp("CheckBox") ? options.CheckBox : (*) => {}
         ; this.lvFn := options.hasOwnProp("ListView") ? options.ListView : (*) => {}

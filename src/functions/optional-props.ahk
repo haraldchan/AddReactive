@@ -17,27 +17,23 @@ class optionalProps {
      * ```
      * jenny := { name: "Jenny", age: 22 }
      * ```
-     * @param {Object|StructInstance} propsDefaults Default values.
+     * @param {Object|Struct} propsDefaults Default values.
      * ```
      * StaffCard(props){
-     *   defaultStaff := {
+     *   staff := {
      *     name: "John Doe",
      *     age:  35,
      *     tel:  88372153
      *   }
      * 
-     *   ; use StructInstance for more confined props defining
-     *   defaultStaff := Struct({
+     *   ; use Struct for more confined props defining
+     *   staff := Struct({
      *     name: String,
      *     age:  Integer,
      *     tel:  Integer
-     *   }).new({
-     *     name: "John Doe",
-     *     age:  35,
-     *     tel:  88372153
      *   })
      * 
-     *   info := optionalProps(props, defaultStaff)
+     *   info := optionalProps(props, staff)
      * }
      * ```
      * @return {Object}
@@ -55,11 +51,8 @@ class optionalProps {
         }
 
         ; strict mode with Struct.StructInstance
-        if (propsDefaults is Struct.StructInstance) {
-            propsObj := {}
-            this._addProps(propsObj)
-
-            matchTest := propsDefaults.baseStruct.new(propsObj)
+        if (propsDefaults is Struct) {
+            matchTest := propsDefaults.new(props)
             matchTest := ""
 
             this._addProps(this)
