@@ -9,7 +9,7 @@ class shareCheckStatus {
      * @param ListView AddReactive Control.
      * @param {Object} options Additional options.
      */
-    __New(CheckBox, ListView, options := { CheckBox: (*) => {}, ListView: (*) => {} }) {
+    __New(CheckBox, ListView, options := {}) {
         ; param type checking
         checkType(CheckBox, [Gui.CheckBox, AddReactiveCheckBox], "First parameter is not a Gui.CheckBox or AddReactiveCheckBox")
         checkType(ListView, [Gui.ListView, AddReactiveListView], "Second parameter is not a Gui.ListView or AddReactiveListView")
@@ -25,15 +25,29 @@ class shareCheckStatus {
         if options.hasOwnProp("ListView") {
             checkType(options.ListView, Func, "This property must be a callback function")
         }
-        if options.hasOwnProp("checkValue") {
+        if options.hasOwnProp("checkStatus") {
             checkType(options.checkStatus, signal, "checkStatus must be a signal")
         }
 
         this.cb := CheckBox
         this.lv := ListView
-        this.cbFn := options.hasOwnProp("CheckBox") ? options.CheckBox : (*) => {}
-        this.lvFn := options.hasOwnProp("ListView") ? options.ListView : (*) => {}
-        this.checkStatusDepend := options.hasOwnProp("checkStatus") ? options.checkStatus : ""
+
+        o := optionalProps(options, Struct({
+            CheckBox: Func,
+            ListView: Func,
+            checkStatus: signal
+        }).new({
+            CheckBox: (*) => {},
+            ListView: (*) => {},
+            checkStatus: signal(false)
+        }))
+
+        ; this.cbFn := options.hasOwnProp("CheckBox") ? options.CheckBox : (*) => {}
+        ; this.lvFn := options.hasOwnProp("ListView") ? options.ListView : (*) => {}
+        ; this.checkStatusDepend := options.hasOwnProp("checkStatus") ? options.checkStatus : ""
+        this.cbFn := o.CheckBox
+        this.lvFn := o.ListView
+        this.checkStatusDepend := o.checkStatus
 
         ; diversing native/AR control
         if (this.cb is AddReactiveCheckBox && this.lv is AddReactiveListView) {
@@ -84,7 +98,6 @@ class shareCheckStatus {
         }
         this._runCustomFn(this.lvFn)
     }
-
 
     _runCustomFn(userFunctions) {
         checkType(userFunctions, [Func, Array], "Parameter is not a Function or Array")
