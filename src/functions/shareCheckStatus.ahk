@@ -32,7 +32,7 @@ class shareCheckStatus {
         this.cb := CheckBox
         this.lv := ListView
 
-        o := optionalProps(options, {
+        o := useProps(options, {
             CheckBox: (*) => {},
             ListView: (*) => {},
             checkStatus: signal(false)

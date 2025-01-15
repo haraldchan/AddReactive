@@ -5,7 +5,7 @@
 ; functions
 #Include "./shareCheckStatus.ahk"
 #Include "./useListPlaceholder.ahk"
-#Include "./optional-props.ahk"
+#Include "./useProps.ahk"
 
 ; classes
 #Include "./orderedmap.ahk"
