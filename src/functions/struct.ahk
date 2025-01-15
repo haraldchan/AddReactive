@@ -32,14 +32,13 @@ class Struct {
      * @returns {StructInstance} 
      */
     new(data) {
-        return Struct.StructInstance(data, this.typeMap, this)
+        return Struct.StructInstance(data, this.typeMap)
     }
 
     class StructInstance {
-        __New(data, typeMap, baseStruct) {
+        __New(data, typeMap) {
             this.data := data
             this.typeMap := typeMap
-            this.baseStruct := baseStruct
             this._keys := []
             this._values := []
 
@@ -51,7 +50,8 @@ class Struct {
                 ; value type check
                 ; objects
                 if (isPlainObject(val) || val is Map) {
-                    this._values.Push(Struct.StructInstance(val, typeMap[key].typeMap, typeMap[key].baseStruct))
+
+                    this._values.Push(Struct.StructInstance(val, typeMap[key].typeMap))
                     continue
                 }
 
@@ -91,20 +91,20 @@ class Struct {
 
             set {
                 ; general type mismatch
-                if (!(value is this.typeMap[key])) {
-                    throw TypeError(Format(
-                        "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
-                        key,
-                        this.getTypeName(this.typeMap[key]),
-                        Type(value)
-                    ))
-                }
+                ; if (!(value is this.typeMap[key])) {
+                ;     throw TypeError(Format(
+                ;         "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
+                ;         key,
+                ;         this.getTypeName(this.typeMap[key]),
+                ;         Type(value)
+                ;     ))
+                ; }
 
                 ; object validation
                 if (isPlainObject(value) || value is Map || value is Struct.StructInstance) {
                     matching := value is Struct.StructInstance
-                        ? this.baseStruct.new(value.mapify())
-                        : this.baseStruct.new(value)
+                        ? this.typeMap[key].new(value.mapify())
+                        : this.typeMap[key].new(value)
                     matching := ""
                 ; array item validation
                 } else if (value is Array) {
