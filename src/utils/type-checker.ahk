@@ -11,12 +11,12 @@ checkType(val, typeChecking, errMsg := 0) {
 
     if (typeChecking is Array) {
         for t in typeChecking {
-            if (val is t) {
-                return
-            } else if (t == Object.Prototype) {
+            if (t == Object.Prototype) {
                 if (isPlainObject(val)) {
                     return
                 }
+            } else if (val is t) {
+                return
             } else {
                 continue
             }
