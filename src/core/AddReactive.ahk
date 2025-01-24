@@ -59,6 +59,7 @@ class AddReactive {
         } else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
         }
+        this.ctrl.arcWrapper := this
 
         ; add subscribe
         if (this.depend = 0) {
