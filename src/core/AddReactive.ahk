@@ -275,13 +275,13 @@ class AddReactive {
     ; APIs
     /**
      * Registers one or more functions to be call when given event is raised. 
-     * @param {Map<String, Func>|<String, Func>} event Event name | An Map contains key-value pairs of event-callback.
+     * @param {<String, Func>} event key-value pairs of event-callback.
      * ```
      * ; single event
      * AddReactive.OnEvent("Click", (*) => (...))
      * 
      * ; multiple events
-     * AddReactive.OnEvent(Map(
+     * AddReactive.OnEvent(
      *   "Click", (*) => (...), 
      *   "DoubleClick", (*) => (...)
      * )
@@ -289,13 +289,13 @@ class AddReactive {
      * ```
      * @returns {AddReactive} 
      */
-    OnEvent(event*){
-        if (event[1] is Map) {
-            for eventName, callbackFn in event[1] {
-                this.ctrl.OnEvent(eventName, callbackFn)
+    OnEvent(event*) {
+        loop event.Length {
+            if (Mod(A_Index, 2) == 0) {
+                continue
             }
-        } else {
-            this.ctrl.OnEvent(event[1], event[2])
+
+            this.ctrl.OnEvent(event[A_Index], event[A_Index + 1])
         }
 
         return this
@@ -316,6 +316,14 @@ class AddReactive {
      */
     SetFont(options := "", fontName := "") {
         this.ctrl.SetFont(options, fontName)
+        return this
+    }
+
+    /**
+     * Sets keyboard focus to the control.
+     */
+    Focus() {
+        this.ctrl.Focus()
         return this
     }
 }
