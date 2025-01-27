@@ -193,6 +193,25 @@ defineArrayMethods(arr) {
 
         return joined
     }
+
+    arr.Prototype.slice := slice
+    slice(arr, start := 1, end := arr.Length) {
+        newArray := []
+
+        for item in arr {
+            if (A_Index < start) {
+                continue
+            }
+
+            if (A_Index == end && end != arr.Length) {
+                break
+            }
+
+            newArray.Push(item)
+        }
+
+        return newArray
+    }
 }
 
 defineArrayMethods(Array)
