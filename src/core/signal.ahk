@@ -70,12 +70,16 @@ class signal {
 
         ; run all effects
         for effect in this.effects {
-            if (effect.MaxParams = 1) {
-                effect(this.value)
-            } else if (effect.MaxParams = 2) {
-                effect(this.value, prevValue)
-            } else {
-                effect()
+            if (effect.depend is signal) {
+                if (effect.MaxParams == 1) {
+                    effect.effectFn(this.value)
+                } else if (effect.MaxParams == 2) {
+                    effect.effectFn(this.value, prevValue)
+                } else {
+                    effect()
+                }
+            } else if (effect.depend is Array) {
+                effect.effectFn(effect.depend.map(dep => dep.value))
             }
         }
     }

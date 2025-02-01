@@ -1,4 +1,4 @@
-class computed {
+class computed extends signal {
     /**
      * Create a computed signal which derives a reactive value.
      * ```
@@ -35,6 +35,8 @@ class computed {
     }
 
     sync(subbedSignal) {
+        prevValue := this.value
+
         if (this.signal is Array) {
             for s in this.subbedSignals {
                 if (s = subbedSignal) {
@@ -58,12 +60,19 @@ class computed {
         }
 
         ; run all effectss
-        if (this.effects.Length > 0) {
-            for effect in this.effects {
-                effect()
+        for effect in this.effects {
+            if (effect.depend is signal) {
+                if (effect.MaxParams == 1) {
+                    effect.effectFn(this.value)
+                } else if (effect.MaxParams == 2) {
+                    effect.effectFn(this.value, prevValue)
+                } else {
+                    effect()
+                }
+            } else if (effect.depend is Array) {
+                effect.effectFn(effect.depend.map(dep => dep.value))
             }
         }
-
     }
 
     addSub(controlInstance) {
