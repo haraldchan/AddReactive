@@ -79,7 +79,7 @@ class signal {
                     effect()
                 }
             } else if (effect.depend is Array) {
-                effect.effectFn(effect.depend.map(dep => dep.value))
+                effect.effectFn(effect.depend.map(dep => dep.value)*)
             }
         }
     }
