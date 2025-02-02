@@ -13,8 +13,9 @@ class effect {
             for dep in depend {
                 checkType(dep, signal)
             }
-        } 
-        checkType(depend, signal)
+        } else {
+            checkType(depend, signal)
+        }
         checkType(effectFn, Func)
         
         this.depend := depend
@@ -26,7 +27,7 @@ class effect {
 
         if (depend is Array) {
             for dep in depend {
-                depend.addEffect(this)
+                dep.addEffect(this)
             }
         } 
     }
