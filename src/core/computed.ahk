@@ -62,15 +62,17 @@ class computed extends signal {
         ; run all effectss
         for effect in this.effects {
             if (effect.depend is signal) {
-                if (effect.MaxParams == 1) {
-                    effect.effectFn(this.value)
-                } else if (effect.MaxParams == 2) {
-                    effect.effectFn(this.value, prevValue)
+                e := effect.effectFn
+                if (effect.effectFn.MaxParams == 1) {
+                    e(this.value)
+                } else if (effect.effectFn.MaxParams == 2) {
+                    e(this.value, prevValue)
                 } else {
-                    effect()
+                    e()
                 }
             } else if (effect.depend is Array) {
-                effect.effectFn(effect.depend.map(dep => dep.value)*)
+                e := effect.effectFn
+                e(effect.depend.map(dep => dep.value)*)
             }
         }
     }
