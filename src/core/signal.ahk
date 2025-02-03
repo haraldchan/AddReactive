@@ -95,6 +95,9 @@ class signal {
         if (!(this.value is Object)) {
             throw TypeError(Format("update can only handle Array/Object/Map; `n`nCurrent Type: {2}", Type(newValue)))
         }
+        if (newValue is Func) {
+            newValue := newValue(this.value)
+        }
 
         updater := this._mapify(this.value)
         (key is Array) ? this._setExactMatch(key, updater, newValue) : this._setFirstMatch(key, updater, newValue)
