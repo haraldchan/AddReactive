@@ -64,4 +64,14 @@ class useProps {
             obj.DefineProp(name, { Value: this.props.HasOwnProp(name) ? this.props.%name% : value })
         }
     }
+
+    toObject() {
+        obj := {}
+
+        for key, val in (isPlainObject(this.propsDefaults) ? this.propsDefaults.OwnProps() : this.props.OwnProps()) {
+            obj.defineProp(key, { Value: this.%key% })
+        }
+
+        return obj  
+    }
 }
