@@ -87,10 +87,8 @@ class Component {
      * @param {boolean} isShow 
      */
     visible(isShow) {
-        state := isShow is Func
-            ? isShow()
-            : isShow
-        
+        state := isShow is Func ? isShow() : isShow
+
         for ctrl in this.ctrls {
             ctrl.visible := state
         }
@@ -98,16 +96,14 @@ class Component {
         this._handleChildComponentVisible(state, this.childComponents)
     }
 
-    _handleChildComponentVisible(state, childComponents){
+    _handleChildComponentVisible(state, childComponents) {
         if (childComponents.Length == 0) {
             return
         }
-        
+
         for component in childComponents {
             component.visible(state)
-            if (
-                ; component.HasOwnProp("childComponents") && 
-                component.childComponents.Length > 0) {
+            if (component.childComponents.Length > 0) {
                 this._handleChildComponentVisible(state, component.childComponents)
             }
         }
@@ -142,12 +138,33 @@ class Component {
 
         for component in childComponents {
             componentFormData := component.submit()
-            if (
-                ; component.HasOwnProp("childComponents") && 
-                component.childComponents.Length > 0) {
+            if (component.childComponents.Length > 0) {
                 this._handleChildComponentSubmit(componentFormData, component.childComponents)
             }
-            dataObj.DefineProp(component.name, { Value: componentFormData})
+            dataObj.DefineProp(component.name, { Value: componentFormData })
+        }
+    }
+
+    disable(disabled) {
+        state := disabled is Func ? disabled() : disabled
+
+        for ctrl in this.ctrls {
+            ctrl.Enabled := !state
+        }
+
+        this._handleChildComponentDisable(state, this.childComponents)
+    }
+
+    _handleChildComponentDisable(state, childComponents) {
+        if (childComponents.Length == 0) {
+            return
+        }
+
+        for component in childComponents {
+            component.disable(state)
+            if (component.childComponents.Length > 0) {
+                this._handleChildComponentDisable(state, component.childComponents)
+            }
         }
     }
 }
