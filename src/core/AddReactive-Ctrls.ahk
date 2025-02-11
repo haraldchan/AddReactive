@@ -3,64 +3,66 @@ class AddReactiveText extends AddReactive {
      * Add a reactive Text control to Gui
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {string} content Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
      * @returns {AddReactiveText}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
+        checkType(content, [String, Number], "Parameter #2 (content) is not a String")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "Text", options, innerText, depend, key)
+        super.__New(GuiObject, "Text", options, content, depend, key)
     }
 }
 class ARText extends AddReactiveText {
     ; alias
 }
 
+
 class AddReactiveEdit extends AddReactive {
     /**
      * Add a reactive Edit control to Gui
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {string} content Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal.
      * @param {array} [key] the keys or index of the signal's value.
      * @returns {AddReactiveEdit}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
+        checkType(content, [String, Number], "Parameter #2 (content) is not a String")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "Edit", options, innerText, depend, key)
+        super.__New(GuiObject, "Edit", options, content, depend, key)
     }
 }
 class AREdit extends AddReactiveEdit {
     ; alias
 }
 
+
 class AddReactiveButton extends AddReactive {
     /**
      * Add a reactive Button control to Gui
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {string} content Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
      * @returns {AddReactiveButton}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
+        checkType(content, [String, Number], "Parameter #2 (content) is not a String")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "Button", options, innerText, depend, key)
+        super.__New(GuiObject, "Button", options, content, depend, key)
     }
 }
 class ARButton extends AddReactiveButton {
@@ -72,46 +74,48 @@ class AddReactiveCheckBox extends AddReactive {
      * Add a reactive CheckBox control to Gui
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {string} content Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
      * @returns {AddReactiveCheckBox}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
+        checkType(content, [String, Number], "Parameter #2 (content) is not a String")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "CheckBox", options, innerText, depend, key)
+        super.__New(GuiObject, "CheckBox", options, content, depend, key)
     }
 }
 class ARCheckBox extends AddReactiveCheckBox {
     ; alias
 }
 
+
 class AddReactiveRadio extends AddReactive {
     /**
      * Add a reactive Radio control to Gui
      * @param {Gui} GuiObject The target Gui Object.
      * @param {string} options Options apply to the control, same as Gui.Add.
-     * @param {string} innerText Text or formatted text to hold signal values.
+     * @param {string} content Text or formatted text to hold signal values.
      * @param {signal} [depend] Subscribed signal
      * @param {array} [key] the keys or index of the signal's value
      * @returns {AddReactiveRadio}     
      */
-    __New(GuiObject, options := "", innerText := "", depend := 0, key := 0) {
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
-        checkType(innerText, [String, Number], "Parameter #2 (innerText) is not a String")
+        checkType(content, [String, Number], "Parameter #2 (content) is not a String")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "Radio", options, innerText, depend, key)
+        super.__New(GuiObject, "Radio", options, content, depend, key)
     }
 }
 class ARRadio extends AddReactiveRadio {
     ; alias
 }
+
 
 class AddReactiveDropDownList extends AddReactive {
     __New(GuiObject, options, depend := 0, key := 0) {
@@ -119,7 +123,7 @@ class AddReactiveDropDownList extends AddReactive {
         checkTypeDepend(depend)
         this.key := key
 
-        super.__New(GuiObject, "DropDownList", options,, depend, key)
+        super.__New(GuiObject, "DropDownList", options, , depend, key)
     }
 }
 class ARDropDownList extends AddReactiveDropDownList {
@@ -129,18 +133,20 @@ class ARDDL extends AddReactiveDropDownList {
     ; alias
 }
 
+
 class AddReactiveComboBox extends AddReactive {
     __New(GuiObject, options, depend := 0, key := 0) {
         checkType(options, String, "Parameter #1 (options) is not a String")
         checkTypeDepend(depend)
 
         this.key := key
-        super.__New(GuiObject, "ComboBox", options,, depend, key)
+        super.__New(GuiObject, "ComboBox", options, , depend, key)
     }
 }
 class ARComboBox extends AddReactiveComboBox {
     ; alias
 }
+
 
 class AddReactiveListView extends AddReactive {
     /**
@@ -201,6 +207,54 @@ class ARListView extends AddReactiveListView {
     ; alias
 }
 
+
+class AddReactiveGroupBox extends AddReactive {
+    /**
+     * Add a reactive GroupBox control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} content Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @returns {AddReactiveCheckBox}     
+     */
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
+        checkType(options, String, "Parameter #1 (options) is not a String")
+        checkType(content, String, "Parameter #2 (content) is not a String")
+        checkTypeDepend(depend)
+
+        this.key := key
+        super.__New(GuiObject, "GroupBox", options, content, depend, key)
+    }
+}
+class ARGroupBox extends AddReactiveGroupBox {
+    ; alias
+}
+
+
+class AddReactiveDateTime extends AddReactive {
+    /**
+     * Add a reactive GroupBox control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} content Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @returns {AddReactiveCheckBox}     
+     */
+    __New(GuiObject, options := "", content := "", depend := 0, key := 0) {
+        checkType(options, String, "Parameter #1 (options) is not a String")
+        checkType(content, String, "Parameter #2 (content) is not a String")
+        checkTypeDepend(depend)
+
+        this.key := key
+        super.__New(GuiObject, "GroupBox", options, content, depend, key)
+    }
+}
+class ARDateTime extends AddReactiveDateTime {
+    ; alias
+}
+
 ; mount to Gui.Prototype
 Gui.Prototype.AddReactiveText := AddReactiveText
 Gui.Prototype.ARText := ARText
@@ -219,3 +273,7 @@ Gui.Prototype.ARDropDownList := ARDropDownList
 Gui.Prototype.ARDDL := ARDDL
 Gui.Prototype.AddReactiveListView := AddReactiveListView
 Gui.Prototype.ARListView := ARListView
+Gui.Prototype.AddReactiveGroupBox := AddReactiveGroupBox
+Gui.Prototype.ARGroupBox := ARGroupBox
+Gui.Prototype.AddReactiveDateTime := AddReactiveDateTime
+Gui.Prototype.ARDateTime := ARDateTime
