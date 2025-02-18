@@ -75,6 +75,26 @@ for ctrl in textCtrls {
 
 <br>
 
+### Gui.getComponent
+
+使用`.getComponent()` 可以获取有状态组件实例：
+```go
+oGui := Gui(gui)
+
+comp(gui) {
+    c := Component(gui, A_ThisFunc)
+
+    c.render := this => this.Add(...)
+
+    return c
+}
+
+oGui.getComponent("comp").visible(false) // 可以获取实例并对其进行响应操作
+```
+
+
+<br>
+
 ## Gui.ListView 扩展方法
 
 ### Gui.ListView.getFocusedRows

@@ -216,6 +216,36 @@ Increment(gui, number) {
 
 <br>
 
+#### `disable()`
+
+使用 `disable()` 可以调整整个组件内所有控件的 `Enabled` 属性：
+```go
+App(gui) {
+    ...
+
+    diabled := singal(true)
+
+    handleDisable(ctrl, _){
+        isShow.set(s => !s)
+        gui.getComponent("Increment").handleDisable(isShow.value)
+    }
+
+    return (
+        Increment(gui, initNumber)
+        gui.AddButton("...", "show/hide").OnEvent("Click", handleDisable)
+    )
+}
+
+Increment(gui, number) {
+    i := Component(gui, A_ThisFunc)
+    ...
+
+    return i
+}
+```
+
+<br>
+
 #### `submit()`
 
 与原生 `Gui` 的 `Submit()` 方法类似，`Component` 的 `submit()` 方法可以收集组件内具名控件的值并返回一个对象：

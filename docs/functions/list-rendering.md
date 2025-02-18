@@ -114,10 +114,8 @@ staff := signal([
 ])
 
 oGui.AddReactiveEdit(
-    oGui.AddReactiveEdit(
-        "w300 h25",
-        "staff name: {1}, position: {2}", staff, [[1], "name", "pos"]
-    )
+    "w300 h25",
+    "staff name: {1}, position: {2}", staff, [[1], "name", "pos"]
 )
 
 /* 在 Gui 窗口上：
