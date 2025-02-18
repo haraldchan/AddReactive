@@ -8,13 +8,13 @@ defineGuiMethods(gui) {
      */
     getCtrlByName(gui, name) {
         for ctrl in gui {
-            if (ctrl.Name = name) {
+            if (ctrl.Name == name) {
                 return ctrl
             }
         }
 
         for arc in gui.arcs {
-            if (arc.name = name) {
+            if (arc.name == name) {
                 return arc
             }
         }
@@ -30,7 +30,7 @@ defineGuiMethods(gui) {
      */
     getCtrlByType(gui, ctrlType) {
         for ctrl in gui {
-            if (ctrl.Type = ctrlType) {
+            if (ctrl.Type == ctrlType) {
                 return ctrl
             }
         }
@@ -47,7 +47,7 @@ defineGuiMethods(gui) {
         ctrlArray := []
 
         for ctrl in gui {
-            if (ctrl.Type = ctrlType) {
+            if (ctrl.Type == ctrlType) {
                 ctrlArray.Push(ctrl)
             }
         }
@@ -63,11 +63,28 @@ defineGuiMethods(gui) {
      */
     getComponent(gui, componentName) {
         for component in gui.components {
-            if (component.name = componentName) {
+            if (component.name == componentName) {
                 return component
             }
         }
         throw TypeError(Format("Component({1}) not found.", componentName))
+    }
+
+    gui.Prototype.getCtrlByText := getCtrlByText
+    /**
+     * Returns a Gui.Control
+     * @param {String|Func} text 
+     */
+    getCtrlByText(gui, text) {
+        for ctrl in gui {
+            if (text is Func && text(ctrl.Text)) {
+                return ctrl
+            } else if (ctrl.Text == text) {
+                return ctrl
+            }
+        }
+
+        throw ValueError(Format("Control with Text ({1}) not found.", text))
     }
 
     gui.ListView.Prototype.getCheckedRowNumbers := getCheckedRows
@@ -81,7 +98,7 @@ defineGuiMethods(gui) {
         loop LV.GetCount() {
             curRow := LV.GetNext(A_Index - 1, "Checked")
             try {
-                if (curRow = prevRow || curRow = 0) {
+                if (curRow == prevRow || curRow == 0) {
                     Continue
                 }
             }
