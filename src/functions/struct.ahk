@@ -90,16 +90,6 @@ class Struct {
             }
 
             set {
-                ; general type mismatch
-                ; if (!(value is this.typeMap[key])) {
-                ;     throw TypeError(Format(
-                ;         "Expected value type of key:{1} does not match.`n Expected: {2}, Current: {3}",
-                ;         key,
-                ;         this.getTypeName(this.typeMap[key]),
-                ;         Type(value)
-                ;     ))
-                ; }
-
                 ; object validation
                 if (isPlainObject(value) || value is Map || value is Struct.StructInstance) {
                     matching := value is Struct.StructInstance
