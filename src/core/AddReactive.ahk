@@ -337,6 +337,9 @@ class AddReactive {
      * @param {Signal} [depend] Signal dependency. If omitted, it will use the AddReactive.depend instead.
      */
     SetFontStyles(optionMap, depend := this.depend) {
+        checkType(optionMap, Map)
+        checkType(depend, signal)
+        
         effect(depend, cur => this.ctrl.SetFont(optionMap.has(cur) ? optionMap[cur] : optionMap["default"]))
         return this
     }
