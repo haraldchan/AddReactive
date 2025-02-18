@@ -50,11 +50,8 @@ class signal {
         }
 
         prevValue := this.value
-
         this.value := newSignalValue is Func ? newSignalValue(this.value) : newSignalValue
-
-        ; change to Map()
-        if (isPlainObject(newSignalValue) || newSignalValue is Array || newSignalValue is Map) {
+        if (isPlainObject(this.value) || this.value is Array || this.value is Map) {
             this.value := this._mapify(this.value)
         }
 
