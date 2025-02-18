@@ -42,30 +42,18 @@ checkType(val, typeChecking, errMsg := 0) {
 }
 
 checkTypeDepend(depend) {
-    if (depend = 0) {
+    if (depend == 0) {
         return
     }
     errMsg := "Parameter #3 (depend) is not a signal or an array containing signals"
     if (depend is Array) {
         for item in depend {
-            if (!(item is signal || item is computed)) {
+            if (!(item is signal)) {
                 throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
             }
         }
-    } else if (!(depend is signal || depend is computed)) {
+    } else if (!(depend is signal)) {
         throw TypeError(Format("{1}; `n`nCurrent Type: {2}", errMsg, Type(depend)))
-    }
-}
-
-checkTypeEvent(e) {
-    if (e = 0) {
-        return
-    }
-    errMsg := "Fifth(event) parameter is not an [ event, callback ] array."
-    if (e is Array && e.Length != 2) {
-        throw TypeError(errMsg)
-    } else {
-        checkType(e, Array, errMsg)
     }
 }
 
