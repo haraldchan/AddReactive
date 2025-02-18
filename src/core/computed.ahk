@@ -21,13 +21,10 @@ class computed extends signal {
         this.effects := []
 
         if (this.signal is Array) {
-            this.subbedSignals := Map()
-
             for s in this.signal {
-                this.subbedSignals[s] := s.value
                 s.addComp(this)
             }
-            this.value := this.mutation.Call(this.subbedSignals.values()*)
+            this.value := this.mutation.Call(this.signal.map(s => s.value)*)
         } else {
             this.signal.addComp(this)
             this.value := this.mutation.Call(this.signal.value)
@@ -38,13 +35,7 @@ class computed extends signal {
         prevValue := this.value
 
         if (this.signal is Array) {
-            for s in this.subbedSignals {
-                if (s = subbedSignal) {
-                    this.subbedSignals[s] := s.value
-                    break
-                }
-            }
-            this.value := this.mutation.Call(this.subbedSignals.values()*)
+            this.value := this.mutation.Call(this.signal.map(s => s.value)*)
         } else {
             this.value := this.mutation.Call(subbedSignal.value)
         }
