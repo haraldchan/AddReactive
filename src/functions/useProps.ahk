@@ -39,36 +39,48 @@ class useProps {
      * @return {Object}
      */
     __New(props, propsDefaults) {
-        checkType(props, Object.Prototype)
-        checkType(propsDefaults, [Object.Prototype, Struct])
+        checkType(props, [Object.Prototype, Map])
+        checkType(propsDefaults, [Object.Prototype, Map, Struct])
 
         this.props := props
         this.propsDefaults := propsDefaults
 
-        ; props defaults object
-        if (isPlainObject(propsDefaults)) {
-            this._addProps(this)
-        }
-
-        ; strict mode with Struct.StructInstance
         if (propsDefaults is Struct) {
             matchTest := propsDefaults.new(props)
             matchTest := ""
-
-            this._addProps(this)
         }
+
+        this._addProps(this)
+    }
+    
+    _defineEnum() {
+        if (isPlainObject(this.propsDefaults)) {
+            enum := this.propsDefaults.OwnProps()
+        } else if (this.propsDefaults is Map) {
+            enum := this.propsDefaults
+        } else if (this.propsDefaults is Struct) {
+            enum := isPlainObject(this.props) 
+                ? this.props.OwnProps()
+                : this.props            
+        }
+
+        return enum
     }
 
     _addProps(obj) {
-        for name, value in (isPlainObject(this.propsDefaults) ? this.propsDefaults.OwnProps() : this.props.OwnProps()) {
-            obj.DefineProp(name, { Value: this.props.HasOwnProp(name) ? this.props.%name% : value })
+        for name, value in this._defineEnum() {
+            valueToDefine := isPlainObject(this.props)
+                ? (this.props.HasOwnProp(name) ? this.props.%name% : value)
+                : (this.props.Has(name) ? this.props[name] : value)
+        
+            obj.DefineProp(name, { Value: valueToDefine })
         }
     }
 
     toObject() {
         obj := {}
 
-        for key, val in (isPlainObject(this.propsDefaults) ? this.propsDefaults.OwnProps() : this.props.OwnProps()) {
+        for key, val in this._defineEnum() {
             obj.defineProp(key, { Value: this.%key% })
         }
 
