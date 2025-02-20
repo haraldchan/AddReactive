@@ -1,6 +1,6 @@
 defineStringMethods(str) {
 
-    str.Prototype.Length := StrLen(str)
+    str.Prototype.Length := StrLen
     str.Prototype.toLower := StrLower
     str.Prototype.toUpper := StrUpper
     str.Prototype.toTitle := StrTitle
