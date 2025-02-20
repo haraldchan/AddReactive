@@ -237,8 +237,8 @@ class AddReactive {
 
         if (this.ctrl is Gui.ListView) {
             ; update from checkStatusDepend
-            if (this.checkStatusDepend = signal) {
-                this.ctrl.Modify(0, this.checkStatusDepend.value = true ? "-Checked" : "+Checked")
+            if (this.checkStatusDepend == signal) {
+                this.ctrl.Modify(0, this.checkStatusDepend.value == true ? "-Checked" : "+Checked")
                 return
             }
             ; update list items
@@ -247,7 +247,7 @@ class AddReactive {
 
         if (this.ctrl is Gui.CheckBox) {
             ; update from checkStatusDepend
-            if (this.checkStatusDepend = signal) {
+            if (this.checkStatusDepend == signal) {
                 this.ctrl.Value := this.CheckStatusDepend.value
                 return
             }
@@ -273,6 +273,17 @@ class AddReactive {
     }
 
     ; APIs
+    /**
+     * Sets a depend signal for AddReactive Control.
+     * @param {Signal} depend 
+     */
+    SetDepend(depend) {
+        this.depend := this._filterDepends(depend)
+        this.update(this.depend)
+
+        return this
+    }
+
     /**
      * Registers one or more functions to be call when given event is raised. 
      * @param {<String, Func>} event key-value pairs of event-callback.
@@ -301,6 +312,10 @@ class AddReactive {
         return this
     }
 
+    /**
+     * Sets various options and styles for the appearance and behavior of the control.
+     * @param newOptions Specify one or more control-specific or general options and styles, each separated from the next with one or more spaces or tabs.
+     */
     Opt(newOptions) {
         this.ctrl.Opt(newOptions)
         return this
