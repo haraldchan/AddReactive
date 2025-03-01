@@ -91,6 +91,7 @@ class Component {
 
     defineChildren() {
         if (this.props.HasOwnProp("children")) {
+            checkType(this.props.children, Func)
             this.children := this.props.children.Bind(this.GuiObj)
         }
     }
