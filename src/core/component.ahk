@@ -13,15 +13,19 @@ class Component {
      * @param {String} name The unique name of the component
      * @param {Object} props 
      */
-    __New(GuiObj, name) {
+    __New(GuiObj, name, props := {}) {
         checkType(name, String, "Parameter #1 is not a string")
         this.GuiObj := GuiObj
         this.name := name
+        this.props := {}
         this.ctrls := []
+        this.children := () => {}
         this.childComponents := []
         this.isDisabled := false
         this.isVisible := true
-
+        
+        this.defineProps(props)
+        this.defineChildren()
         GuiObj.components.Push(this)
     }
 
@@ -69,6 +73,26 @@ class Component {
         this.ctrls.Push(ctrls*)
 
         return this
+    }
+
+    /**
+     * Define additional props
+     * @param {Object} props props Object
+     */
+    defineProps(props) {
+        checkType(props, Object.Prototype)
+        
+        for name, val in props.OwnProps() {
+            if (name == this.name) {
+                this.props := val
+            }
+        }
+    }
+
+    defineChildren() {
+        if (this.props.HasOwnProp("children")) {
+            this.children := this.props.children.Bind(this.GuiObj)
+        }
     }
 
     /**
