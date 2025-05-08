@@ -8,7 +8,7 @@ Building dynamic and responsive desktop applications with ease, bringing reactiv
 
 
 <!-- <img> use gif here -->
-```go
+```c++
 #Include "./AddReactive/useAddReactive.ahk"
 
 myApp := Gui(, "Reactivity")
