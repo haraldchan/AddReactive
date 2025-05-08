@@ -7,7 +7,7 @@ Building dynamic and responsive desktop applications with ease, bringing reactiv
 ## At a Glance
 
 
-<!-- <img> use gif here -->
+<img src="./assets/Counter.gif">
 ```c++
 #Include "./AddReactive/useAddReactive.ahk"
 
