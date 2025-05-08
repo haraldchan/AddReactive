@@ -1,6 +1,5 @@
 <img src="./assets/banner.png">
 <br>
-<br>
 
 AddReactive is a reactive GUI control library for AutoHotkey v2, inspired by modern frontend frameworks. 
 Building dynamic and responsive desktop applications with ease, bringing reactivity to AutoHotkey's GUI capabilities.
