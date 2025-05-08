@@ -9,7 +9,7 @@ Building dynamic and responsive desktop applications with ease, bringing reactiv
 
 ```c++
 #Include "./AddReactive/useAddReactive.ahk"
-#SingleInstance "Force"
+#SingleInstance Force
 
 myApp := Gui(, "Reactivity")
 Counter(myApp)
@@ -24,18 +24,19 @@ Counter(App) {
     doubleCount := computed(count, curCount => curCount * 2)
 
     // Use effect to create a side-effect function that runs when depend changes.
-    effect(count, curCount => MsgBox("Count changed! current:" . curCount))
+    effect(count, curCount => MsgBox("Count changed! current:" . curCount, "Counter", "T2"))
 
     return (
-        App.AddText("w150 h30", "Show case"),
+        App.AddText("w150 h30", "Counter").SetFont("Bold"),
         
         // Use AddReactive Controls with formatted string to show reactive data.
-        App.ARText("y+10", "Count: {1}", count),
-        App.ARText("y+10", "Doubled: {2}", doubleCount),
+        App.ARText("w80 y+10", "Count: {1}", count),
+        App.ARText("w80 x+10", "Doubled: {1}", doubleCount),
         
         // Updating the value of signal by its setter.
-        App.AddButton("y+10 w80 h30", "Increase")
+        App.AddButton("x10 y+10 w80 h30", "Increase")
            .OnEvent("Click", (*) => count.set(c => c + 1))
     )
+
 }
 ```
