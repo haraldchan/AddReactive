@@ -17,6 +17,7 @@ class OrderedMap extends Map {
         }
 
         this._entries := []
+        this._lookupMap := Map()
         loop items.Length {
             if (Mod(A_Index, 2) = 0) {
                 continue
@@ -25,14 +26,12 @@ class OrderedMap extends Map {
             k := items[A_Index]
             v := items[A_Index + 1]
             this._entries.Push([k, v])
+            this._lookupMap[k] := v
         }
-
-        this._keys := this._entries.map(entry => entry[1])
-        this._values := this._entries.map(entry => entry[2])
     }
 
     __Item[key] {
-        get => this._values[this._keys.findIndex(item => item = key)]
+        get => this._lookupMap[key]
         set => this.setOne(key, value)
     }
 
@@ -43,17 +42,18 @@ class OrderedMap extends Map {
      */
     setOne(key, value) {
         ; key not exist
-        if (this._keys.find(item => item = key) = "") {
-            this._keys.Push(key)
-            this._values.Push(value)
+        if (!this._lookupMap.has(key)) {
             this._entries.Push([key, value])
-        } else {
-            this._values := this._values.with(this._keys.findIndex(item => item = key), value)
-            this._entries := []
-            for key in this._keys {
-                this._entries.Push([key, this._values[A_Index]])
+        ; key exists
+            for entry in this._entries {
+                if (entry[1] == key) {
+                    entry[2] := value
+                    break
+                }
             }
         }
+
+        this._lookupMap[key] := value
     }
 
     /**
@@ -72,32 +72,27 @@ class OrderedMap extends Map {
             }
 
             k := keyValues[A_Index]
-            if (this._keys.find(eKey => eKey = k) != "") {
-                throw Error("Key already exist.")
+            if (this._lookupMap.has(k)) {
+                throw Error(Format("Key:({1}) already exist.", k))
             }
             v := keyValues[A_Index + 1]
             entriesToSet.Push([k, v])
+            this._lookupMap[k] := v
         }
 
-        keysToSet := entriesToSet.map(entry => entry[1])
-        valuesToSet := entriesToSet.map(entry => entry[2])
-
         this._entries.Push(entriesToSet*)
-        this._keys.Push(keysToSet*)
-        this._values.Push(valuesToSet*)
     }
 
     __Enum(NumberOfVars) {
         return EnumKVI
 
         EnumKVI(&key, &value := 0, &index := 0) {
-            if (A_Index > this._keys.Length) {
+            if (A_Index > this._entries.Length) {
                 return false
             }
 
-            index := A_Index
-            key := this._keys[index]
-            value := this._values[index]
+            key := this._entries[A_Index][1]
+            value := this._entries[A_Index][2]
         }
     }
 
@@ -107,7 +102,7 @@ class OrderedMap extends Map {
      * @returns {Array} 
      */
     keys() {
-        return this._keys
+        return this._entries.map(entry => entry[1])
     }
 
     /**
@@ -115,7 +110,7 @@ class OrderedMap extends Map {
      * @returns {Array} 
      */
     values() {
-        return this._values
+        return this._entries.map(entry => entry[2])
     }
 
     /**
@@ -132,13 +127,13 @@ class OrderedMap extends Map {
      * @returns {Any} 
      */
     keyOf(value) {
-        foundIndex := this._values.findIndex(item => item = value)
+        foundEntry := this._entries.find(entry => entry[2] == value)
 
-        if (foundIndex = "") {
+        if (!foundEntry) {
             throw Error("Value not found.", value)
         }
 
-        return this._keys[foundIndex]
+        return foundEntry[1]
     }
 
     /**
@@ -147,10 +142,10 @@ class OrderedMap extends Map {
      * @returns {Integer} 
      */
     indexOf(key) {
-        foundIndex := this._keys.findIndex(item => item = key)
+        foundIndex := this._entries.findIndex(entry => entry[1] == key)
 
-        if (foundIndex = "") {
-            throw Error("Key not found.", key)
+        if (!foundIndex) {
+            throw Error(Format("Key:({1}) not found.", key))
         }
 
         return foundIndex
@@ -158,21 +153,20 @@ class OrderedMap extends Map {
 
     /**
      * Insert an [key, value] pair entry in OrderedMap.
-     * @param {Array} entry a [key, value] pair
      * @param {Integer} index The position to insert the entry at.
+     * @param {Array} entry a [key, value] pair
      */
-    insert(entry, index) {
-        checkType(entry, Array)
+    insert(index, entry) {
         checkType(index, Integer)
+        checkType(entry, Array)
 
         key := entry[1], value := entry[2]
-        if (this._keys.find(eKey => eKey = key) != "") {
-            throw Error("Key already exist.")
+        if (this._lookupMap.has(key)) {
+            throw Error(Format("Key:({1}) already exist.", key))
         }
 
         this._entries.InsertAt(index, [key, value])
-        this._keys.InsertAt(index, key)
-        this._values.InsertAt(index, value)
+        this._lookupMap[key] := value
     }
 
     /**
@@ -181,16 +175,16 @@ class OrderedMap extends Map {
      * @returns {Boolean} true if an element with the specified key exists in the OrderedMap object; otherwise false.
      */
     has(key) {
-        return this._keys.find(item => item = key) != "" ? true : false
+        ; return this.keys().find(item => item = key) != "" ? true : false
+        return this._lookupMap.has(key)
     }
 
     /**
      * Removes all key-value pairs.
      */
     clear() {
-        this._keys := []
-        this._values := []
         this._entries := []
+        this._lookupMap.Clear()
     }
 
     /**
@@ -199,13 +193,13 @@ class OrderedMap extends Map {
      * @returns {Any} The removed [key, value] pair.
      */
     delete(key) {
-        index := this._keys.findIndex(item => item = key)
-        target := this._entries[index]
-
-        this._keys.RemoveAt(index)
-        this._values.RemoveAt(index)
+        index := this._entries.findIndex(entry => entry[1] == key)
+        if (!index) {
+            throw Error(Format("Key:({1}) not found.", key))
+        }
+        
         this._entries.RemoveAt(index)
-
-        return target
+        
+        return this._lookupMap.Delete(key)
     }
 }
