@@ -160,6 +160,10 @@ class OrderedMap extends Map {
         checkType(index, Integer)
         checkType(entry, Array)
 
+        if (index < 1 || index > this._entries.Length) {
+            throw IndexError("Index out of range.")
+        }
+
         key := entry[1], value := entry[2]
         if (this._lookupMap.has(key)) {
             throw Error(Format("Key:({1}) already exist.", key))
