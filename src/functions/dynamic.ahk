@@ -23,7 +23,7 @@ class Dynamic {
      * props := { gui: oGui, style: "w200 h30" }
      * ```
      */
-    __New(_signal, componentEntries, props) {
+    __New(_signal, componentEntries, props, &instances := []) {
         checkType(_signal, signal, "Parameter #1 is not a signal")
         checkType(componentEntries, Map, "Parameter #2 is not a Map")
         checkType(props, Object.Prototype, "Parameter #3 is not an Object")
@@ -45,6 +45,9 @@ class Dynamic {
         ; show components conditionally
         this._renderDynamic(this.signal.value)
         effect(this.signal, cur => this._renderDynamic(cur))
+
+        ; pass component instances reference
+        instances := this.components
     }
 
     _renderDynamic(currentValue) {
