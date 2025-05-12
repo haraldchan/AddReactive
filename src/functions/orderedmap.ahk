@@ -101,25 +101,19 @@ class OrderedMap extends Map {
      * Returns an Array that contains all keys in insertion order.
      * @returns {Array} 
      */
-    keys() {
-        return this._entries.map(entry => entry[1])
-    }
+    keys() => this._entries.map(entry => entry[1])
 
     /**
      * Returns an Array that contains all values in insertion order.
      * @returns {Array} 
      */
-    values() {
-        return this._entries.map(entry => entry[2])
-    }
+    values() => this._entries.map(entry => entry[2])
 
     /**
      * Returns an Array of all [key, value] pairs in insertion order.
      * @returns {Array} [[key, value], [key, value] ...]
      */
-    entries() {
-        return this._entries
-    }
+    entries() => this._entries
 
     /**
      * Returns the specified key from OrderedMap by value.
@@ -178,10 +172,7 @@ class OrderedMap extends Map {
      * @param key The key of the element to test for presence in the OrderedMap object.
      * @returns {Boolean} true if an element with the specified key exists in the OrderedMap object; otherwise false.
      */
-    has(key) {
-        ; return this.keys().find(item => item = key) != "" ? true : false
-        return this._lookupMap.has(key)
-    }
+    has(key) => this._lookupMap.has(key)
 
     /**
      * Removes all key-value pairs.
