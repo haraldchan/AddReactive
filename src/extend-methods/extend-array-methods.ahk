@@ -195,61 +195,58 @@ defineArrayMethods(arr) {
     }
 
     arr.Prototype.slice := slice
-    slice(arr, start := 1, end := arr.Length) {
+    slice(arr, start := 1, end := arr.Length + 1) {
         newArray := []
 
-        for item in arr {
-            if (A_Index < start) {
-                continue
-            }
+        if (start < 1 || start > arr.length || end < 1 || end > arr.length + 1) {
+            return false
+        }
 
-            if (A_Index == end && end != arr.Length) {
-                break
-            }
-
-            newArray.Push(item)
+        ptr := start
+        loop (end == arr.Length + 1 ? arr.Length + 1 : end) - start {
+            newArray.Push(arr[ptr])
+            ptr++
         }
 
         return newArray
     }
 
-    arr.Prototype.sort := sort
+    arr.Prototype.sort := _sort
     _merge(arr1, arr2) {
         mergedList := []
-        i := 0, j := 0
+        i := 1, j := 1
 
-        while (i < arr1.Length && j < arr2.Length) {
+        while (i < arr1.Length+1 && j < arr2.Length+1) {
             if (arr1[i] < arr2[j]) {
-                mergedList.Push(arr2[i])
+                mergedList.Push(arr1[i])
                 i++
             } else {
-                mergedList.Push(arr2[i])
+                mergedList.Push(arr2[j])
                 j++
             }
         }
 
-        while (i < arr1.Length) {
+        while (i < arr1.Length+1) {
             mergedList.Push(arr1[i])
             i++
         }
 
-        while (j < arr2.Length) {
+        while (j < arr2.Length+1) {
             mergedList.Push(arr2[j])
             j++
         }
-
         return mergedList
     }
-    sort(arr) {
+    _sort(arr) {
         if (arr.Length == 1) {
             return arr
         }
 
-        mid := Integer(arr.Length / 2)
+        mid := Integer(arr.Length / 2 + 1)
         left := arr.slice(, mid)
         right := arr.slice(mid)
 
-        return _merge(sort(left), sort(right))
+        return _merge(_sort(left), _sort(right))
     }
 }
 
