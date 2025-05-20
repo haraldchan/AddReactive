@@ -212,6 +212,45 @@ defineArrayMethods(arr) {
 
         return newArray
     }
+
+    arr.Prototype.sort := sort
+    _merge(arr1, arr2) {
+        mergedList := []
+        i := 0, j := 0
+
+        while (i < arr1.Length && j < arr2.Length) {
+            if (arr1[i] < arr2[j]) {
+                mergedList.Push(arr2[i])
+                i++
+            } else {
+                mergedList.Push(arr2[i])
+                j++
+            }
+        }
+
+        while (i < arr1.Length) {
+            mergedList.Push(arr1[i])
+            i++
+        }
+
+        while (j < arr2.Length) {
+            mergedList.Push(arr2[j])
+            j++
+        }
+
+        return mergedList
+    }
+    sort(arr) {
+        if (arr.Length == 1) {
+            return arr
+        }
+
+        mid := Integer(arr.Length / 2)
+        left := arr.slice(, mid)
+        right := arr.slice(mid)
+
+        return _merge(sort(left), sort(right))
+    }
 }
 
 defineArrayMethods(Array)
