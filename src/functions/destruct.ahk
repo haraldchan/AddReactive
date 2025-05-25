@@ -1,5 +1,29 @@
 class destruct {
+    /**
+     * Destructures an array or object into multiple variables by reference.
+     * 
+     * ```
+     * arr := [1, 2, 3]
+     * destruct([&a, &b, &c], arr)  ; assigns: a := 1, b := 2, c := 3
+     * 
+     * staff := { name: "John", age: 33 }
+     * destruct({ name: &name, age: &age }, staff)  ; assigns: name := "John", age := 33
+     * 
+     * nested := { user: { name: "Jane", location: { city: "Paris" } } }
+     * destruct({ user: { name: &userName, location: { city: &city } } }, nested)
+     * ; assigns: userName := "Jane", city := "Paris"
+     * ```
+     * 
+     * Supports deep nesting and type-safe value mapping from the source object or array.
+     * 
+     * @param {Array<VarRef>|Object<string, VarRef>} outputVars - An array or object containing VarRefs to receive values.
+     * @param {Array|Object} source - An array, Map, or plain object whose values are destructured into outputVars.
+     * @throws {ValueError} If a key or index is missing in the source.
+     */
     __New(outputVars, source) {
+        checkType(outputVars, [Array, Map, Object.Prototype])
+        checkType(source, [Array, Map, Object.Prototype])
+
         this._resolve(this._refs(outputVars), source)
     }
 
