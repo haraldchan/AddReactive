@@ -35,28 +35,16 @@ class destruct {
             }
         }
 
-        if (source is Map) {
+        if (source is Map || isPlainObject(source)) {
+            isMap := source is Map
+
             for k, setter in setters.OwnProps() {
-                if (setter is Map) {
-                    this._resolve(setter, source[k])
+                if (setter is Map || isPlainObject(setter)) {
+                    this._resolve(setter, isMap ? source[k] : source.%k%)
                 }
 
-                if (source.has(k)) {
-                    setter(source[k])
-                } else {
-                    throw ValueError("Key not found.", -1, k)
-                }
-            }
-        }
-
-        if (isPlainObject(source)) {
-            for k, setter in setters.OwnProps() {
-                if (setter is Map) {
-                    this._resolve(setter, source.%k%)
-                }
-
-                if (source.HasOwnProp(k)) {
-                    setter(source.%k%)
+                if (isMap ? source.has(k) : source.HasOwnProp(k)) {
+                    setter(isMap ? source[k] : source.%k%)
                 } else {
                     throw ValueError("Key not found.", -1, k)
                 }
@@ -64,6 +52,3 @@ class destruct {
         }
     }
 }
-
-destruct([&a, &b], [1, 2])
-destruct({ name: &name }, { name: "john" })
