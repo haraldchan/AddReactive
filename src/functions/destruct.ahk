@@ -29,12 +29,13 @@ class destruct {
 
     _refs(rawRefs) {
         if (rawRefs is Array) {
-            return rawRefs.map((&var) => value => var := value)
+            return rawRefs.flat().map((&var) => value => var := value)
+
         } else if (rawRefs is Map || isPlainObject(rawRefs)) {
             out := {}
             for k, v in (rawRefs is Map ? rawRefs : rawRefs.OwnProps()) {
-                if (IsObject(v)) {
-                    this._refs(v)
+                if (v is Map || isPlainObject(v)) {
+                    out.%k% := this._refs(v)
                 } else {
                     out.%k% := ((&var) => value => var := value)(v)
                 }
@@ -45,17 +46,20 @@ class destruct {
     }
 
     _resolve(setters, source) {
+        if (setters is Func) {
+            setters(source)
+            return
+        }
+
         if (source is Array) {
+            source := source.flat()
+            
             for setter in setters {
                 if (A_Index > source.Length) {
                     throw IndexError("Index out of range", -1, A_Index)
                 }
 
-                if (setter is Array) {
-                    this._resolve(setter, source[A_Index])
-                }
-
-                setter(source[A_Index])
+                this._resolve(setter, source[A_Index])
             }
         }
 
@@ -68,7 +72,7 @@ class destruct {
                 }
 
                 if (isMap ? source.has(k) : source.HasOwnProp(k)) {
-                    setter(isMap ? source[k] : source.%k%)
+                    this._resolve(setter, isMap ? source[k] : source.%k%)
                 } else {
                     throw ValueError("Key not found.", -1, k)
                 }
