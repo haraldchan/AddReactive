@@ -51,6 +51,21 @@ defineArrayMethods(arr) {
         }
     }
 
+    arr.Prototype.at := at
+    at(arr, index) {
+        if (Abs(index) > arr.Length || index == 0) {
+            throw ValueError("Index out of range.")
+        }
+
+        if (index > 0) {
+            return arr[index]
+        }
+
+        if (index < 0) {
+            return arr[arr.Length + 1 + index]
+        }
+    }
+
     arr.Prototype.map := map
     map(arr, fn) {
         newArray := []
