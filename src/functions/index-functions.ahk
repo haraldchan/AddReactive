@@ -6,7 +6,7 @@
 #Include "./shareCheckStatus.ahk"
 #Include "./useListPlaceholder.ahk"
 #Include "./useProps.ahk"
-#Include "./matchCase.ahk"
+#Include "./match.ahk"
 #Include "./unpack.ahk"
 
 ; classes
