@@ -7,16 +7,24 @@ defineGuiMethods(gui) {
      * @returns {Gui.Control|AddReactive}
      */
     getCtrlByName(gui, name) {
-        for ctrl in gui {
-            if (ctrl.Name == name) {
-                return ctrl
-            }
+        ; for ctrl in gui {
+        ;     if (ctrl.Name == name) {
+        ;         return ctrl
+        ;     }
+        ; }
+
+        ; for arc in gui.arcs {
+        ;     if (arc.name == name) {
+        ;         return arc
+        ;     }
+        ; }
+
+        if (gui[name]) {
+            return gui[name]
         }
 
-        for arc in gui.arcs {
-            if (arc.name == name) {
-                return arc
-            }
+        if (gui.arcs[name]) {
+            return gui.arcs[name]
         }
 
         throw ValueError(Format("Control name ({1}) not found.", name))

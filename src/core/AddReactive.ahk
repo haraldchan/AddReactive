@@ -81,7 +81,7 @@ class AddReactive {
 
         if (arcNameIndex != "") {
             this.name := optionsArr.RemoveAt(optionsArr.findIndex(item => InStr(item, "$")))
-            this.GuiObject.arcs.Push(this)
+            this.GuiObject.arcs[this.name] := this
         }
 
         formattedOptions := ""
@@ -369,5 +369,5 @@ class AddReactive {
 }
 
 Gui.Prototype.AddReactive := AddReactive
-Gui.Prototype.arcs := []
-Gui.Prototype.arcGroups := []
+Gui.Prototype.arcs := Map()
+Gui.Prototype.arcs.Default := ""
