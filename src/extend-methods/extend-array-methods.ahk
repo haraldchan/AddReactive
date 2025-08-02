@@ -488,8 +488,8 @@ class ArrayExt {
         }
 
         mid := Integer(arr.Length / 2 + 1)
-        left := arr.slice(, mid)
-        right := arr.slice(mid)
+        left := this.slice(arr ,, mid)
+        right := this.slice(arr, mid)
 
         return this._merge(this.sort(left, compareFn), this.sort(right, compareFn), compareFn)
     }
@@ -501,13 +501,14 @@ defineArrayMethods(ArrayProto) {
     }
 
     for method, enabled in ARConfig.extendMethods.array.OwnProps() {
+        if (method == "sort" && enabled) {
+            Array.Prototype._merge := ObjBindMethod(ArrayExt, "_merge")
+        }
+
         if (enabled) {
-            Array.Prototype.%method% := ArrayExt.%method%
-            ; ObjBindMethod(Array.Proto, method)
+            Array.Prototype.%method% := ObjBindMethod(ArrayExt, method)
         }
     }
-
-    ; if (ARConfig.extendMethods.array.some) {
-    ;     ArrayProto.some := ArrayExt.some
-    ; }
 }
+
+defineArrayMethods(Array.Prototype)
