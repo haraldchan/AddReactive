@@ -1,19 +1,29 @@
-defineStringMethods(str) {
+class StringExt {
+    static patch() {
+        if (!ARConfig.useExtendMethods) {
+            return
+        }
 
-    str.Prototype.length := StrLen
-    str.Prototype.toLower := StrLower
-    str.Prototype.toUpper := StrUpper
-    str.Prototype.toTitle := StrTitle
-    str.Prototype.trim := Trim
-    str.Prototype.trimStart := LTrim
-    str.Prototype.trimEnd := RTrim
-    str.Prototype.includes := InStr
-    str.Prototype.replace := StrReplace
-    str.Prototype.split := StrSplit
-    str.Prototype.substr := SubStr
-    
-    str.Prototype.replaceThese := replaceThese
-    replaceThese(str, needles, replaceText := "", caseSense := false, &outputVarCount := 0, limit := -1) {
+        for method, enabled in ARConfig.extendMethods.string.OwnProps() {
+            if (enabled) {
+                String.Prototype.%method% := ObjBindMethod(this, method)
+            }
+        }
+    }
+
+    static length := StrLen
+    static toLower := StrLower
+    static toUpper := StrUpper
+    static toTitle := StrTitle
+    static trim := Trim
+    static trimStart := LTrim
+    static trimEnd := RTrim
+    static includes := InStr
+    static replace := StrReplace
+    static split := StrSplit
+    static substr := SubStr
+
+    static replaceThese(str, needles, replaceText := "", caseSense := false, &outputVarCount := 0, limit := -1) {
         checkType(needles, Array)
 
         for needle in needles {
@@ -23,5 +33,3 @@ defineStringMethods(str) {
         return str
     }
 }
-
-defineStringMethods(String)
