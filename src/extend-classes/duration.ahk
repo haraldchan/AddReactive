@@ -1,63 +1,91 @@
 class Duration {
-    class TimeUnit {
-        __New(span, unitType) {
-            this.span := span
-            this.unitType := unitType
+    static use() {
+        if (!ARConfig.useExtendClasses) {
+            return
         }
 
-        ago() => DateAdd(A_Now, 0 - this.span, this.unitType)
-
-        fromNow() => DateAdd(A_Now, this.span, this.unitType)
-
-        after(time) => this.since(time)
-        since(time) {
-            if (!IsTime(time)) {
-                Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, time)
+        for method, enabled in ARConfig.extendClasses.duration.integer.OwnProps() {
+            if (enabled) {
+                Integer.Prototype.%method% := ObjBindMethod(this, method)
             }
-
-            return DateAdd(time, this.span, this.unitType)
         }
 
-        before(time) => this.until(time)
-        until(time) {
-            if (!IsTime(time)) {
-                Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, time)
+        for method, enabled in ARConfig.extendClasses.duration.string.OwnProps() {
+            if (enabled) {
+                String.Prototype.%method% := ObjBindMethod(this, method)
             }
-
-            return DateAdd(time, 0 - this.span, this.unitType)
         }
     }
 
-    static seconds(duration) => this.TimeUnit(duration, "Seconds")
-    static minutes(duration) => this.TimeUnit(duration, "Minutes")
-    static hours(duration) => this.TimeUnit(duration, "Hours")
-    static days(duration) => this.TimeUnit(duration, "Days")
+    static seconds(duration) => TimeUnit(duration, "Seconds")
+
+    static minutes(duration) => TimeUnit(duration, "Minutes")
+
+    static hours(duration) => TimeUnit(duration, "Hours")
+
+    static days(duration) => TimeUnit(duration, "Days")
+
+    static daysToDate(fromDate, toDate) {
+        if (!IsTime(fromDate)) {
+            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, fromDate)
+        }
+
+        if (!IsTime(toDate)) {
+            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, toDate)
+        }
+
+        return DateDiff(toDate, fromDate, "Days")
+    }
+
+    static tomorrow(fromDate) => this.nextDay(fromDate)
+    static nextDay(fromDate) {
+        if (!IsTime(fromDate)) {
+            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, fromDate)
+        }
+
+        return DateAdd(fromDate, 1, "Days")
+    }
 }
 
-Integer.Prototype.days := (i) => Duration.days(i)
-
-
-String.Prototype.daysToDate := daysToDate
-daysToDate(fromDate, toDate) {
-    if (!IsTime(fromDate)) {
-        Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, fromDate)
+class TimeUnit {
+    __New(value, unitType) {
+        this.value := value
+        this.unitType := unitType
+        this.unitInSeconds := {
+            Seconds: 1,
+            Minutes: 60,
+            Hours: 3600,
+            Days: 86400
+        }
     }
 
-    if (!IsTime(toDate)) {
-        Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, toDate)
+    ago() => DateAdd(A_Now, 0 - this.value, this.unitType)
+
+    fromNow() => DateAdd(A_Now, this.value, this.unitType)
+
+    after(time) => this.since(time)
+    since(time) {
+        if (!IsTime(time)) {
+            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, time)
+        }
+
+        return DateAdd(time, this.value, this.unitType)
     }
 
-    return DateDiff(toDate, fromDate, "Days")
+    before(time) => this.until(time)
+    until(time) {
+        if (!IsTime(time)) {
+            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, time)
+        }
+
+        return DateAdd(time, 0 - this.value, this.unitType)
+    }
+
+    inSeconds() => this.unitInSeconds.%this.unitType%
+
+    inMinutes() => this.unitInSeconds.%this.unitType% / 60
+
+    inHours() => this.unitInSeconds.%this.unitType% / 60 / 60
+
+    inDays() => this.unitInSeconds.%this.unitType% / 60 / 60 / 24
 }
-
-MsgBox(
-    5.days().ago()
-)
-
-MsgBox(
-    5.days().since("20240505")
-)
-
-MsgBox(
-    "20250101".daysToDate("20250105")
-)
