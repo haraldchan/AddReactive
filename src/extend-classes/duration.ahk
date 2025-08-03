@@ -89,3 +89,4 @@ class TimeUnit {
 
     inDays() => this.unitInSeconds.%this.unitType% / 60 / 60 / 24
 }
+
