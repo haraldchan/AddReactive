@@ -1,6 +1,5 @@
 class ARConfig {
     static useExtendMethods := true
-
     static extendMethods := {
         array: {
             some:      true,
@@ -51,6 +50,22 @@ class ARConfig {
             listview: {
                 getCheckedRows: true,
                 getFocusedRows: true
+            }
+        }
+    }
+
+    static useExtendClasses := true
+    static extendClasses := {
+        duration: {
+            integer: {
+                seconds:    true,
+                minutes:    true,
+                hours:      true,
+                days:       true,
+
+            },
+            string: {
+                daysToDate: true
             }
         }
     }
