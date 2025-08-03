@@ -34,7 +34,9 @@ class Duration {
     static days(duration) => this.TimeUnit(duration, "Days")
 }
 
-Integer.Prototype.days := ((d) => Duration.days(d))()
+Integer.Prototype.days := (i) => Duration.days(i)
+
+
 String.Prototype.daysToDate := daysToDate
 daysToDate(fromDate, toDate) {
     if (!IsTime(fromDate)) {
@@ -49,13 +51,13 @@ daysToDate(fromDate, toDate) {
 }
 
 MsgBox(
-    5.days.ago()
+    5.days().ago()
 )
 
 MsgBox(
-    5.days.since("20240505")
+    5.days().since("20240505")
 )
 
 MsgBox(
-    "20250101".daysToDate("20250102")
+    "20250101".daysToDate("20250105")
 )
