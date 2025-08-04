@@ -4,13 +4,13 @@ class Duration {
             return
         }
 
-        for method, enabled in ARConfig.extendClasses.duration.integer.OwnProps() {
+        for method, enabled in ARConfig.enableExtendClasses.duration.integer.OwnProps() {
             if (enabled) {
                 Integer.Prototype.%method% := ObjBindMethod(this, method)
             }
         }
 
-        for method, enabled in ARConfig.extendClasses.duration.string.OwnProps() {
+        for method, enabled in ARConfig.enableExtendClasses.duration.string.OwnProps() {
             if (enabled) {
                 String.Prototype.%method% := ObjBindMethod(this, method)
             }
@@ -89,4 +89,3 @@ class TimeUnit {
 
     inDays() => this.unitInSeconds.%this.unitType% / 60 / 60 / 24
 }
-

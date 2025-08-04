@@ -4,7 +4,7 @@ class ArrayExt {
             return
         }
 
-        for method, enabled in ARConfig.extendMethods.array.OwnProps() {
+        for method, enabled in ARConfig.enableExtendMethods.array.OwnProps() {
             if (method == "sort" && enabled) {
                 Array.Prototype._merge := ObjBindMethod(this, "_merge")
             }

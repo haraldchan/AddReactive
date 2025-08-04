@@ -4,7 +4,7 @@ class MapExt {
             return
         }
 
-        for method, enabled in ARConfig.extendMethods.map.OwnProps() {
+        for method, enabled in ARConfig.enableExtendMethods.map.OwnProps() {
             if (enabled) {
                 Map.Prototype.%method% := ObjBindMethod(this, method)
             }

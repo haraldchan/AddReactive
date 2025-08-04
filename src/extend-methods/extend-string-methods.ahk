@@ -4,7 +4,7 @@ class StringExt {
             return
         }
 
-        for method, enabled in ARConfig.extendMethods.string.OwnProps() {
+        for method, enabled in ARConfig.enableExtendMethods.string.OwnProps() {
             if (enabled) {
                 String.Prototype.%method% := ObjBindMethod(this, method)
             }

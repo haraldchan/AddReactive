@@ -4,7 +4,7 @@ class GuiExt {
             return
         }
 
-        for method, status in ARConfig.extendMethods.gui.OwnProps() {
+        for method, status in ARConfig.enableExtendMethods.gui.OwnProps() {
             if (method == "listview") {
                 for lvMethod, lvStatus in status.OwnProps() {
                     if (lvStatus) {
