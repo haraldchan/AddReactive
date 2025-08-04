@@ -1,6 +1,6 @@
 class ARConfig {
     static useExtendMethods := true
-    static extendMethods := {
+    static enableExtendMethods := {
         array: {
             some:      true,
             every:     true,
@@ -55,7 +55,7 @@ class ARConfig {
     }
 
     static useExtendClasses := true
-    static extendClasses := {
+    static enableExtendClasses := {
         duration: {
             integer: {
                 seconds:    true,
@@ -65,7 +65,9 @@ class ARConfig {
 
             },
             string: {
-                daysToDate: true
+                daysToDate: true,
+                tomorrow:   true,
+                nextDay:    true, 
             }
         }
     }
