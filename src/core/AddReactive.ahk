@@ -30,18 +30,14 @@ class AddReactive {
             if (depend.value is Array) {
                 this.optionTexts := depend.value
             } else if (depend.value is Map) {
-                ; this.optionTexts := depend.value.keys()
                 this.optionTexts := MapExt.keys(depend.value)
-                ; this.optionsValues := depend.value.values()
                 this.optionsValues := MapExt.values(depend.value)
             }
         } else if (controlType == "ListView") {
             this.titleKeys := content.keys
             this.formattedContent := content.HasOwnProp("titles")
                 ? content.titles
-                ; : this.titleKeys.map(key => (key is Array) ? key[key.Length] : key)
                 : ArrayExt.map(this.titleKeys, key => (key is Array) ? key[key.Length] : key)
-            ; this.colWidths := content.HasOwnProp("widths") ? content.widths : this.titleKeys.map(item => "AutoHdr")
             this.colWidths := content.HasOwnProp("widths") ? content.widths : ArrayExt.map(this.titleKeys, item => "AutoHdr")
         } else {
             this.formattedContent := RegExMatch(content, "\{\d+\}") ? this._handleFormatStr(content, depend, key) : content
@@ -81,11 +77,9 @@ class AddReactive {
         optionsString := this.ctrlType == "ListView" ? options.lvOptions : options
 
         optionsArr := StrSplit(optionsString, " ")
-        ; arcNameIndex := optionsArr.findIndex(item => InStr(item, "$"))
         arcNameIndex := ArrayExt.findIndex(optionsArr, item => InStr(item, "$"))
 
         if (arcNameIndex) {
-            ; this.name := optionsArr.RemoveAt(optionsArr.findIndex(item => InStr(item, "$")))
             this.name := optionsArr.RemoveAt(arcNameIndex)
             this.GuiObject.arcs[this.name] := this
         }
@@ -105,11 +99,9 @@ class AddReactive {
 
     _filterDepends(depend) {
         if (depend is Array) {
-            ; checkValueObject := depend.find(d => d is Object && d.HasOwnProp("checkValue"))
             checkValueObject := ArrayExt.find(depend, d => d is Object && d.HasOwnProp("checkValue"))
             if (checkValueObject != "") {
                 this.checkValueDepend := (depend.RemoveAt(
-                    ; depend.findIndex(d => d is Object && d.HasOwnProp("checkValue"))
                     ArrayExt.findIndex(depend, d => d is Object && d.HasOwnProp("checkValue"))
                 )).checkValue
                 this.checkValueDepend.addSub(this)
@@ -186,7 +178,6 @@ class AddReactive {
                 itemIn := item
             }
 
-            ; rowData := this.titleKeys.map(key => getRowData(key, itemIn))
             rowData := ArrayExt.map(this.titleKeys, key => getRowData(key, itemIn))
             getRowData(key, itemIn, layer := 1) {
                 if (key is String) {
@@ -208,7 +199,6 @@ class AddReactive {
         this.ctrl.Modify(1, "Select")
         this.ctrl.Focus()
 
-        ; find nested key by exact query path
         getExactMatch(keys, item, index) {
             if !(item is Map) {
                 return item
@@ -272,15 +262,12 @@ class AddReactive {
         if (this.ctrl is Gui.ComboBox || this.ctrl is Gui.DDL) {
             ; replace the list content
             this.ctrl.Delete()
-            ; this.ctrl.Add(signal.value is Array ? signal.value : signal.value.keys())
             this.ctrl.Add(signal.value is Array ? signal.value : MapExt.keys(signal.value))
             this.ctrl.Choose(1)
             if (signal.value is Array) {
                 this.optionTexts := signal.value
             } else {
-                ; this.optionsTexts := signal.value.keys()
                 this.optionsTexts := MapExt.keys(signal.value)
-                ; this.optionsValues := signal.value.values()
                 this.optionsValues := MapExt.values(signal.value)
             }
         }
