@@ -58,16 +58,19 @@ class ARConfig {
     static enableExtendClasses := {
         duration: {
             integer: {
-                seconds:    true,
-                minutes:    true,
-                hours:      true,
-                days:       true,
-
+                seconds: true,
+                minutes: true,
+                hours:   true,
+                days:    true,
             },
             string: {
-                daysToDate: true,
-                tomorrow:   true,
-                nextDay:    true, 
+                secondsBetween:  true,
+                minutesBetween:  true,
+                hoursBetween:    true,
+                daysBetween:     true,
+                tomorrow:        true,
+                nextDay:         true,
+                toFormat:        true, 
             }
         }
     }

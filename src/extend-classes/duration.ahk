@@ -17,34 +17,22 @@ class Duration {
         }
     }
 
+    ; integer
     static seconds(duration) => TimeUnit(duration, "Seconds")
-
     static minutes(duration) => TimeUnit(duration, "Minutes")
-
     static hours(duration) => TimeUnit(duration, "Hours")
-
     static days(duration) => TimeUnit(duration, "Days")
+    
+    ; string/date
+    static secondsBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Seconds") 
+    static minuteBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Minutes")
+    static hourBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Hours")
+    static daysBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Days")
 
-    static daysToDate(fromDate, toDate) {
-        if (!IsTime(fromDate)) {
-            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, fromDate)
-        }
-
-        if (!IsTime(toDate)) {
-            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, toDate)
-        }
-
-        return DateDiff(toDate, fromDate, "Days")
-    }
-
-    static tomorrow(fromDate) => this.nextDay(fromDate)
-    static nextDay(fromDate) {
-        if (!IsTime(fromDate)) {
-            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, fromDate)
-        }
-
-        return DateAdd(fromDate, 1, "Days")
-    }
+    static tomorrow(fromDate, time := 0) => this.nextDay(fromDate, time)
+    static nextDay(fromDate, time := 0) => time ? FormatTime(DateAdd(fromDate, 1, "Days"), "yyyyMMdd") . time : DateAdd(fromDate, 1, "Days")
+    static yesterday(fromDate, time := 0) => time ? FormatTime(DateAdd(fromDate, -1, "Days"), "yyyyMMdd") . time : DateAdd(fromDate, -1, "Days")
+    static toFormat(time, timeFormat) => FormatTime(time, timeFormat)
 }
 
 class TimeUnit {
@@ -64,28 +52,13 @@ class TimeUnit {
     fromNow() => DateAdd(A_Now, this.value, this.unitType)
 
     after(time) => this.since(time)
-    since(time) {
-        if (!IsTime(time)) {
-            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, time)
-        }
-
-        return DateAdd(time, this.value, this.unitType)
-    }
+    since(time) => DateAdd(time, this.value, this.unitType)
 
     before(time) => this.until(time)
-    until(time) {
-        if (!IsTime(time)) {
-            Throw TypeError("Value does not fulfill YYYYMMDDHH24MISS format", -1, time)
-        }
-
-        return DateAdd(time, 0 - this.value, this.unitType)
-    }
+    until(time) => DateAdd(time, 0 - this.value, this.unitType)
 
     inSeconds() => this.unitInSeconds.%this.unitType%
-
     inMinutes() => this.unitInSeconds.%this.unitType% / 60
-
     inHours() => this.unitInSeconds.%this.unitType% / 60 / 60
-
     inDays() => this.unitInSeconds.%this.unitType% / 60 / 60 / 24
 }
