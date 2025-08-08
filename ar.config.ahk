@@ -48,8 +48,8 @@ class ARConfig {
             getCtrlByText:    true,
             getComponent:     true,
             listview: {
-                getCheckedRows: true,
-                getFocusedRows: true
+                getCheckedRowNumbers: true,
+                getFocusedRowNumbers: true
             }
         }
     }
