@@ -74,7 +74,7 @@ class GuiExt {
         throw ValueError("Control with Text not found.", -1, text)
     }
 
-    static getCheckedRows(LV) {
+    static getCheckedRowNumbers(LV) {
         checkedRowNumbers := []
         loop LV.GetCount() {
             curRow := LV.GetNext(A_Index - 1, "Checked")
@@ -89,7 +89,7 @@ class GuiExt {
         return checkedRowNumbers
     }
 
-    static getFocusedRows(LV) {
+    static getFocusedRowNumbers(LV) {
         focusedRows := []
         rowNumber := 0
         loop {
