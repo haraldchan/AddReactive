@@ -11,17 +11,17 @@ class StringExt {
         }
     }
 
-    static length := StrLen
-    static toLower := StrLower
-    static toUpper := StrUpper
-    static toTitle := StrTitle
-    static trim := Trim
-    static trimStart := LTrim
-    static trimEnd := RTrim
-    static includes := InStr
-    static replace := StrReplace
-    static split := StrSplit
-    static substr := SubStr
+    static length(args*) => StrLen(args*)
+    static toLower(args*) => StrLower(args*)
+    static toUpper(args*) => StrUpper(args*)
+    static toTitle(args*) => StrTitle(args*)
+    static trim(args*) => Trim(args*)
+    static trimStart(args*) => LTrim(args*)
+    static trimEnd(args*) => RTrim(args*)
+    static includes(args*) => InStr(args*)
+    static replace(args*) => StrReplace(args*)
+    static split(args*) => StrSplit(args*)
+    static substr(args*) => SubStr(args*)
 
     static replaceThese(str, needles, replaceText := "", caseSense := false, &outputVarCount := 0, limit := -1) {
         checkType(needles, Array)
