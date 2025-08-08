@@ -39,7 +39,7 @@ class ARConfig {
             values:    true,
             getKey:    true,
             deepClone: true,
-
+            default:   true,
         },
         gui: {
             getCtrlByName:    true,
