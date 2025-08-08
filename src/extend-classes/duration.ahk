@@ -25,14 +25,14 @@ class Duration {
     
     ; string/date
     static secondsBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Seconds") 
-    static minuteBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Minutes")
+    static minutesBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Minutes")
     static hourBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Hours")
     static daysBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Days")
 
     static tomorrow(fromDate, time := 0) => this.nextDay(fromDate, time)
     static nextDay(fromDate, time := 0) => time ? FormatTime(DateAdd(fromDate, 1, "Days"), "yyyyMMdd") . time : DateAdd(fromDate, 1, "Days")
     static yesterday(fromDate, time := 0) => time ? FormatTime(DateAdd(fromDate, -1, "Days"), "yyyyMMdd") . time : DateAdd(fromDate, -1, "Days")
-    static toFormat(time, timeFormat) => FormatTime(time, timeFormat)
+    static toFormat(time, timeFormat) => checkType(time, IsTime) && FormatTime(time, timeFormat)
 }
 
 class TimeUnit {
