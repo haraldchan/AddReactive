@@ -70,6 +70,7 @@ class ARConfig {
                 daysBetween:     true,
                 tomorrow:        true,
                 nextDay:         true,
+                yesterday:       true,
                 toFormat:        true, 
             }
         }
