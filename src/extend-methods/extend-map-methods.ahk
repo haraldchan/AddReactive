@@ -39,6 +39,11 @@ class MapExt {
         }
     }
 
+    static default(_map, value) {
+        _map.Default := value
+        return _map
+    }
+
     static deepClone(_map) {
         if (_map is Map) {
             res := _map is OrderedMap ? OrderedMap() : Map()
