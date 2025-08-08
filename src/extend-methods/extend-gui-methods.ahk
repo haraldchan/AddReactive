@@ -21,12 +21,12 @@ class GuiExt {
     }
 
     static getCtrlByName(gui, name) {
-        if (gui[name]) {
-            return gui[name]
-        }
-
         if (gui.arcs[name]) {
             return gui.arcs[name]
+        }
+
+        if (gui[name]) {
+            return gui[name]
         }
 
         throw ValueError("Control name not found.", -1, name)
