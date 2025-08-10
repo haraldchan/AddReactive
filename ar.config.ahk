@@ -1,4 +1,6 @@
 class ARConfig {
+    static debugMode := true
+
     static useExtendMethods := true
     static enableExtendMethods := {
         array: {

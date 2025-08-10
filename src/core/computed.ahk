@@ -19,6 +19,7 @@ class computed extends signal {
         this.subs := []
         this.comps := []
         this.effects := []
+        this.debugger := false
 
         if (this.signal is Array) {
             for s in this.signal {
@@ -28,6 +29,11 @@ class computed extends signal {
         } else {
             this.signal.addComp(this)
             this.value := this.mutation.Call(this.signal.value)
+        }
+
+        if (ARConfig.debugMode && !(this is Debugger)) {
+            this.createDebugInfo()
+            SignalTracker.trackings[this.debugger.value["variable"]] := this.debugger
         }
     }
 
@@ -66,6 +72,11 @@ class computed extends signal {
                 e(effect.depend.map(dep => dep.value)*)
             }
         }
+        
+        ; notify signal tracker
+        if (this.debugger) {
+            this.debugger.update("value", this.value)
+        }
     }
 
     addSub(controlInstance) {
@@ -78,5 +89,32 @@ class computed extends signal {
 
     addEffect(effectFn) {
         this.effects.Push(effectFn)
+    }
+
+
+    createDebugInfo() {
+        try {
+            throw Error()
+        } catch Error as err {
+                stacks := StrSplit(err.Stack, "`r`n")
+                varLine := StrSplit(
+                    stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1],
+                    "[Object.Call]"
+                )[2]
+
+                varName := Trim(StrSplit(varLine, ":=")[1])
+
+                classType := StrSplit(err.What, ".")[1]
+
+                compLine := stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 2]
+                compName := StringExt.replaceThese(StrSplit(StrSplit(compLine, varName)[1], ":")[2], ["[", "]"])
+
+                this.debugger := Debugger({ 
+                    variable: varName, 
+                    class: classType, 
+                    value: this.value,
+                    component: compName
+                })
+        }
     }
 }

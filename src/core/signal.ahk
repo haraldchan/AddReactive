@@ -20,6 +20,12 @@ class signal {
         this.comps := []
         this.effects := []
         this.type := ""
+        this.debugger := false
+
+        if (ARConfig.debugMode && !(this is Debugger)) {
+            this.createDebugInfo()
+            SignalTracker.trackings[this.debugger.value["variable"]] := this.debugger
+        }
     }
 
     /**
@@ -80,6 +86,11 @@ class signal {
                 e := effect.effectFn
                 e(effect.depend.map(dep => dep.value)*)
             }
+        }
+
+        ; notify signal tracker
+        if (this.debugger) {
+            this.debugger.update("value", this.value)
         }
     }
 
@@ -203,4 +214,35 @@ class signal {
             return res
         }
     }
+
+    createDebugInfo() {
+        try {
+            throw Error()
+        } catch Error as err {
+                stacks := StrSplit(err.Stack, "`r`n")
+                varLine := StrSplit(
+                    stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1],
+                    "[Object.Call]"
+                )[2]
+
+                varName := Trim(StrSplit(varLine, ":=")[1])
+
+                classType := StrSplit(err.What, ".")[1]
+
+                compLine := stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 2]
+                compName := StringExt.replaceThese(StrSplit(StrSplit(compLine, varName)[1], ":")[2], ["[", "]"])
+
+                this.debugger := Debugger({ 
+                    variable: varName, 
+                    class: classType, 
+                    value: this.value,
+                    component: compName
+                })
+        }
+    }
+}
+
+
+class Debugger extends signal {
+
 }
