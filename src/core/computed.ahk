@@ -33,7 +33,7 @@ class computed extends signal {
 
         if (ARConfig.debugMode && !(this is Debugger)) {
             this.createDebugInfo()
-            SignalTracker.trackings[this.debugger.value["variable"]] := this.debugger
+            SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
         }
     }
 
@@ -97,6 +97,7 @@ class computed extends signal {
             throw Error()
         } catch Error as err {
             stacks := StrSplit(err.Stack, "`r`n")
+
             varLine := StrSplit(
                 stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1],
                 "[Object.Call]"

@@ -29,5 +29,14 @@ App(App) {
 DoubledCount(App, count) {
 	doubled := computed(count, c => c * 2)
 
-	return App.ARText("w200 h10", "Attached Computed Value: {1}", doubled)
+	return (
+		App.ARText("w200 h10", "Doubled Count: {1}", doubled),
+		TripleCount(App, count)
+	)
+}
+
+TripleCount(App, count) {
+	trippled := computed(count, c => c * 3)
+
+	return App.ARText("w200 h10", "Trippled Count: {1}", trippled)
 }

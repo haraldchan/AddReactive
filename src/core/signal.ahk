@@ -24,7 +24,7 @@ class signal {
 
         if (ARConfig.debugMode && !(this is Debugger)) {
             this.createDebugInfo()
-            SignalTracker.trackings[this.debugger.value["variable"]] := this.debugger
+            SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
         }
     }
 
