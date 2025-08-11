@@ -5,11 +5,6 @@ g := Gui()
 App(g)
 g.Show()
 
-class SignalTracker {
-	static trackings := Map()
-}
-
-
 App(App) {
 	count := signal(1)
 
@@ -22,9 +17,9 @@ App(App) {
 			debugger => 
 			App.ARText(
 					"w500 h15", 
-					"varName: {1}, class: {2}, value: {3}, component: {4}", 
+					"varName: {1}, class: {2}, value: {3}, scope: {4}", 
 					debugger, 
-					["variable", "class", "value", "component"]
+					["varName", "class", "value", "scope"]
 				)
 		)
 	)
