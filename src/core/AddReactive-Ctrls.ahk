@@ -255,6 +255,19 @@ class ARDateTime extends AddReactiveDateTime {
     ; alias
 }
 
+
+class AddReactiveTreeView extends AddReactive {
+    __New(GuiObject, options := "", depend := 0, key := 0) {
+        this.key := key
+        super.__New(GuiObject, "TreeView", options, "", depend, key)
+    }
+}
+class ARTreeView extends AddReactiveTreeView {
+    ; alias
+}
+
+
+
 ; mount to Gui.Prototype
 Gui.Prototype.AddReactiveText := AddReactiveText
 Gui.Prototype.ARText := ARText
@@ -277,3 +290,5 @@ Gui.Prototype.AddReactiveGroupBox := AddReactiveGroupBox
 Gui.Prototype.ARGroupBox := ARGroupBox
 Gui.Prototype.AddReactiveDateTime := AddReactiveDateTime
 Gui.Prototype.ARDateTime := ARDateTime
+Gui.Prototype.AddReactiveDateTime := AddReactiveTreeView
+Gui.Prototype.ARDateTime := ARTreeView
