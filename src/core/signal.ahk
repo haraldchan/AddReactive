@@ -40,15 +40,11 @@ class signal {
 
         ; validates new value if it matches the Struct
         if (this.type is Struct) {
-            validateInstance := newSignalValue is Struct.StructInstance
-                ? this.type.new(newSignalValue.mapify())
-                : this.type.new(newSignalValue)
+            validateInstance := this.type.new(newSignalValue is Struct.StructInstance ? newSignalValue.mapify() : newSignalValue)
             validateInstance := ""
         } else if (this.type is Array && this.type[1] is Struct) {
             for item in newSignalValue {
-                validateInstance := item is Struct.StructInstance
-                    ? this.type[1].new(item.mapify())
-                    : this.type[1].new(item)
+                validateInstance := this.type[1].new(item is Struct.StructInstance ? item.mapify() : item)
                 validateInstance := ""
             }
         } else if (this.type != "") {
@@ -105,7 +101,12 @@ class signal {
         }
 
         updater := this._mapify(this.value)
-        (key is Array) ? this._setExactMatch(key, updater, newValue) : this._setFirstMatch(key, updater, newValue)
+        if (key is Array) {
+            this._setExactMatch(key, updater, newValue)
+        } else {
+
+            this._setFirstMatch(key, updater, newValue)
+        }
 
         this.set(updater)
     }
@@ -152,16 +153,12 @@ class signal {
 
         if (datatype is Struct) {
             ; try creating the same struct instance for validate.
-            validateInstance := this.value is Struct.StructInstance
-                ? this.type.new(this.value.mapify())
-                : this.type.new(this.value)
+            validateInstance := this.type.new(this.value is Struct.StructInstance ? this.value.mapify() : this.value)
             validateInstance := ""
 
         } else if (datatype is Array && datatype[1] is Struct) {
             for item in this.value {
-                validateInstance := item is Struct.StructInstance
-                    ? this.type[1].new(item.mapify())
-                    : this.type[1].new(item)
+                validateInstance := this.type[1].new(item is Struct.StructInstance ? item.mapify() : item)
                 validateInstance := ""
             }
         } else {
