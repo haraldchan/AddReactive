@@ -1,26 +1,46 @@
+#SingleInstance Force
+#Include "../useAddReactive.ahk"
 
-; g := Gui()
-; App(g)
-; g.Show()
+oGui := Gui()
+TreeViewTest(oGui)
+oGui.Show()
 
-; App(App) {
-; 	getItem(*) {
-; 		msgbox TV.getText(P1C1)
-; 	}
+TreeViewTest(App) {
+	ct := CompTree()
+	ct.addChildren("root node")
 
-; 	return (
-; 		TV := App.AddTreeView(),
-; 		TV.SetFont("s10.5"),
-; 		P1 := TV.Add("First parent"),
-; 		P1C1 := TV.Add("Parent 1's first child", P1, "Check Bold"),
-; 		P2 := TV.Add("Second parent"),
-; 		P2C1 := TV.Add("Parent 2's first child", P2),
-; 		P2C2 := TV.Add("Parent 2's second child", P2),
-; 		P2C2C1 := TV.Add("Child 2's first child", P2C2)
+	ct.addChildren("A")
+	ct.addChildren("A1", "A")
+	ct.addChildren("A2", "A")
 
-; 		App.AddButton("h30 w100", "get second p").OnEvent("Click", getItem)
-; 	)
-; }
+	ct.addChildren("B")
+	ct.addChildren("B1", "B")
+	ct.addChildren("B11", "B1")
+	ct.addChildren("B12", "B1")
+	ct.addChildren("B111", "B11")
+
+	ct.addChildren("C")
+	ct.modifyNode("C", { label: "C", id: "123" })
+
+	
+	
+	
+	tree := signal(ct)
+
+	options := {
+		tvOptions: "w300 h600",
+		itemOptions: ""
+	}
+
+	updateTree(*) {
+		ct.addChildren("D")
+		tree.set(() => ct)
+	}
+
+	return (
+		App.ARTreeView(options, tree).SetFont("s10.5")
+	)
+}
 
 class CompNode {
 	__New(nodeContent) {
@@ -33,10 +53,6 @@ class CompNode {
 class CompTree {
 	__New() {
 		this.root := ""
-	}
-
-	copy() {
-		
 	}
 
 	getNode(label, curNode := this.root) {
@@ -72,13 +88,11 @@ class CompTree {
 
 		if (!parentLabel && !this.root) {
 			this.root := newNode
-			return newNode
 		}
 
 		if (!parentLabel && this.root) {
 			this.root.childrens.Push(newNode)
 			newNode.parent := this.root
-			return newNode
 		}
 
 		parentNode := this.getNode(parentLabel)
@@ -89,28 +103,6 @@ class CompTree {
 		newNode.parent := parentNode
 		parentNode.childrens.Push(newNode)
 
-		return true
+		return newNode
 	}
 }
-
-ct := CompTree()
-ct.addChildren("root node")
-
-ct.addChildren("A")
-ct.addChildren("A1", "A")
-ct.addChildren("A2", "A")
-
-ct.addChildren("B")
-ct.addChildren("B1", "B")
-ct.addChildren("B11", "B1")
-ct.addChildren("B12", "B1")
-ct.addChildren("B111", "B11")
-
-ct.addChildren("C")
-ct.modifyNode("C", { label: "C", id: "123" })
-
-st := ct.copy()
-
-st.modifyNode("C", { label: "C", id: "456" })
-
-; msgbox ct.getNode("C").content.id

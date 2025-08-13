@@ -12,9 +12,9 @@ class AddReactive {
     __New(GuiObject, controlType, options := "", content := "", depend := 0, key := 0) {
         this.GuiObject := GuiObject
         this.ctrlType := controlType
-        this.options := this._handleArcName(options)
-        this.content := content
-        this.depend := this._filterDepends(depend)
+        this.options := options ? this._handleArcName(options) : ""
+        this.content := content ? content : ""
+        this.depend := depend ? this._filterDepends(depend) : 0
         this.checkStatusDepend := ""
         this.key := key
 
@@ -23,6 +23,12 @@ class AddReactive {
             this.lvOptions := options.lvOptions
             this.itemOptions := options.HasOwnProp("itemOptions") ? options.itemOptions : ""
             this.checkedRows := []
+        }
+
+        ; TreeView options
+        if (controlType == "TreeView") {
+            this.tvOptions := options.tvOptions
+            this.itemOptions := options.HasOwnProp("itemOptions") ? options.itemOptions : ""
         }
 
         ; textString handling
@@ -50,13 +56,30 @@ class AddReactive {
             for width in this.colWidths {
                 this.ctrl.ModifyCol(A_Index, width)
             }
-        } else if (controlType == "CheckBox" && this.HasOwnProp("checkValueDepend")) {
+        } else if (controlType == "TreeView") {
+            this.ctrl := this.GuiObject.AddTreeView(this.tvOptions)
+            this.shadowTree := AddReactiveTreeView.ShadowTree(this.ctrl)
+            this.shadowTree.copy(this.depend.value)
+
+            itemId := 0
+            loop {
+                itemId := this.ctrl.GetNext(itemId, "Full")
+                if (!itemId) {
+                    break
+                }
+
+                this.ctrl.Modify(this.ctrl.Get(itemId), this.itemOptions)
+            }
+        }
+        else if (controlType == "CheckBox" && this.HasOwnProp("checkValueDepend")) {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
             this.ctrl.Value := this.checkValueDepend.value
             this.ctrl.OnEvent("Click", (ctrl, *) => this.checkValueDepend.set(ctrl.Value))
-        } else if (controlType == "ComboBox" || controlType == "DropDownList") {
+        } 
+        else if (controlType == "ComboBox" || controlType == "DropDownList") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.optionTexts)
-        } else {
+        } 
+        else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
         }
         this.ctrl.arcWrapper := this
@@ -75,6 +98,7 @@ class AddReactive {
 
     _handleArcName(options) {
         optionsString := this.ctrlType == "ListView" ? options.lvOptions : options
+        optionsString := this.ctrlType == "TreeView" ? options.tvOptions : options
 
         optionsArr := StrSplit(optionsString, " ")
         arcNameIndex := ArrayExt.findIndex(optionsArr, item => InStr(item, "$"))
@@ -244,6 +268,11 @@ class AddReactive {
             }
             ; update list items
             this._handleListViewUpdate()
+        }
+
+        if (this.ctrl is Gui.TreeView) {
+            this.ctrl.Delete()
+            this.shadowTree.copy(this.depend.value)
         }
 
         if (this.ctrl is Gui.CheckBox) {
