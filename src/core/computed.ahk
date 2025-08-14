@@ -31,12 +31,16 @@ class computed extends signal {
             this.value := this.mutation.Call(this.signal.value)
         }
 
-        if (ARConfig.debugMode && !(this is Debugger)) {
-            this.createDebugInfo()
+        if (ARConfig.debugMode && !(this is debugger)) {
+            this.debugger := this.createDebugInfo()
             SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
         }
     }
 
+    /**
+     * Interface for subscribed signal to sync value to date.
+     * @param {signal} subbedSignal subscribed signal
+     */
     sync(subbedSignal) {
         prevValue := this.value
 
@@ -79,19 +83,34 @@ class computed extends signal {
         }
     }
 
-    addSub(controlInstance) {
-        this.subs.Push(controlInstance)
+    /**
+     * Interface for AddReactiveControl instances to subscribe.
+     * @param {AddReactive} AddReactiveControl 
+     */
+    addSub(AddReactiveControl) {
+        this.subs.Push(AddReactiveControl)
     }
 
+    /**
+     * Interface for computed instances to subscribe.
+     * @param {computed} computed 
+     */
     addComp(computed) {
         this.comps.Push(computed)
     }
 
-    addEffect(effectFn) {
-        this.effects.Push(effectFn)
+    /**
+     * Interface for effect instances to subscribe.
+     * @param {effect} effect
+     */
+    addEffect(effect) {
+        this.effects.Push(effect)
     }
 
-
+    /**
+     * Creates a debugger property for SignalTracker to capture.
+     * @returns {debugger}
+     */
     createDebugInfo() {
         try {
             throw Error()
@@ -101,7 +120,7 @@ class computed extends signal {
             varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1
 
             ; signal var name
-            varLine := StrSplit(stacks[varLineIndex],"[Object.Call]")[2]
+            varLine := StrSplit(stacks[varLineIndex], "[Object.Call]")[2]
             varName := Trim(StrSplit(varLine, ":=")[1])
 
             ; type: signal | computed
@@ -111,12 +130,14 @@ class computed extends signal {
             callerName := getCallerNameFromStack(stacks[varLineIndex + 1])
             callerStack := stacks[varLineIndex + 2]
 
-            this.debugger := Debugger({
+            return debugger({
                 varName: varName,
                 class: classType,
                 value: this.value,
-                callerName: callerName,
-                callerStack: callerStack
+                caller: {
+                    name: callerName,
+                    stack: callerStack
+                }
             })
         }
     }

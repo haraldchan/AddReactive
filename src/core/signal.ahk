@@ -22,8 +22,8 @@ class signal {
         this.type := ""
         this.debugger := false
 
-        if (ARConfig.debugMode && !(this is Debugger)) {
-            this.createDebugInfo()
+        if (ARConfig.debugMode && !(this is debugger)) {
+            this.debugger := this.createDebugInfo()
             SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
         }
     }
@@ -168,21 +168,38 @@ class signal {
         return this
     }
 
-    addSub(controlInstance) {
-        this.subs.Push(controlInstance)
+    /**
+     * Interface for AddReactiveControl instances to subscribe.
+     * @param {AddReactive} AddReactiveControl 
+     */
+    addSub(AddReactiveControl) {
+        this.subs.Push(AddReactiveControl)
     }
 
+    /**
+     * Interface for computed instances to subscribe.
+     * @param {computed} computed 
+     */
     addComp(computed) {
         this.comps.Push(computed)
     }
 
-    addEffect(effectFn) {
-        this.effects.Push(effectFn)
+    /**
+     * Interface for effect instances to subscribe.
+     * @param {effect} effect
+     */
+    addEffect(effect) {
+        this.effects.Push(effect)
     }
 
+    /**
+     * Reformat an Object to Map.
+     * @param {Object} obj Object to be change.
+     * @returns {false|Map}
+     */
     _mapify(obj) {
         if (!isPlainObject(obj) && !(obj is Array) && !(obj is Map)) {
-            return
+            return false
         }
 
         if (isPlainObject(obj) || obj is Map) {
@@ -212,6 +229,10 @@ class signal {
         }
     }
 
+    /**
+     * Creates a debugger property for SignalTracker to capture.
+     * @returns {debugger}
+     */
     createDebugInfo() {
         try {
             throw Error()
@@ -231,12 +252,14 @@ class signal {
             callerName := getCallerNameFromStack(stacks[varLineIndex + 1])
             callerStack := stacks[varLineIndex + 2]
 
-            this.debugger := Debugger({
+            return debugger({
                 varName: varName,
                 class: classType,
                 value: this.value,
-                callerName: callerName,
-                callerStack: callerStack
+                caller: {
+                    name: callerName,
+                    stack: callerStack
+                }
             })
         }
     }
