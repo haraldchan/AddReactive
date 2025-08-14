@@ -19,7 +19,7 @@ App(App) {
 					"w500 h15", 
 					"varName: {1}, class: {2}, value: {3}, caller: {4}", 
 					debugger, 
-					["varName", "class", "value", (v) => v.caller.name]
+					["varName", "class", "value", (v) => v["caller"]["name"]]
 				)
 		)
 	)
