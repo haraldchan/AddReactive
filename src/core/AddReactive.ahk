@@ -59,17 +59,7 @@ class AddReactive {
         } else if (controlType == "TreeView") {
             this.ctrl := this.GuiObject.AddTreeView(this.tvOptions)
             this.shadowTree := AddReactiveTreeView.ShadowTree(this.ctrl)
-            this.shadowTree.copy(this.depend.value)
-
-            itemId := 0
-            loop {
-                itemId := this.ctrl.GetNext(itemId, "Full")
-                if (!itemId) {
-                    break
-                }
-
-                this.ctrl.Modify(this.ctrl.Get(itemId), this.itemOptions)
-            }
+            this._handleTreeViewUpdate()
         }
         else if (controlType == "CheckBox" && this.HasOwnProp("checkValueDepend")) {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
@@ -248,6 +238,21 @@ class AddReactive {
         }
     }
 
+    _handleTreeViewUpdate() {
+        this.ctrl.Delete()
+        this.shadowTree.copy(this.depend.value)
+
+        itemId := 0
+            loop {
+                itemId := this.ctrl.GetNext(itemId, "Full")
+                if (!itemId) {
+                    break
+                }
+
+            this.ctrl.Modify(itemId, this.itemOptions)
+        }
+    }
+
     ; updating subs
     update(signal) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
@@ -271,8 +276,7 @@ class AddReactive {
         }
 
         if (this.ctrl is Gui.TreeView) {
-            this.ctrl.Delete()
-            this.shadowTree.copy(this.depend.value)
+            this._handleTreeViewUpdate()
         }
 
         if (this.ctrl is Gui.CheckBox) {

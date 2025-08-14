@@ -15,30 +15,71 @@ TreeViewTest(App) {
 
 	ct.addChildren("B")
 	ct.addChildren("B1", "B")
+	ct.addChildren("B1", "B")
 	ct.addChildren("B11", "B1")
-	ct.addChildren("B12", "B1")
+	ct.addChildren("B11", "B1")
 	ct.addChildren("B111", "B11")
 
 	ct.addChildren("C")
-	ct.modifyNode("C", { label: "C", id: "123" })
 
 	
 	
 	
 	tree := signal(ct)
+	selectedNodeContent := signal(JSON.stringify(ct.root.content))
+
+
 
 	options := {
-		tvOptions: "w300 h600",
-		itemOptions: ""
+		tvOptions: "x10 w300 h300 ",
+		itemOptions: "Expand"
 	}
 
-	updateTree(*) {
+	updateTreeD(*) {
 		ct.addChildren("D")
-		tree.set(() => ct)
+		tree.set((t) => ct)
 	}
+
+	updateTreeB123(*) {
+		ct.addChildren("B123", "B1")
+		tree.set((t) => ct)
+	}
+
+
+	clickTest(ctrl, itemId) {
+		content := ctrl.arcWrapper.shadowTree.getNodeById(itemId).content
+		selectedNodeContent.set(JSON.stringify(content))
+	}
+
+	FocusTest(ctrl, itemId) {
+		
+	}
+
+	ItemSelectTest(ctrl, itemId) {
+		; msgbox itemId
+	}
+
+	ItemExpandTest(ctrl, itemId) {
+		
+	}
+
+
 
 	return (
-		App.ARTreeView(options, tree).SetFont("s10.5")
+		App.ARTreeView(options, tree)
+		   .SetFont("s10.5")
+		   .OnEvent(
+		   		"Click", ClickTest,
+		   		; "Focus", FocusTest,
+		   		; "ItemSelect", ItemSelectTest,
+		   		; "ItemExpand", ItemExpandTest,
+		),
+
+		App.ARText("x+10 w200 h300", "node content:`n{1}", selectedNodeContent),
+
+
+		App.AddButton("x10 w100 h30", "add D").OnEvent("Click", updateTreeD),
+		App.AddButton("x+10 w100 h30", "add B123").OnEvent("Click", updateTreeB123)
 	)
 }
 
@@ -55,14 +96,14 @@ class CompTree {
 		this.root := ""
 	}
 
-	getNode(label, curNode := this.root) {
-		if (label == curNode.content.label) {
+	getNode(text, curNode := this.root) {
+		if (text == curNode.content.text) {
 			return curNode
 		}
 
 		if (curNode.childrens.Length > 0) {
 			for childNode in curNode.childrens {
-				res := this.getNode(label, childNode)
+				res := this.getNode(text, childNode)
 				if (res) {
 					return res
 				}
@@ -72,8 +113,8 @@ class CompTree {
 		return false
 	}
 
-	modifyNode(label, newContent) {
-		targetNode := this.getNode(label)
+	modifyNode(text, newContent) {
+		targetNode := this.getNode(text)
 		if (!targetNode) {
 			return false
 		}
@@ -83,16 +124,18 @@ class CompTree {
 		return true
 	}
 
-	addChildren(label, parentLabel := 0) {
-		newNode := CompNode({ label: label })
+	addChildren(text, parentLabel := 0) {
+		newNode := CompNode({ text: text })
 
 		if (!parentLabel && !this.root) {
 			this.root := newNode
+			return newNode
 		}
 
 		if (!parentLabel && this.root) {
 			this.root.childrens.Push(newNode)
 			newNode.parent := this.root
+			return newNode
 		}
 
 		parentNode := this.getNode(parentLabel)
@@ -103,6 +146,6 @@ class CompTree {
 		newNode.parent := parentNode
 		parentNode.childrens.Push(newNode)
 
-		return newNode
+		return true
 	}
 }

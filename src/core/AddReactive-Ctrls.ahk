@@ -259,7 +259,6 @@ class ARDateTime extends AddReactiveDateTime {
 class AddReactiveTreeView extends AddReactive {
     __New(GuiObject, options := "", depend := 0, key := 0) {
         checkType(options, [String, Object.Prototype])
-        if ()
 
         this.key := key
         super.__New(GuiObject, "TreeView", options, "", depend, key)
@@ -303,7 +302,7 @@ class AddReactiveTreeView extends AddReactive {
             }
 
             for node in originNode.childrens {
-                this.addChildren(node, node.parent.text)
+                this.addChildren(node, node.parent.content.text)
                 this.copyChildren(node)
             }
         }
@@ -325,18 +324,37 @@ class AddReactiveTreeView extends AddReactive {
             return false
         }
 
+        getNodeById(nodeId, curNode := this.root) {
+            if (nodeId == curNode.nodeId) {
+                return curNode
+            }
+
+            if (curNode.childrens.Length > 0) {
+                for childNode in curNode.childrens {
+                    res := this.getNodeById(nodeId, childNode)
+                    if (res) {
+                        return res
+                    }
+                }
+            }
+
+            return false
+        }
+
         addChildren(originNode, parentText := 0) {
             newShadowNode := AddReactiveTreeView.ShadowNode(this.TreeView, originNode)
 
             if (!parentText && !this.root) {
                 this.root := newShadowNode
                 newShadowNode.createTreeViewNode(this.TreeView)
+                return newShadowNode
             }
 
             if (!parentText && this.root) {
                 this.root.childrens.Push(newShadowNode)
                 newShadowNode.parent := this.root
                 newShadowNode.createTreeViewNode(this.TreeView, this.root.nodeId)
+                return newShadowNode
             }
 
             parentShadowNode := this.getNode(parentText)
