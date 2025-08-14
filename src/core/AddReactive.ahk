@@ -12,7 +12,7 @@ class AddReactive {
     __New(GuiObject, controlType, options := "", content := "", depend := 0, key := 0) {
         this.GuiObject := GuiObject
         this.ctrlType := controlType
-        this.options := options ? this._handleArcName(options) : ""
+        this.options := options ? this._handleOptionsFormatting(options) : ""
         this.content := content ? content : ""
         this.depend := depend ? this._filterDepends(depend) : 0
         this.checkStatusDepend := ""
@@ -65,10 +65,10 @@ class AddReactive {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
             this.ctrl.Value := this.checkValueDepend.value
             this.ctrl.OnEvent("Click", (ctrl, *) => this.checkValueDepend.set(ctrl.Value))
-        } 
+        }
         else if (controlType == "ComboBox" || controlType == "DropDownList") {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.optionTexts)
-        } 
+        }
         else {
             this.ctrl := this.GuiObject.Add(this.ctrlType, this.options, this.formattedContent)
         }
@@ -86,7 +86,12 @@ class AddReactive {
         }
     }
 
-    _handleArcName(options) {
+    /**
+     * Reformat options string to assign proper options for each control type.
+     * @param {String} options 
+     * @returns {String} formatted options string.
+     */
+    _handleOptionsFormatting(options) {
         optionsString := this.ctrlType == "ListView" ? options.lvOptions : options
         optionsString := this.ctrlType == "TreeView" ? options.tvOptions : options
 
@@ -111,6 +116,10 @@ class AddReactive {
         return formattedOptions
     }
 
+    /**
+     * Filters checkValue for checks status binding with shared signal for ListView and CheckBox.
+     * @param {signal|Object|Array} depend 
+     */
     _filterDepends(depend) {
         if (depend is Array) {
             checkValueObject := ArrayExt.find(depend, d => d is Object && d.HasOwnProp("checkValue"))
@@ -130,57 +139,63 @@ class AddReactive {
         }
     }
 
+    /**
+     * Updates text content of the control with latest signal value.
+     * @param {String} formatStr Text content of the control in format string form.
+     * @param {signal} depend depend signal.
+     * @param {Number|Array} key A index for Array of key for an Object value of depend signal.
+     */
     _handleFormatStr(formatStr, depend, key) {
         vals := []
 
         if (!key) {
-            handleKeyless()
+            this._fmtStr_handleKeyless(depend, vals)
         } else if (key is Number) {
-            handleKeyNumber()
+            this._fmtStr_handleKeyNumber(depend, key, vals)
         } else {
-            handleKeyObject()
-        }
-
-        handleKeyless() {
-            if (!depend) {
-                return
-            }
-
-            if (depend is Array) {
-                for dep in depend {
-                    vals.Push(dep.value)
-                }
-            } else if (depend.value is Array) {
-                vals := depend.value
-            } else {
-                vals.Push(depend.value)
-            }
-        }
-
-        handleKeyNumber() {
-            for item in depend.value {
-                vals.Push(depend.value[key])
-            }
-        }
-
-        handleKeyObject() {
-            if (key[1] is Array) {
-                for k in key {
-                    if (A_Index == 1) {
-                        continue
-                    }
-                    vals.Push(depend.value[key[1][1]][k])
-                }
-            } else {
-                for k in key {
-                    vals.Push(depend.value[k])
-                }
-            }
+            this._fmtStr_handleKeyObject(depend, key, vals)
         }
 
         return Format(formatStr, vals*)
     }
+    _fmtStr_handleKeyless(depend, vals) {
+        if (!depend) {
+            return
+        }
 
+        if (depend is Array) {
+            for dep in depend {
+                vals.Push(dep.value)
+            }
+        } else if (depend.value is Array) {
+            vals := depend.value
+        } else {
+            vals.Push(depend.value)
+        }
+    }
+    _fmtStr_handleKeyNumber(depend, key, vals) {
+        for item in depend.value {
+            vals.Push(depend.value[key])
+        }
+    }
+    _fmtStr_handleKeyObject(depend, key, vals) {
+        if (key[1] is Array) {
+            for k in key {
+                if (A_Index == 1) {
+                    continue
+                }
+                vals.Push(depend.value[key[1][1]][k])
+            }
+        } else {
+            for k in key {
+                vals.Push(k is Func ? k(depend.value) : depend.value[k])
+            }
+        }
+    }
+
+    /**
+     * Updates ListView items with latest signal value.
+     */
     _handleListViewUpdate() {
         this.ctrl.Delete()
 
@@ -198,12 +213,12 @@ class AddReactive {
                     if (itemIn.Has(key)) {
                         return itemIn[key]
                     } else {
-                        return getFirstMatch(key, itemIn)
+                        return this._listview_getFirstMatch(key, itemIn)
                     }
                 }
 
                 if (key is Array) {
-                    return getExactMatch(key, itemIn, 1)
+                    return this._listview_getExactMatch(key, itemIn, 1)
                 }
             }
 
@@ -213,47 +228,52 @@ class AddReactive {
         this.ctrl.Modify(1, "Select")
         this.ctrl.Focus()
 
-        getExactMatch(keys, item, index) {
-            if !(item is Map) {
-                return item
-            }
 
-            return getExactMatch(keys, item[keys[index]], index + 1)
+    }
+    _listview_getExactMatch(keys, item, index) {
+        if !(item is Map) {
+            return item
         }
 
-        ; find the first matching key
-        getFirstMatch(key, item) {
-            if (item.Has(key)) {
-                return item[key]
-            }
+        return this._listview_getExactMatch(keys, item[keys[index]], index + 1)
+    }
+    _listview_getFirstMatch(key, item) {
+        if (item.Has(key)) {
+            return item[key]
+        }
 
-            for k, v in item {
-                if (v is Map) {
-                    res := getFirstMatch(key, v)
-                    if (res != "") {
-                        return res
-                    }
+        for k, v in item {
+            if (v is Map) {
+                res := this._listview_getFirstMatch(key, v)
+                if (res != "") {
+                    return res
                 }
             }
         }
     }
 
+    /**
+     * Updates TreeView items with latest signal value.
+     */
     _handleTreeViewUpdate() {
         this.ctrl.Delete()
         this.shadowTree.copy(this.depend.value)
 
         itemId := 0
-            loop {
-                itemId := this.ctrl.GetNext(itemId, "Full")
-                if (!itemId) {
-                    break
-                }
+        loop {
+            itemId := this.ctrl.GetNext(itemId, "Full")
+            if (!itemId) {
+                break
+            }
 
             this.ctrl.Modify(itemId, this.itemOptions)
         }
     }
 
-    ; updating subs
+    /**
+     * Interface for signal too call and updating control contents.
+     * @param {signal} signal The subscribed signal
+     */
     update(signal) {
         if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
             ; update text label
