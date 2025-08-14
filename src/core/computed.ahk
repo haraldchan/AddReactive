@@ -98,23 +98,25 @@ class computed extends signal {
         } catch Error as err {
             stacks := StrSplit(err.Stack, "`r`n")
 
-            varLine := StrSplit(
-                stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1],
-                "[Object.Call]"
-            )[2]
+            varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1
 
+            ; signal var name
+            varLine := StrSplit(stacks[varLineIndex],"[Object.Call]")[2]
             varName := Trim(StrSplit(varLine, ":=")[1])
 
+            ; type: signal | computed
             classType := StrSplit(err.What, ".")[1]
 
-            scopeLine := stacks[ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 2]
-            scopeName := Trim(StringExt.replaceThese(StrSplit(StrSplit(scopeLine, varName)[1], ":")[2], ["[", "]"]))
+            ; caller: function name; stack string
+            callerName := getCallerNameFromStack(stacks[varLineIndex + 1])
+            callerStack := stacks[varLineIndex + 2]
 
             this.debugger := Debugger({
                 varName: varName,
                 class: classType,
                 value: this.value,
-                scope: scopeName
+                callerName: callerName,
+                callerStack: callerStack
             })
         }
     }
