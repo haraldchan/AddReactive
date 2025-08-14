@@ -2,7 +2,7 @@ class SignalTracker {
 	static trackings := Map()
 }
 
-class Debugger extends signal {
+class debugger extends signal {
 
 }
 
