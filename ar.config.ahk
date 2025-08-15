@@ -36,6 +36,9 @@ class ARConfig {
             split:         true,
             substr:        true,
         },
+        integer: {
+            times:     true
+        },
         map: {
             keys:      true,
             values:    true,
