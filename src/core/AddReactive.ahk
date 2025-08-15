@@ -184,8 +184,12 @@ class AddReactive {
                 if (A_Index == 1) {
                     continue
                 }
-                vals.Push(depend.value[key[1][1]][k])
+                vals.Push(k is Func
+                    ? k(depend.value[key[1][1]])
+                    : depend.value[key[1][1]][k]
+                )
             }
+        ; if (key is Object) {}
         } else {
             for k in key {
                 vals.Push(k is Func ? k(depend.value) : depend.value[k])
