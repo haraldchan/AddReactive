@@ -210,6 +210,7 @@ class ArrayExt {
         return joined
     }
 
+    ; include start, exclude end
     static slice(arr, start := 1, end := arr.Length + 1) {
         newArray := []
 
