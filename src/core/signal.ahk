@@ -20,11 +20,13 @@ class signal {
         this.comps := []
         this.effects := []
         this.type := ""
-        this.debugger := false
-
+        
+        ; dev mode
         if (ARConfig.debugMode && !(this is debugger)) {
-            this.debugger := this.createDebugInfo()
-            SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
+            this.createDebugInfo := ObjBindMethod(DebugUtils, "createDebugInfo", this)
+            this.debugger := this.createDebugInfo.Call()
+            ; SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
+            ct.addDebugger(this.debugger)
         }
     }
 
@@ -85,7 +87,7 @@ class signal {
         }
 
         ; notify signal tracker
-        if (this.debugger) {
+        if (ARConfig.debugMode && this.debugger) {
             this.debugger.update("value", this.value)
         }
     }
@@ -226,41 +228,6 @@ class signal {
             }
 
             return res
-        }
-    }
-
-    /**
-     * Creates a debugger property for SignalTracker to capture.
-     * @returns {debugger}
-     */
-    createDebugInfo() {
-        try {
-            throw Error()
-        } catch Error as err {
-            stacks := StrSplit(err.Stack, "`r`n")
-
-            varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1
-
-            ; signal var name
-            varLine := StrSplit(stacks[varLineIndex],"[Object.Call]")[2]
-            varName := Trim(StrSplit(varLine, ":=")[1])
-
-            ; type: signal | computed
-            classType := StrSplit(err.What, ".")[1]
-
-            ; caller: function name; stack string
-            callerName := getCallerNameFromStack(stacks[varLineIndex + 1])
-            callerStack := stacks[varLineIndex + 2]
-
-            return debugger({
-                varName: varName,
-                class: classType,
-                value: this.value,
-                caller: {
-                    name: callerName,
-                    stack: callerStack
-                }
-            })
         }
     }
 }
