@@ -18,11 +18,11 @@ ListRenderingTest(App) {
         App.ARText("w500 h20", "List Rendering").SetFont("s10.5 Bold"),
         
         3.times(() => App.ARText(
-            "w500 h20", "name: {1}, position: {2}, tel: {3}",
+            "w500 h20", "name: {1}, position: {2}, email: {3}",
             staffList,
             { index: A_Index, keys: ["name", "pos", item => item["contact"]["tel"] ] }
         )),
 
-        App.ARText("w500 h20", "{1}")
+        App.ARText("w500 h20", "name: {1}, position: {2}, tel: {3}", chloe, ["name", "pos", (v) => v["contact"]["email"]])
     )
 }
