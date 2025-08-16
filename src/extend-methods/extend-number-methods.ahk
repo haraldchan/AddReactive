@@ -13,7 +13,7 @@ class NumberExt {
 
     static times(int, fn) {
         loop int {
-            (fn.MaxParams == 1) ? fn.Call(A_Index) : fn.Call()
+            (fn.MaxParams == 1) ? fn(A_Index) : (fn.MaxParams == 2) ? fn(int, A_Index) : fn()
         }
     }
 }
