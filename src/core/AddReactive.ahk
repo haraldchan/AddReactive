@@ -179,17 +179,22 @@ class AddReactive {
         }
     }
     _fmtStr_handleKeyObject(depend, key, vals) {
-        if (key[1] is Array) {
-            for k in key {
-                if (A_Index == 1) {
-                    continue
-                }
-                vals.Push(k is Func
-                    ? k(depend.value[key[1][1]])
-                    : depend.value[key[1][1]][k]
-                )
+        ; if (key[1] is Array) {
+        ;     for k in key {
+        ;         if (A_Index == 1) {
+        ;             continue
+        ;         }
+        ;         vals.Push(k is Func
+        ;             ? k(depend.value[key[1][1]])
+        ;             : depend.value[key[1][1]][k]
+        ;         )
+        ;     }
+        if (isPlainObject(key)) {
+            index := key.HasOwnProp("index") ? key.index : A_Index
+
+            for k in key.keys {
+                vals.Push(k is Func ? k(depend.value[index]) : depend.value[index][k])
             }
-        ; if (key is Object) {}
         } else {
             for k in key {
                 vals.Push(k is Func ? k(depend.value) : depend.value[k])
