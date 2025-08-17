@@ -274,9 +274,9 @@ class AddReactiveTreeView extends AddReactive {
 
         createTreeViewNode(TreeView, parentId := 0) {
             if (parentId) {
-                this.nodeId := TreeView.Add(this.content.text, parentId)
+                this.nodeId := TreeView.Add(this.content.name, parentId)
             } else {
-                this.nodeId := TreeView.Add(this.content.text)
+                this.nodeId := TreeView.Add(this.content.name)
             }
         }
     }
@@ -302,19 +302,19 @@ class AddReactiveTreeView extends AddReactive {
             }
 
             for node in originNode.childrens {
-                this.addChildren(node, node.parent.content.text)
+                this.addChildren(node, node.parent.content.name)
                 this.copyChildren(node)
             }
         }
 
-        getNode(text, curNode := this.root) {
-            if (text == curNode.content.text) {
+        getNode(name, curNode := this.root) {
+            if (name == curNode.content.name) {
                 return curNode
             }
 
             if (curNode.childrens.Length > 0) {
                 for childNode in curNode.childrens {
-                    res := this.getNode(text, childNode)
+                    res := this.getNode(name, childNode)
                     if (res) {
                         return res
                     }
