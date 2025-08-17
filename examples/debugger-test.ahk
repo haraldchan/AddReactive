@@ -1,6 +1,38 @@
 #SingleInstance Force
 #Include "../useAddReactive.ahk"
 
+
+aGui := Gui()
+TreeViewTest(aGui)
+aGui.Show()
+
+TreeViewTest(App) {
+	global tree := signal(CALL_TREE)
+	selectedNodeContent := signal("")
+
+
+
+	options := {
+		tvOptions: "x10 w300 h300 ",
+		itemOptions: "Expand"
+	}
+
+	clickTest(ctrl, itemId) {
+		content := ctrl.arcWrapper.shadowTree.getNodeById(itemId).content.debuggers.map(d => JSON.stringify(d))
+		selectedNodeContent.set(JSON.stringify(content))
+	}
+
+	showTree(*) {
+		msgbox CALL_TREE.root.childrens[1].stackString
+	}
+
+	return (
+		App.ARTreeView(options, tree).SetFont("s10.5").OnEvent("Click", ClickTest),
+	)
+}
+
+
+
 g := Gui()
 App(g)
 g.Show()
@@ -11,17 +43,7 @@ App(App) {
 	return (
 		App.ARText("w200 h10", "Attached Signal Value: {1}", count),
 		DoubledCount(App, count),
-		App.AddButton("w100 h40", "++").OnEvent("Click", (*) => count.set(c => c + 1)),
-
-		SignalTracker.trackings.values().map(
-			debugger => 
-			App.ARText(
-					"w500 h15", 
-					"varName: {1}, class: {2}, value: {3}, caller: {4}", 
-					debugger, 
-					["varName", "class", "value", (v) => v["caller"]["name"]]
-				)
-		)
+		App.AddButton("w100 h40", "++").OnEvent("Click", (*) => count.set(c => c + 1))
 	)
 	
 }
@@ -40,3 +62,8 @@ TripleCount(App, count) {
 
 	return App.ARText("w200 h10", "Trippled Count: {1}", trippled)
 }
+
+
+
+
+tree.set(t => CALL_TREE)
