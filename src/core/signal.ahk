@@ -20,13 +20,14 @@ class signal {
         this.comps := []
         this.effects := []
         this.type := ""
+        this.debugger := false
         
         ; dev mode
         if (ARConfig.debugMode && !(this is debugger)) {
-            this.createDebugInfo := ObjBindMethod(DebugUtils, "createDebugInfo", this)
-            this.debugger := this.createDebugInfo.Call()
+            this.createDebugInfo := DebugUtils.createDebugInfo
+            this.debugger := this.createDebugInfo(this)
             ; SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
-            ct.addDebugger(this.debugger)
+            CALL_TREE.addDebugger(this.debugger)
         }
     }
 
@@ -205,7 +206,7 @@ class signal {
         }
 
         if (isPlainObject(obj) || obj is Map) {
-            res := Map()
+            res := OrderedMap()
             for key, val in (obj is Map ? obj : obj.OwnProps()) {
                 if (isPlainObject(val) || val is Array || val is Map) {
                     res[key] := this._mapify(val)
