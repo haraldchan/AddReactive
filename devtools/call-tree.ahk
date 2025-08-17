@@ -113,9 +113,8 @@ class CallTree {
 		}
 		; at the end of the chain, push debugger to node's debuggers array
 		; caller is now Object.Call
-		else {
-			endCallerNode := this.getNode(prevNodeReached.name, prevNodeReached.file)
-			endCallerNode.content.debuggers.Push(debugger)
+		else {			
+			prevNodeReached.content.debuggers.Push(debugger)
 		}
 	}
 }
