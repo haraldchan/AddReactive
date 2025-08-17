@@ -19,6 +19,7 @@ class computed extends signal {
         this.subs := []
         this.comps := []
         this.effects := []
+        this.debugger := false
 
         if (this.signal is Array) {
             for s in this.signal {
@@ -31,10 +32,10 @@ class computed extends signal {
         }
 
         if (ARConfig.debugMode && !(this is debugger)) {
-            this.createDebugInfo := ObjBindMethod(DebugUtils, "createDebugInfo", this)
-            this.debugger := this.createDebugInfo.Call()
+            this.createDebugInfo := DebugUtils.createDebugInfo
+            this.debugger := this.createDebugInfo(this)
             ; SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
-            ct.addDebugger(this.debugger)
+            CALL_TREE.addDebugger(this.debugger)
         }
     }
 
