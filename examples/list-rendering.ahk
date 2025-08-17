@@ -12,7 +12,17 @@ ListRenderingTest(App) {
         { name: "alex", pos: "supervisor", contact: { tel: 66666666, email: "example33333@163.com" } },
     ])
 
-    chloe := { name: "chloe", pos: "supervisor", contact: { tel: 888888, email: "chloez@163.com" } }
+    Contact := Struct({ tel: Integer, email: String })
+    Staff := Struct({ name: String, pos: String, contact: Contact })
+
+    chloe := signal({ 
+        name: "chloe", 
+        pos: "supervisor", 
+        contact: { 
+            tel: 888888, 
+            email: "chloez@163.com" 
+        } 
+    }).as(Staff)
 
     return (
         App.ARText("w500 h20", "List Rendering").SetFont("s10.5 Bold"),
