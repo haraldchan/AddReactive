@@ -8,7 +8,7 @@ class debugger extends signal {
 
 class DebugUtils {
 	/**
-	 * Returns the caller name from stack string.
+	 * Gets the caller name from stack string.
 	 * @param {String} stackString 
 	 * @returns {false|String}
 	 */
@@ -17,7 +17,7 @@ class DebugUtils {
 		isCollecting := false
 		for char in StrSplit(StrSplit(stackString, ".ahk")[2], "") {
 			if (isCollecting && char == "]") {
-				return callerSplitted == "" ? "Index File" : ArrayExt.join(callerSplitted, "")
+				return callerSplitted.Length == 0 ? "root" : ArrayExt.join(callerSplitted, "")
 			}
 
 			if (char == "[") {
@@ -39,6 +39,16 @@ class DebugUtils {
 
 
 	/**
+	 * Gets the caller full file name from stack string.
+	 * @param {String} stackString 
+	 * @returns {String}
+	 */
+	static getCallerFileFromStack(stackString) {
+		return StrSplit(stackString, ".ahk")[1] . ".ahk"
+	}
+
+
+	/**
 	 * Creates a debugger property for SignalTracker to capture.
 	 * @param {signal} signal
 	 * @returns {debugger}
@@ -48,8 +58,9 @@ class DebugUtils {
 			throw Error()
 		} catch Error as err {
 			stacks := StrSplit(err.Stack, "`r`n")
+			stacks.RemoveAt(stacks.Length - 1)
 
-			varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "this.createDebugInfo")) + 1
+			varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "[Object.Call]"))
 			endIndex := ArrayExt.findIndex(stacks, item => item == "")
 
 			; signal var name
@@ -60,12 +71,13 @@ class DebugUtils {
 			classType := StrSplit(err.What, ".")[1]
 
 			; caller: caller name(direct caller), stack, call chain(full stack)
-			callerName := this.getCallerNameFromStack(stacks[varLineIndex + 1])
+			callerName := DebugUtils.getCallerNameFromStack(stacks[varLineIndex + 1])
 			callerStack := stacks[varLineIndex + 2]
 
-			callerChain := OrderedMap()
-			for stackString in ArrayExt.reverse(ArrayExt.slice(varLineIndex, endIndex)) {
-				callerChain[this.getCallerNameFromStack(stackString)] := stackString
+			
+			callerChainMap := OrderedMap()
+			for stackString in ArrayExt.reverse(ArrayExt.slice(stacks, varLineIndex, endIndex)) {
+				callerChainMap[DebugUtils.getCallerNameFromStack(stackString)] := DebugUtils.getCallerFileFromStack(stackstring)	
 			}
 
 			return debugger({
@@ -74,11 +86,11 @@ class DebugUtils {
 				value: signal.value,
 				caller: {
 					name: callerName,
-					stackString: callerStack,
-					callChainMap: callerChain
+					stack: callerStack,
+					file: DebugUtils.getCallerFileFromStack(callerStack),
+					callChainMap: callerChainMap
 				}
 			})
 		}
 	}
-
 }
