@@ -32,9 +32,8 @@ class computed extends signal {
         }
 
         if (ARConfig.debugMode && !(this is debugger)) {
-            this.createDebugInfo := DebugUtils.createDebugInfo
-            this.debugger := this.createDebugInfo(this)
-            ; SignalTracker.trackings[this.debugger.value["varName"]] := this.debugger
+            this.createDebugger := DebugUtils.createDebugger
+            this.debugger := this.createDebugger(this)
             CALL_TREE.addDebugger(this.debugger)
         }
     }
