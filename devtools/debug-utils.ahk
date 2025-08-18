@@ -1,7 +1,3 @@
-class SignalTracker {
-	static trackings := Map()
-}
-
 class debugger extends signal {
 
 }
@@ -49,11 +45,11 @@ class DebugUtils {
 
 
 	/**
-	 * Creates a debugger property for SignalTracker to capture.
+	 * Creates a debugger.
 	 * @param {signal} signal
 	 * @returns {debugger}
 	 */
-	static createDebugInfo(signal) {
+	static createDebugger(signal) {
 		try {
 			throw Error()
 		} catch Error as err {
@@ -81,9 +77,11 @@ class DebugUtils {
 			}
 
 			return debugger({
+				signal: signal,
 				varName: varName,
 				class: classType,
 				value: signal.value,
+				stacks: stacks,
 				caller: {
 					name: callerName,
 					stack: callerStack,
