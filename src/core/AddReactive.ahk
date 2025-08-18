@@ -152,7 +152,9 @@ class AddReactive {
             this._fmtStr_handleKeyless(depend, vals)
         } else if (key is Number) {
             this._fmtStr_handleKeyNumber(depend, key, vals)
-        } else {
+        } else if (key is Func) { 
+            this._fmtStr_handleKeyFunc(depend, key, vals)
+        }else {
             this._fmtStr_handleKeyObject(depend, key, vals)
         }
 
@@ -177,6 +179,9 @@ class AddReactive {
         for item in depend.value {
             vals.Push(depend.value[key])
         }
+    }
+    _fmtStr_handleKeyFunc(depend, key, vals) {
+        vals.Push(key(depend.value))
     }
     _fmtStr_handleKeyObject(depend, key, vals) {
         ; if (key[1] is Array) {
