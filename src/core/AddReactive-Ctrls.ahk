@@ -182,6 +182,11 @@ class AddReactiveListView extends AddReactive {
         super.__New(GuiObject, "ListView", options, columnDetails, depend, key)
     }
 
+    /**
+     * Applies new options to columns
+     * @param {Object} newColumnDetails 
+     * @param {String} columnOptions 
+     */
     setColumndDetails(newColumnDetails, columnOptions := "") {
         colDiff := newColumnDetails.keys.Length - this.titleKeys.Length
         if (colDiff > 0) {
@@ -265,6 +270,11 @@ class AddReactiveTreeView extends AddReactive {
     }
 
     class ShadowNode {
+        /**
+         * Make a copy node with the original tree
+         * @param {Gui.TreeView} TreeView 
+         * @param {Object} originNode 
+         */
         __New(TreeView, originNode) {
             this.content := originNode.content
             this.parent := ""
@@ -272,6 +282,11 @@ class AddReactiveTreeView extends AddReactive {
             this.nodeId := 0
         }
 
+        /**
+         * Creates a node on TreeView control
+         * @param {Gui.TreeView} TreeView 
+         * @param {Number} parentId 
+         */
         createTreeViewNode(TreeView, parentId := 0) {
             if (parentId) {
                 this.nodeId := TreeView.Add(this.content.name, parentId)
@@ -282,11 +297,19 @@ class AddReactiveTreeView extends AddReactive {
     }
 
     class ShadowTree {
+        /**
+         * Creates copy tree base on the depend tree-structured object/
+         * @param {Gui.TreeView} TreeView 
+         */
         __New(TreeView) {
             this.TreeView := TreeView
             this.root := ""
         }
 
+        /**
+         * Creates a copy with original tree-structured object.
+         * @param {Object} originTree 
+         */
         copy(originTree) {
             ; clear tree and copy root
             this.root := ""
@@ -296,6 +319,10 @@ class AddReactiveTreeView extends AddReactive {
             this.copyChildren(originTree.root)
         }
 
+        /**
+         * Copy children node and add it to shadow tree.
+         * @param {Object} originNode 
+         */
         copyChildren(originNode) {
             if (originNode.childrens.Length == 0) {
                 return
@@ -307,6 +334,32 @@ class AddReactiveTreeView extends AddReactive {
             }
         }
 
+        /**
+         * Print tree nodes with a custom function.
+         * @param {Func} fn 
+         */
+        print(fn := node => node) {
+            results := []
+            this._printTree(fn, results)
+
+            return results
+        }
+        _printTree(fn := node => node, results := [], curNode := this.root) {
+            results.Push(fn(curNode))
+
+            if (curNode.childrens.Length > 0) {
+                for childNode in curNode.childrens {
+                    this._printTree(fn, results)
+                }
+            }
+        }
+
+        /**
+         * Gets a ShadowNode with `content.name`.
+         * @param {String} name content.name
+         * @param {ShadowNode} curNode starting node
+         * @returns {false|ShadowNode}
+         */
         getNode(name, curNode := this.root) {
             if (name == curNode.content.name) {
                 return curNode
@@ -324,6 +377,12 @@ class AddReactiveTreeView extends AddReactive {
             return false
         }
 
+        /**
+         * Gets a ShadowNode with Item ID of a TreeView node.
+         * @param {Number} nodeId Item ID of the target TreeView node
+         * @param {ShadowNode} curNode starting node
+         * @returns {false|ShadowNode}
+         */
         getNodeById(nodeId, curNode := this.root) {
             if (nodeId == curNode.nodeId) {
                 return curNode
@@ -341,23 +400,28 @@ class AddReactiveTreeView extends AddReactive {
             return false
         }
 
-        addChildren(originNode, parentText := 0) {
+        /**
+         * Adds a children node to a node.
+         * @param {Object} originNode 
+         * @param {String} parentName `content.name` of a node
+         */
+        addChildren(originNode, parentName := 0) {
             newShadowNode := AddReactiveTreeView.ShadowNode(this.TreeView, originNode)
 
-            if (!parentText && !this.root) {
+            if (!parentName && !this.root) {
                 this.root := newShadowNode
                 newShadowNode.createTreeViewNode(this.TreeView)
                 return newShadowNode
             }
 
-            if (!parentText && this.root) {
+            if (!parentName && this.root) {
                 this.root.childrens.Push(newShadowNode)
                 newShadowNode.parent := this.root
                 newShadowNode.createTreeViewNode(this.TreeView, this.root.nodeId)
                 return newShadowNode
             }
 
-            parentShadowNode := this.getNode(parentText)
+            parentShadowNode := this.getNode(parentName)
             if (!parentShadowNode) {
                 return false
             }
