@@ -92,8 +92,14 @@ class AddReactive {
      * @returns {String} formatted options string.
      */
     _handleOptionsFormatting(options) {
-        optionsString := this.ctrlType == "ListView" ? options.lvOptions : options
-        optionsString := this.ctrlType == "TreeView" ? options.tvOptions : options
+        if (this.ctrlType == "ListView") {
+            optionsString := options.lvOptions
+        } else if (this.ctrlType == "TreeView") {
+            optionsString := options.tvOptions
+        } else {
+            optionsString := options
+        }
+
 
         optionsArr := StrSplit(optionsString, " ")
         arcNameIndex := ArrayExt.findIndex(optionsArr, item => InStr(item, "$"))
@@ -110,6 +116,9 @@ class AddReactive {
 
         if (this.ctrlType == "ListView") {
             options.lvOptions := formattedOptions
+            return options
+        } else if (this.ctrlType == "TreeView") {
+            options.tvOptions := formattedOptions
             return options
         }
 
@@ -184,16 +193,6 @@ class AddReactive {
         vals.Push(key(depend.value))
     }
     _fmtStr_handleKeyObject(depend, key, vals) {
-        ; if (key[1] is Array) {
-        ;     for k in key {
-        ;         if (A_Index == 1) {
-        ;             continue
-        ;         }
-        ;         vals.Push(k is Func
-        ;             ? k(depend.value[key[1][1]])
-        ;             : depend.value[key[1][1]][k]
-        ;         )
-        ;     }
         if (isPlainObject(key)) {
             index := key.HasOwnProp("index") ? key.index : A_Index
 
@@ -220,7 +219,7 @@ class AddReactive {
             } else if (item is Map) {
                 itemIn := item
             }
-
+            
             rowData := ArrayExt.map(this.titleKeys, key => getRowData(key, itemIn))
             getRowData(key, itemIn, layer := 1) {
                 if (key is String) {
@@ -282,6 +281,8 @@ class AddReactive {
 
             this.ctrl.Modify(itemId, this.itemOptions)
         }
+
+        this.ctrl.Modify(this.ctrl.GetNext(0, "Full"), "Select")
     }
 
     /**
@@ -289,14 +290,10 @@ class AddReactive {
      * @param {signal} signal The subscribed signal
      */
     update(signal) {
-        if (this.ctrl is Gui.Text || this.ctrl is Gui.Button) {
-            ; update text label
-            this.ctrl.Text := this._handleFormatStr(this.content, this.depend, this.key)
-        }
-
         if (this.ctrl is Gui.Edit) {
             ; update text value
             this.ctrl.Value := this._handleFormatStr(this.content, this.depend, this.key)
+            return
         }
 
         if (this.ctrl is Gui.ListView) {
@@ -307,10 +304,12 @@ class AddReactive {
             }
             ; update list items
             this._handleListViewUpdate()
+            return
         }
 
         if (this.ctrl is Gui.TreeView) {
             this._handleTreeViewUpdate()
+            return
         }
 
         if (this.ctrl is Gui.CheckBox) {
@@ -324,6 +323,7 @@ class AddReactive {
             if (this.HasOwnProp("checkValueDepend")) {
                 this.ctrl.Value := this.checkValueDepend.Value
             }
+            return
         }
 
         if (this.ctrl is Gui.ComboBox || this.ctrl is Gui.DDL) {
@@ -337,7 +337,12 @@ class AddReactive {
                 this.optionsTexts := MapExt.keys(signal.value)
                 this.optionsValues := MapExt.values(signal.value)
             }
+            return
         }
+
+        ; update text label
+        this.ctrl.Text := this._handleFormatStr(this.content, this.depend, this.key)
+
     }
 
     ; APIs
