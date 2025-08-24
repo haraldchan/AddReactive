@@ -48,3 +48,5 @@ Green(props) {
 
     return G
 }
+
+DevToolsUI()

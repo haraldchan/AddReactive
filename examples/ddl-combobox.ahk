@@ -36,10 +36,10 @@ DdlComboBoxTest(App) {
         App.AddButton("x+10 w50", "添加").OnEvent("Click", handleAddToArr),
         
         ; combobox with map
-        App.ARComboBox("$cb X20 w150 Choose1", mapList).OnEvent(Map(
+        App.ARComboBox("$cb X20 w150 Choose1", mapList).OnEvent(
             "Change", (ctrl, *) => showKV(ctrl),
             "ContextMenu", (ctrl, *) => MsgBox(ctrl.Text)
-        )),
+        ),
         App.AddEdit("vaddToMK w50", "key"),
         App.AddEdit("vaddToMV w50 x+10", "val"),
         App.AddButton("x+10 w50", "添加").OnEvent("Click", handleAddToMap)
