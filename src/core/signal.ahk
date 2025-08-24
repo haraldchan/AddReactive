@@ -88,7 +88,7 @@ class signal {
 
         ; notify signal tracker
         if (ARConfig.debugMode && this.debugger) {
-            this.debugger.update("value", this.value)
+            this.debugger.notifyChange()
         }
     }
 

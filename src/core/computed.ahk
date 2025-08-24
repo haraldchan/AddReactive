@@ -77,11 +77,6 @@ class computed extends signal {
                 e(effect.depend.map(dep => dep.value)*)
             }
         }
-
-        ; notify signal tracker
-        if (this.debugger) {
-            this.debugger.update("value", this.value)
-        }
     }
 
     /**
