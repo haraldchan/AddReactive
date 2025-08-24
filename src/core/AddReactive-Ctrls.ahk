@@ -276,11 +276,13 @@ class AddReactiveTreeView extends AddReactive {
          * @param {Object} originNode 
          */
         __New(TreeView, originNode) {
-            this.content := originNode.content
+            this.name := originNode.name
+            this.file := originNode.file
+            this.debuggers := originNode.debuggers
             this.parent := ""
             this.childrens := []
             this.nodeId := 0
-        }
+        }   
 
         /**
          * Creates a node on TreeView control
@@ -289,9 +291,9 @@ class AddReactiveTreeView extends AddReactive {
          */
         createTreeViewNode(TreeView, parentId := 0) {
             if (parentId) {
-                this.nodeId := TreeView.Add(this.content.name, parentId)
+                this.nodeId := TreeView.Add(this.name, parentId)
             } else {
-                this.nodeId := TreeView.Add(this.content.name)
+                this.nodeId := TreeView.Add(this.name)
             }
         }
     }
@@ -329,7 +331,7 @@ class AddReactiveTreeView extends AddReactive {
             }
 
             for node in originNode.childrens {
-                this.addChildren(node, node.parent.content.name)
+                this.addChildren(node, node.parent.name)
                 this.copyChildren(node)
             }
         }
@@ -361,7 +363,7 @@ class AddReactiveTreeView extends AddReactive {
          * @returns {false|ShadowNode}
          */
         getNode(name, curNode := this.root) {
-            if (name == curNode.content.name) {
+            if (name == curNode.name) {
                 return curNode
             }
 
