@@ -1,5 +1,6 @@
 class ARConfig {
     static debugMode := true
+    static useDevtoolsUI := false
 
     static useExtendMethods := true
     static enableExtendMethods := {
