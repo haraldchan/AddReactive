@@ -3,17 +3,13 @@ class CallNode {
 	 * Creates a CallNode.
 	 * @param {Object} nodeContent 
 	 */
-	__New(nodeContent) {
+	__New(nodeName, nodeFile) {
 		this.parent := ""
 		this.childrens := []
-		this.content := nodeContent
-		this.content.debuggers := []
 
-		; nodeContent: debugger.caller
-		this.name := nodeContent.name
-		this.file := nodeContent.file
-		this.stack := nodeContent.stack
-		this.callChainMap := nodeContent.callChainMap
+		this.name := nodeName
+		this.file := nodeFile
+		this.debuggers := []
 	}
 }
 
@@ -51,13 +47,14 @@ class CallTree {
 
 	/**
 	 * Appends children node to a node by using name and file as search keys.
-	 * @param {Object} content 
+	 * @param {String} name 
+	 * @param {String} file 
 	 * @param {String} parentName 
 	 * @param {String} parentFile 
-	 * @returns {false|CallNode}
+	 * @returns {CallNode | false} 
 	 */
-	addChildren(content := 0, parentName := "root", parentFile := 0) {
-		newNode := CallNode(content)
+	addChildren(name, file, parentName := "", parentFile := "") {
+		newNode := CallNode(name, file)
 
 		if (!this.root) {
 			this.root := newNode
@@ -77,6 +74,8 @@ class CallTree {
 
 		newNode.parent := parentNode
 		parentNode.childrens.Push(newNode)
+
+		return newNode
 	}
 
 
@@ -86,20 +85,24 @@ class CallTree {
 	 * @param {Number} chainIndex 
 	 * @param {CallNode} prevNodeReached 
 	 */
-	addDebugger(debugger, chainIndex := 1, prevNodeReached := 0) {
+	addDebugger(debugger, chainIndex := 1, prevNodeReached := "") {
+		if (InStr(debugger.value["caller"]["file"], "AddReactive\devtools")) {
+			return
+		}
+
 		callChain := debugger.value["caller"]["callChainMap"].entries()
 		if (chainIndex > callChain.Length) {
 			return
 		}
 
-		unpack([&curCallerName, &curCallerFile], callChain[chainIndex])
-		msgbox curCallerFile, curCallerName
+		curCallerName := callChain[chainIndex][1]
+		curCallerFile := callChain[chainIndex][2]
 
 		; start from root
 		if (chainIndex == 1) {
 			; root caller, create or continue depends on whether root node exists
 			if (!this.root) {
-				this.addChildren(debugger["caller"])
+				this.addChildren(debugger.value["caller"]["name"], debugger.value["caller"]["file"])
 			}
 			this.addDebugger(debugger, chainIndex + 1, this.root)
 		}
@@ -107,17 +110,21 @@ class CallTree {
 		else if (curCallerName !== "Object.Call") {
 			targetNode := this.getNode(curCallerName, curCallerFile)
 			if (!targetNode) {
-				targetNode := this.addChildren(debugger["caller"], prevNodeReached.name, prevNodeReached.file)
+				targetNode := this.addChildren(
+					debugger.value["caller"]["name"], 
+					debugger.value["caller"]["file"],
+					prevNodeReached.name, 
+					prevNodeReached.file
+				)
 			}
 			this.addDebugger(debugger, chainIndex + 1, targetNode)
 		}
 		; at the end of the chain, push debugger to node's debuggers array
 		; caller is now Object.Call
 		else {
-			prevNodeReached.content.debuggers.Push(debugger)
+			prevNodeReached.debuggers.Push(debugger)
 		}
 	}
 }
-
 
 CALL_TREE := CallTree()
