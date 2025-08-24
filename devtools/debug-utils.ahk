@@ -1,5 +1,7 @@
 class debugger extends signal {
-
+	notifyChange() {
+		CALL_TREE.updateTimeStamp.set(A_Now . A_MSec)
+	}
 }
 
 class DebugUtils {
@@ -64,12 +66,11 @@ class DebugUtils {
 			varName := Trim(StrSplit(varLine, ":=")[1])
 
 			; type: signal | computed
-			classType := StrSplit(err.What, ".")[1]
+			classType := Type(signal)
 
 			; caller: caller name(direct caller), stack, call chain(full stack)
 			callerName := DebugUtils.getCallerNameFromStack(stacks[varLineIndex + 1])
 			callerStack := stacks[varLineIndex + 2]
-
 			
 			callerChainMap := OrderedMap()
 			for stackString in ArrayExt.reverse(ArrayExt.slice(stacks, varLineIndex, endIndex)) {
@@ -80,8 +81,7 @@ class DebugUtils {
 				signal: signal,
 				varName: varName,
 				class: classType,
-				value: signal.value,
-				stacks: stacks,
+				stacks: ArrayExt.slice(stacks, 3, stacks.Length),
 				caller: {
 					name: callerName,
 					stack: callerStack,
