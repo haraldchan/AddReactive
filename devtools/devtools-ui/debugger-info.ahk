@@ -1,36 +1,42 @@
 DebuggerInfo(debugger) {
     dd := Gui("+AlwaysOnTop", debugger.value["varName"])
     dd.SetFont(,"微软雅黑")
+    
+    displaySignalValue := computed(debugger.value["signal"], ds => ds is Object ? JSON.stringify(ds, 0, "") : ds)
+    listenersGroupBoxHeight := (50 * debugger.value["signal"].comps.Length) + (50 * debugger.value["signal"].subs.Length)
+    listenersGroupBoxHeight := listenersGroupBoxHeight > 0 ? listenersGroupBoxHeight + 60 : 0
+    callStackGroupBoxHeight := 85 * debugger.value["stacks"].Length
 
     return (
         ; basic info
-        dd.AddText("x10 w100 h20", "Info").SetFont("s10.5 Bold"),
+        dd.AddGroupBox("Section x10 w300 h120", " Info ").SetFont("s10.5 Bold"),
         ; varName
-        dd.AddText("x10 w100 h20", "Variable"),
+        dd.AddText("xs10 yp+30 w100 h20", "Var Name"),
         dd.AddEdit("ReadOnly w150 h20 x+10", debugger.value["varName"]),
         
         ; signal type
-        dd.AddText("x10 w100 h20", "Class Type"),
+        dd.AddText("xs10 yp+30 w100 h20", "Class Type"),
         dd.AddEdit("ReadOnly w150 h20 x+10", debugger.value["class"]),
         
         ; current value
-        dd.AddText("x10 w100 h20", "Current Value"),
-        dd.AREdit("vDebuggerInfoDisplay ReadOnly w150 h20 x+10", "{1}", debugger.value["signal"]),
+        dd.AddText("xs10 yp+30 w100 h20", "Current Value"),
+        dd.AREdit("vDebuggerInfoDisplay ReadOnly w150 h20 x+10", "{1}", displaySignalValue),
         
         ; ; subscribers
-        dd.AddText("x10 w100 h20", "Listeners").SetFont("s10.5 Bold"),
+        ; dd.AddText("x10 w100 h20", "Listeners").SetFont("s10.5 Bold"),
+        dd.AddGroupBox("Section x10 w300 h" . listenersGroupBoxHeight , " Listeners ").SetFont("s10.5 Bold"),
         ; subbed computed
-        dd.AddText("x10 w100 h20", "Computeds").SetFont("Bold"),
-        ArrayExt.map(debugger.value["signal"].comps, comp => (
-            dd.AddText("x10 w100 h20", "Name"),
+        dd.AddText("xs10 yp+30 w100 h20", "Computeds").SetFont("Bold"),
+         ArrayExt.map(debugger.value["signal"].comps, comp => comp.debugger && (
+            dd.AddText("xs10 yp+30 w100 h20", "Var Name"),
             dd.AddEdit("ReadOnly x+10 w150 h20", comp.debugger.value["varName"])
         )),
 
         ; controls 
-        dd.AddText("x10 w100 h20", "Controls").SetFont("Bold"),
+        dd.AddText("xs10 yp+30 w100 h20", "Controls").SetFont("Bold"),
         ArrayExt.map(
             ArrayExt.filter(debugger.value["signal"].subs, s => s.ctrl.Name !== "DebuggerInfoDisplay"), 
-                ctrl => dd.AddEdit("ReadOnly w260 r4", Format("
+                ctrl => dd.AddEdit("ReadOnly yp+30 w260 r4", Format("
                     (
                         Name:`t`t{1}
                         Type:`t`t{2}
@@ -42,8 +48,8 @@ DebuggerInfo(debugger) {
         ),
 
         ; call stack
-        dd.AddText("x10 w100 h20", "Call Stack").SetFont("s10.5 Bold"),
-        debugger.value["stacks"].map(stack => dd.AddEdit("ReadOnly w260 r3", stack)),
+        dd.AddGroupBox("Section x10 w300 h" . callStackGroupBoxHeight, " Call Stack ").SetFont("s10.5 Bold"),
+        ArrayExt.map(debugger.value["stacks"], stack => dd.AddEdit("ReadOnly xs10 w260 r3 " . (A_Index == 1 ? "yp+30" : "yp+70") , stack)),
 
         dd.Show()
     )

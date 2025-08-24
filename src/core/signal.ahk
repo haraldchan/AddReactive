@@ -26,7 +26,11 @@ class signal {
         if (ARConfig.debugMode && !(this is debugger)) {
             this.createDebugger := DebugUtils.createDebugger
             this.debugger := this.createDebugger(this)
-            CALL_TREE.addDebugger(this.debugger)
+            if (InStr(this.debugger.value["caller"]["file"], "\AddReactive\devtools")) {
+                this.debugger := false
+            } else {
+                CALL_TREE.addDebugger(this.debugger)
+            }
         }
     }
 
@@ -205,7 +209,7 @@ class signal {
         }
 
         if (isPlainObject(obj) || obj is Map) {
-            res := OrderedMap()
+            res := Map()
             for key, val in (obj is Map ? obj : obj.OwnProps()) {
                 if (isPlainObject(val) || val is Array || val is Map) {
                     res[key] := this._mapify(val)

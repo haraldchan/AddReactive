@@ -5,7 +5,6 @@ Components(dtUI) {
     CALL_TREE.updateTimeStamp := signal(A_Now . A_MSec)
     selectedNodeContent := signal({ 
         name: CALL_TREE.root.name, 
-        file: CALL_TREE.root.file, 
         debuggers: CALL_TREE.root.debuggers 
     })
 
@@ -15,7 +14,6 @@ Components(dtUI) {
         node := TV.arcWrapper.shadowTree.getNodeById(TV.GetSelection())
         selectedNodeContent.set({ 
             name: node.name,
-            file: node.file,
             debuggers: node.debuggers
         })
     }
@@ -33,7 +31,6 @@ Components(dtUI) {
         node := ctrl.arcWrapper.shadowTree.getNodeById(itemId)
         selectedNodeContent.set({ 
             name: node.name,
-            file: node.file,
             debuggers: node.debuggers
         })
     }

@@ -31,10 +31,15 @@ class computed extends signal {
             this.value := this.mutation.Call(this.signal.value)
         }
 
+        ; dev mode
         if (ARConfig.debugMode && !(this is debugger)) {
             this.createDebugger := DebugUtils.createDebugger
             this.debugger := this.createDebugger(this)
-            CALL_TREE.addDebugger(this.debugger)
+            if (InStr(this.debugger.value["caller"]["file"], "\AddReactive\devtools")) {
+                this.debugger := false
+            } else {
+                CALL_TREE.addDebugger(this.debugger)
+            }
         }
     }
 

@@ -277,7 +277,6 @@ class AddReactiveTreeView extends AddReactive {
          */
         __New(TreeView, originNode) {
             this.name := originNode.name
-            this.file := originNode.file
             this.debuggers := originNode.debuggers
             this.parent := ""
             this.childrens := []

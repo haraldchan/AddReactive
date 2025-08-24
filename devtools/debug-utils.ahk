@@ -1,6 +1,8 @@
 class debugger extends signal {
 	notifyChange() {
-		CALL_TREE.updateTimeStamp.set(A_Now . A_MSec)
+		if (ARConfig.useDevtoolsUI) {
+			CALL_TREE.updateTimeStamp.set(A_Now . A_MSec)
+		}
 	}
 }
 
@@ -11,8 +13,12 @@ class DebugUtils {
 	 * @returns {false|String}
 	 */
 	static getCallerNameFromStack(stackString) {
+		if (!InStr(stackString, ".ahk")) {
+			return false
+		}
 		callerSplitted := []
 		isCollecting := false
+
 		for char in StrSplit(StrSplit(stackString, ".ahk")[2], "") {
 			if (isCollecting && char == "]") {
 				return callerSplitted.Length == 0 ? "root" : ArrayExt.join(callerSplitted, "")
@@ -42,6 +48,10 @@ class DebugUtils {
 	 * @returns {String}
 	 */
 	static getCallerFileFromStack(stackString) {
+		if (!InStr(stackString, ".ahk")) {
+			return false
+		}
+
 		return StrSplit(stackString, ".ahk")[1] . ".ahk"
 	}
 
@@ -59,7 +69,7 @@ class DebugUtils {
 			stacks.RemoveAt(stacks.Length - 1)
 
 			varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "[Object.Call]"))
-			endIndex := ArrayExt.findIndex(stacks, item => item == "")
+			endIndex := ArrayExt.findIndex(stacks, item => !InStr(item, ".ahk"))
 
 			; signal var name
 			varLine := StrSplit(stacks[varLineIndex], "[Object.Call]")[2]
@@ -70,11 +80,19 @@ class DebugUtils {
 
 			; caller: caller name(direct caller), stack, call chain(full stack)
 			callerName := DebugUtils.getCallerNameFromStack(stacks[varLineIndex + 1])
-			callerStack := stacks[varLineIndex + 2]
 			
-			callerChainMap := OrderedMap()
+			try {
+				callerStack := stacks[varLineIndex + 2]
+			} catch {
+				callerStack := ""
+			}
+
+			callerChainMap := []
 			for stackString in ArrayExt.reverse(ArrayExt.slice(stacks, varLineIndex, endIndex)) {
-				callerChainMap[DebugUtils.getCallerNameFromStack(stackString)] := DebugUtils.getCallerFileFromStack(stackstring)	
+				callerChainMap.Push([
+					DebugUtils.getCallerNameFromStack(stackString),
+					DebugUtils.getCallerFileFromStack(stackstring)
+				])
 			}
 
 			return debugger({

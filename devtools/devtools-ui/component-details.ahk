@@ -6,7 +6,10 @@ ComponentDetails(dtUI, selectedNodeContent) {
     filterReactives(nodeContent, classType) {
         return ArrayExt.map(
                    ArrayExt.filter(nodeContent["debuggers"], d => d.value["class"] == classType),
-                   d => { varName: d.value["varName"], value: d.value["signal"].value }
+                   d => { 
+                        varName: d.value["varName"], 
+                        value: d.value["signal"].value is Object ? JSON.stringify(d.value["signal"].value, 0 , "") : d.value["signal"].value
+                    }
                )
     }
 
@@ -17,7 +20,7 @@ ComponentDetails(dtUI, selectedNodeContent) {
     }
 
     options := {
-        lvOptions: "ReadOnly -LV0x10 LV0x4000 w380 yp+20",
+        lvOptions: "ReadOnly -LV0x10 LV0x4000 w380 r10 yp+20",
     }
     
     showDebuggerInfo(LV, row) {
@@ -30,17 +33,13 @@ ComponentDetails(dtUI, selectedNodeContent) {
         dtUI.ARGroupBox("Section x+10 w400 h500", "<{1}>", selectedNodeContent, ["name"])
             .SetFont("S10.5"),
         
-        ; component call stack
-        dtUI.ARText("xs10 yp+25 w180 h20", "Call file").SetFont("s9 Bold"),
-        dtui.AddEdit("xs10 yp+20 w380 h50 ReadOnly", selectedNodeContent.value["file"]),
-        
         ; signals
         dtUI.AddText("xs10 yp+60 w180 h20", "Signals").SetFont("s9 Bold"),
         dtUI.ARListView(options, colDetails, signalList)
             .OnEvent("DoubleClick", showDebuggerInfo),
         
         ; computeds
-        dtUI.AddText("xs10 yp+120 w180 h20", "Computeds").SetFont("s9 Bold"),
+        dtUI.AddText("xs10 yp+200 w180 h20", "Computeds").SetFont("s9 Bold"),
         dtUI.ARListView(options, colDetails, computedList)
             .OnEvent("DoubleClick", showDebuggerInfo)
     )

@@ -3,12 +3,11 @@ class CallNode {
 	 * Creates a CallNode.
 	 * @param {Object} nodeContent 
 	 */
-	__New(nodeName, nodeFile) {
+	__New(nodeName) {
 		this.parent := ""
 		this.childrens := []
 
 		this.name := nodeName
-		this.file := nodeFile
 		this.debuggers := []
 	}
 }
@@ -27,14 +26,14 @@ class CallTree {
 	 * @param {CallNode} curNode 
 	 * @returns {false|CallNode}
 	 */
-	getNode(name, file, curNode := this.root) {
-		if (name == curNode.name && file == curNode.file) {
+	getNode(name, curNode := this.root) {
+		if (name == curNode.name) {
 			return curNode
 		}
 
 		if (curNode.childrens.Length > 0) {
 			for childNode in curNode.childrens {
-				res := this.getNode(name, file, childNode)
+				res := this.getNode(name, childNode)
 				if (res) {
 					return res
 				}
@@ -53,21 +52,21 @@ class CallTree {
 	 * @param {String} parentFile 
 	 * @returns {CallNode | false} 
 	 */
-	addChildren(name, file, parentName := "", parentFile := "") {
-		newNode := CallNode(name, file)
+	addChildren(name, parentName := "") {
+		newNode := CallNode(name)
 
 		if (!this.root) {
 			this.root := newNode
 			return newNode
 		}
 
-		if (!parentFile && this.root) {
+		if (!parentName && this.root) {
 			this.root.childrens.Push(newNode)
 			newNode.parent := this.root
 			return newNode
 		}
 
-		parentNode := this.getNode(parentName, parentFile)
+		parentNode := this.getNode(parentName)
 		if (!parentNode) {
 			return false
 		}
@@ -90,32 +89,26 @@ class CallTree {
 			return
 		}
 
-		callChain := debugger.value["caller"]["callChainMap"].entries()
+		callChain := debugger.value["caller"]["callChainMap"]
 		if (chainIndex > callChain.Length) {
 			return
 		}
 
 		curCallerName := callChain[chainIndex][1]
-		curCallerFile := callChain[chainIndex][2]
 
 		; start from root
 		if (chainIndex == 1) {
 			; root caller, create or continue depends on whether root node exists
 			if (!this.root) {
-				this.addChildren(debugger.value["caller"]["name"], debugger.value["caller"]["file"])
+				this.addChildren(debugger.value["caller"]["name"])
 			}
 			this.addDebugger(debugger, chainIndex + 1, this.root)
 		}
 		; in the middle of call chain
 		else if (curCallerName !== "Object.Call") {
-			targetNode := this.getNode(curCallerName, curCallerFile)
+			targetNode := this.getNode(curCallerName)
 			if (!targetNode) {
-				targetNode := this.addChildren(
-					debugger.value["caller"]["name"], 
-					debugger.value["caller"]["file"],
-					prevNodeReached.name, 
-					prevNodeReached.file
-				)
+				targetNode := this.addChildren(curCallerName, prevNodeReached.name)
 			}
 			this.addDebugger(debugger, chainIndex + 1, targetNode)
 		}
