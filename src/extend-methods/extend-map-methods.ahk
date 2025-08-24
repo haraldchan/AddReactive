@@ -39,7 +39,7 @@ class MapExt {
         }
     }
 
-    static default(_map, value) {
+    static setDefault(_map, value) {
         _map.Default := value
         return _map
     }
