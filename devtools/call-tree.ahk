@@ -3,12 +3,12 @@ class CallNode {
 	 * Creates a CallNode.
 	 * @param {Object} nodeContent 
 	 */
-	__New(nodeName) {
+	__New(nodeName, content) {
 		this.parent := ""
 		this.childrens := []
 
 		this.name := nodeName
-		this.debuggers := []
+		this.content := content
 	}
 }
 
@@ -22,9 +22,8 @@ class CallTree {
 	/**
 	 * Gets a node by using name and file as search keys.
 	 * @param {String} name 
-	 * @param {String} file 
 	 * @param {CallNode} curNode 
-	 * @returns {false|CallNode}
+	 * @returns {CallNode | false}
 	 */
 	getNode(name, curNode := this.root) {
 		if (name == curNode.name) {
@@ -47,13 +46,12 @@ class CallTree {
 	/**
 	 * Appends children node to a node by using name and file as search keys.
 	 * @param {String} name 
-	 * @param {String} file 
-	 * @param {String} parentName 
-	 * @param {String} parentFile 
+	 * @param {Object} content 
+	 * @param {String} parentName  
 	 * @returns {CallNode | false} 
 	 */
-	addChildren(name, parentName := "") {
-		newNode := CallNode(name)
+	addChildren(name, content, parentName := "") {
+		newNode := CallNode(name, content)
 
 		if (!this.root) {
 			this.root := newNode
@@ -95,12 +93,17 @@ class CallTree {
 		}
 
 		curCallerName := callChain[chainIndex][1]
+		curCallerFile := callChain[chainIndex][2]
+		curCallerStack := callChain[chainIndex][3]
 
 		; start from root
 		if (chainIndex == 1) {
 			; root caller, create or continue depends on whether root node exists
 			if (!this.root) {
-				this.addChildren(debugger.value["caller"]["name"])
+				this.addChildren(
+					debugger.value["caller"]["name"], 
+					{ file: curCallerFile, stack: curCallerStack, debuggers: [] }
+				)
 			}
 			this.addDebugger(debugger, chainIndex + 1, this.root)
 		}
@@ -108,14 +111,18 @@ class CallTree {
 		else if (curCallerName !== "Object.Call") {
 			targetNode := this.getNode(curCallerName)
 			if (!targetNode) {
-				targetNode := this.addChildren(curCallerName, prevNodeReached.name)
+				targetNode := this.addChildren(
+					curCallerName, 
+					{ file: curCallerFile, stack: curCallerStack, debuggers: [] },
+					prevNodeReached.name
+				)
 			}
 			this.addDebugger(debugger, chainIndex + 1, targetNode)
 		}
 		; at the end of the chain, push debugger to node's debuggers array
 		; caller is now Object.Call
 		else {
-			prevNodeReached.debuggers.Push(debugger)
+			prevNodeReached.content.debuggers.Push(debugger)
 		}
 	}
 }
