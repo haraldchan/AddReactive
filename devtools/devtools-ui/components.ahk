@@ -5,7 +5,8 @@ Components(dtUI) {
     CALL_TREE.updateTimeStamp := signal(A_Now . A_MSec)
     selectedNodeContent := signal({ 
         name: CALL_TREE.root.name, 
-        debuggers: CALL_TREE.root.debuggers 
+        file: CALL_TREE.root.content.file,
+        debuggers: CALL_TREE.root.content.debuggers 
     })
 
     effect(CALL_TREE.updateTimeStamp, refreshComponentNodeInfo)
@@ -14,12 +15,13 @@ Components(dtUI) {
         node := TV.arcWrapper.shadowTree.getNodeById(TV.GetSelection())
         selectedNodeContent.set({ 
             name: node.name,
-            debuggers: node.debuggers
+            file: node.content.file,
+            debuggers: node.content.debuggers
         })
     }
 
     options := {
-        tvOptions: "vcomponentTree x10 w300 h500",
+        tvOptions: "vcomponentTree w300 h600",
         itemOptions: "Expand"
     }
 
@@ -31,7 +33,8 @@ Components(dtUI) {
         node := ctrl.arcWrapper.shadowTree.getNodeById(itemId)
         selectedNodeContent.set({ 
             name: node.name,
-            debuggers: node.debuggers
+            file: node.content.file,
+            debuggers: node.content.debuggers
         })
     }
 
