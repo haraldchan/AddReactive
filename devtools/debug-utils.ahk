@@ -1,3 +1,5 @@
+#Include "../useAddReactive.ahk"
+
 class debugger extends signal {
 	notifyChange() {
 		if (ARConfig.useDevtoolsUI) {
@@ -16,6 +18,7 @@ class DebugUtils {
 		if (!InStr(stackString, ".ahk")) {
 			return false
 		}
+		
 		callerSplitted := []
 		isCollecting := false
 
@@ -91,7 +94,8 @@ class DebugUtils {
 			for stackString in ArrayExt.reverse(ArrayExt.slice(stacks, varLineIndex, endIndex)) {
 				callerChainMap.Push([
 					DebugUtils.getCallerNameFromStack(stackString),
-					DebugUtils.getCallerFileFromStack(stackstring)
+					DebugUtils.getCallerFileFromStack(stackstring),
+					stackString
 				])
 			}
 
@@ -100,6 +104,7 @@ class DebugUtils {
 				varName: varName,
 				class: classType,
 				stacks: ArrayExt.slice(stacks, 3, stacks.Length),
+				file: DebugUtils.getCallerFileFromStack(varLine),
 				caller: {
 					name: callerName,
 					stack: callerStack,
