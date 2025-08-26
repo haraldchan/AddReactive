@@ -1,9 +1,9 @@
 #SingleInstance Force
 #Include "../useAddReactive.ahk"
 
-oGui := Gui()
-DdlComboBoxTest(oGui)
-oGui.Show()
+; oGui := Gui()
+; DdlComboBoxTest(oGui)
+; oGui.Show()
 
 DdlComboBoxTest(App) {
     arrList := signal(["amy", "chloe", "harald"])

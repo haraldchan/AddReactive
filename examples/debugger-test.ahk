@@ -1,5 +1,6 @@
 #SingleInstance Force
 #Include "../useAddReactive.ahk"
+#Include "./ddl-combobox.ahk"
 
 g := Gui()
 App(g)
@@ -12,7 +13,8 @@ App(App) {
 	return (
 		App.ARText("vcounter w200 h10", "Attached Signal Value: {1}", count),
 		DoubledCount(App, count),
-		App.AddButton("w100 h40", "++").OnEvent("Click", (*) => count.set(c => c + 1))
+		App.AddButton("w100 h40", "++").OnEvent("Click", (*) => count.set(c => c + 1)),
+		DdlComboBoxTest(App)
 	)
 	
 }
@@ -40,4 +42,4 @@ QuadrupleCount(App, doubled) {
 }
 
 
-DevToolsUI()
+; DevToolsUI()

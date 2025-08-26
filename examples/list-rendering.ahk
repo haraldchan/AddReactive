@@ -36,3 +36,6 @@ ListRenderingTest(App) {
         App.ARText("w500 h20", "name: {1}, position: {2}, tel: {3}", chloe, ["name", "pos", (v) => v["contact"]["email"]])
     )
 }
+
+; DevToolsUI()
+

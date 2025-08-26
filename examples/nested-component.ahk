@@ -68,4 +68,4 @@ GrandChild(App) {
     return comp.render()
 }
 
-DevToolsUI()
+; DevToolsUI()
