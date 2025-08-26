@@ -22,14 +22,18 @@ class signal {
         this.type := ""
         this.debugger := false
         
-        ; dev mode
+        ; debug mode
+        if (!IsSet(DebugUtils) && !IsSet(debugger)) {
+            return
+        }
+
         if (ARConfig.debugMode && !(this is debugger)) {
             this.createDebugger := DebugUtils.createDebugger
             this.debugger := this.createDebugger(this)
             if (InStr(this.debugger.value["caller"]["file"], "\AddReactive\devtools")) {
                 this.debugger := false
             } else {
-                CALL_TREE.addDebugger(this.debugger)
+                IsSet(CALL_TREE) && CALL_TREE.addDebugger(this.debugger)
             }
         }
     }
@@ -186,7 +190,7 @@ class signal {
      * Interface for computed instances to subscribe.
      * @param {computed} computed 
      */
-    addComp(computed) {
+    addComp(computed) {        
         this.comps.Push(computed)
     }
 
