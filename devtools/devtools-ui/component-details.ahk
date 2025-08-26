@@ -30,11 +30,14 @@ ComponentDetails(dtUI, selectedNodeContent) {
     }
 
     return (
-        dtUI.ARGroupBox("Section x+10 w400 h500", "<{1}>", selectedNodeContent, ["name"])
+        dtUI.ARGroupBox("Section x+10 w400 h600", "<{1}>", selectedNodeContent, ["name"])
             .SetFont("S10.5"),
+
+        dtUI.AddText("xs10 yp+30 w180 h20", "Source File").SetFont("s9 Bold"),
+        dtUI.ARText("xs10 yp+20 w380 h40", "{1}", selectedNodeContent, ["file"]),   
         
         ; signals
-        dtUI.AddText("xs10 yp+60 w180 h20", "Signals").SetFont("s9 Bold"),
+        dtUI.AddText("xs10 yp+40 w180 h20", "Signals").SetFont("s9 Bold"),
         dtUI.ARListView(options, colDetails, signalList)
             .OnEvent("DoubleClick", showDebuggerInfo),
         
