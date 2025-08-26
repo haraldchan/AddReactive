@@ -1,9 +1,9 @@
 DebuggerInfo(debugger) {
-    dd := Gui("+AlwaysOnTop", debugger.value["varName"])
+    dd := Gui(, debugger.value["varName"])
     dd.SetFont(,"微软雅黑")
     
     displaySignalValue := computed(debugger.value["signal"], ds => ds is Object ? JSON.stringify(ds, 0, "") : ds)
-    listenersGroupBoxHeight := (50 * debugger.value["signal"].comps.Length) + (50 * debugger.value["signal"].subs.Length)
+    listenersGroupBoxHeight := (50 * (debugger.value["signal"].comps.Length - 1)) + (50 * (debugger.value["signal"].subs.Length - 1))
     listenersGroupBoxHeight := listenersGroupBoxHeight > 0 ? listenersGroupBoxHeight + 60 : 0
     callStackGroupBoxHeight := 85 * debugger.value["stacks"].Length
 
@@ -26,17 +26,17 @@ DebuggerInfo(debugger) {
         ; dd.AddText("x10 w100 h20", "Listeners").SetFont("s10.5 Bold"),
         dd.AddGroupBox("Section x10 w300 h" . listenersGroupBoxHeight , " Listeners ").SetFont("s10.5 Bold"),
         ; subbed computed
-        dd.AddText("xs10 yp+30 w100 h20", "Computeds").SetFont("Bold"),
-         ArrayExt.map(debugger.value["signal"].comps, comp => comp.debugger && (
+        debugger.value["signal"].comps.Length > 1 && dd.AddText("xs10 yp+30 w100 h20", "Computeds").SetFont("Bold"),
+        ArrayExt.map(debugger.value["signal"].comps, comp => comp.debugger && (
             dd.AddText("xs10 yp+30 w100 h20", "Var Name"),
             dd.AddEdit("ReadOnly x+10 w150 h20", comp.debugger.value["varName"])
         )),
 
         ; controls 
-        dd.AddText("xs10 yp+30 w100 h20", "Controls").SetFont("Bold"),
+        debugger.value["signal"].subs.Length > 1 && dd.AddText("xs10 yp+30 w100 h20", "Controls").SetFont("Bold"),
         ArrayExt.map(
             ArrayExt.filter(debugger.value["signal"].subs, s => s.ctrl.Name !== "DebuggerInfoDisplay"), 
-                ctrl => dd.AddEdit("ReadOnly yp+30 w260 r4", Format("
+                ctrl => dd.AddEdit("ReadOnly yp+50 w260 r4", Format("
                     (
                         Name:`t`t{1}
                         Type:`t`t{2}
