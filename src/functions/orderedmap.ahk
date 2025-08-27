@@ -44,12 +44,12 @@ class OrderedMap extends Map {
         ; key not exist
         if (!this._lookupMap.has(key)) {
             this._entries.Push([key, value])
+        }
         ; key exists
-            for entry in this._entries {
-                if (entry[1] == key) {
-                    entry[2] := value
-                    break
-                }
+        for entry in this._entries {
+            if (entry[1] == key) {
+                entry[2] := value
+                break
             }
         }
 
@@ -192,9 +192,9 @@ class OrderedMap extends Map {
         if (!index) {
             throw Error(Format("Key:({1}) not found.", key))
         }
-        
+
         this._entries.RemoveAt(index)
-        
+
         return this._lookupMap.Delete(key)
     }
 }
