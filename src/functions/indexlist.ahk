@@ -46,7 +46,7 @@ class IndexList {
         this._saveTemplates(this.ctrlGroups[1])
         this._updateListContent(this.signal.value)
 
-        effect(this.signal, new => this._updateListContent(new))
+        effect(this.signal, this._updateListContent)
     }
 
     _saveTemplates(controlGroup) {
