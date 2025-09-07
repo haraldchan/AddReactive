@@ -8,6 +8,7 @@
 #Include "./useProps.ahk"
 #Include "./match.ahk"
 #Include "./unpack.ahk"
+#Include "./pipe.ahk"
 
 ; classes
 #Include "./orderedmap.ahk"
