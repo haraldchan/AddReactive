@@ -32,4 +32,14 @@ class StringExt {
 
         return str
     }
+
+    static repeat(str, times) {
+        newStr := ""
+        
+        loop times {
+            newStr .= str
+        }
+
+        return newStr
+    }
 }
