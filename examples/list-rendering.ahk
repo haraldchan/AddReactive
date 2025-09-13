@@ -33,9 +33,24 @@ ListRenderingTest(App) {
             { index: A_Index, keys: ["name", "pos", item => item["contact"]["tel"] ] }
         )),
 
-        App.ARText("w500 h20", "name: {1}, position: {2}, tel: {3}", chloe, ["name", "pos", (v) => v["contact"]["email"]])
+        App.AddText("x10 w500 h20", "-".repeat(150)),
+
+        3.times(() => (
+            App.ARText("w100 h20 x10", "name: {1}", staffList, {keys: ["name"]}),
+            App.ARText("w100 h20 x+10", "position: {1}", staffList, {keys: ["pos"]}),
+            App.ARText("w180 h20 x+10", "email: {1}", staffList, {keys: [v => v["contact"]["email"]]})
+        )),
+
+        App.AddText("x10 w500 h20", "-".repeat(150)),
+
+        IndexList(() => [
+            App.AddText("w100 h20 x10", "name: {1}"),
+            App.AddText("w100 h20 x+10", "position: {2}"),
+            App.AddText("w180 h20 x+10", "email: {3}")
+        ], staffList, ["name", "pos", v => v["contact"]["email"]]),
+
+        App.ARText("x10 w500 h20", "name: {1}, position: {2}, tel: {3}", chloe, ["name", "pos", (v) => v["contact"]["email"]])
     )
 }
 
 ; DevToolsUI()
-
