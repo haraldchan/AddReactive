@@ -6,6 +6,7 @@ class ARConfig {
     static enableExtendMethods := {
         array: {
             some:      true,
+            includes:  true,
             every:     true,
             filter:    true,
             find:      true,
@@ -37,6 +38,7 @@ class ARConfig {
             split:         true,
             substr:        true,
             repeat:        true,
+            slice:         true
         },
         integer: {
             times:     true
