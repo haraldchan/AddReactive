@@ -38,9 +38,6 @@ class shareCheckStatus {
             checkStatus: signal(false)
         })
 
-        ; this.cbFn := options.hasOwnProp("CheckBox") ? options.CheckBox : (*) => {}
-        ; this.lvFn := options.hasOwnProp("ListView") ? options.ListView : (*) => {}
-        ; this.checkStatusDepend := options.hasOwnProp("checkStatus") ? options.checkStatus : ""
         this.cbFn := o.CheckBox
         this.lvFn := o.ListView
         this.checkStatusDepend := o.checkStatus
