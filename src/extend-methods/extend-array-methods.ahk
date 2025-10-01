@@ -1,4 +1,10 @@
+/**
+ * ArrayExt provides extended array manipulation methods similar to JavaScript Array methods.
+ */
 class ArrayExt {
+    /**
+     * Patches Array prototype with enabled methods from ARConfig.
+     */
     static patch() {
         if (!ARConfig.useExtendMethods) {
             return
@@ -15,6 +21,12 @@ class ArrayExt {
         }
     }
 
+    /**
+     * Returns true if at least one element in the array passes the test implemented by the provided function.
+     * @param {Array} arr - The array to test.
+     * @param {Function} fn - The test function.
+     * @returns {Boolean}
+     */
     static some(arr, fn) {
         for item in arr {
             if (fn(item)) {
@@ -24,6 +36,32 @@ class ArrayExt {
         return false
     }
 
+    /**
+     * Returns true if the array contains a certain element, starting the search at fromIndex.
+     * @param {Array} arr - The array to search.
+     * @param {Any} val - The value to search for.
+     * @param {Integer} [fromIndex=1] - The index to start the search from.
+     * @returns {Boolean}
+     */
+    static includes(arr, val, fromIndex := 1) {
+        for item in arr {
+            if (A_Index < fromIndex) {
+                continue
+            }
+            
+            if (item = val) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Returns true if all elements in the array pass the test implemented by the provided function.
+     * @param {Array} arr - The array to test.
+     * @param {Function} fn - The test function.
+     * @returns {Boolean}
+     */
     static every(arr, fn) {
         for item in arr {
             if (!fn(item))
@@ -32,6 +70,12 @@ class ArrayExt {
         return true
     }
 
+    /**
+     * Creates a new array with all elements that pass the test implemented by the provided function.
+     * @param {Array} arr - The array to filter.
+     * @param {Function} fn - The test function.
+     * @returns {Array}
+     */
     static filter(arr, fn) {
         newArray := []
 
@@ -43,6 +87,12 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Returns the value of the first element in the array that satisfies the provided testing function.
+     * @param {Array} arr - The array to search.
+     * @param {Function} fn - The test function.
+     * @returns {Any|false} - The found element or false if none found.
+     */
     static find(arr, fn) {
         for item in arr {
             if (fn(item)) {
@@ -50,17 +100,32 @@ class ArrayExt {
             }
         }
 
-        return ""
+        return false
     }
 
+    /**
+     * Returns the index of the first element in the array that satisfies the provided testing function.
+     * @param {Array} arr - The array to search.
+     * @param {Function} fn - The test function.
+     * @returns {Integer|false} - The index of the found element or false if none found.
+     */
     static findIndex(arr, fn) {
         for item in arr {
             if (fn(item)) {
                 return A_Index
             }
         }
+
+        return false
     }
 
+    /**
+     * Returns the element at the given index. Supports negative indexing.
+     * @param {Array} arr - The array.
+     * @param {Integer} index - The index (can be negative).
+     * @returns {Any}
+     * @throws {ValueError} If index is out of range.   
+     */
     static at(arr, index) {
         if (Abs(index) > arr.Length || index == 0) {
             throw ValueError("Index out of range.")
@@ -75,6 +140,12 @@ class ArrayExt {
         }
     }
 
+    /**
+     * Creates a new array with the results of calling a provided function on every element.
+     * @param {Array} arr  - The array to map.
+     * @param {Function} fn - The mapping function.
+     * @returns {Array}
+     */
     static map(arr, fn) {
         newArray := []
 
@@ -91,6 +162,13 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Applies a function against an accumulator and each element to reduce it to a single value.
+     * @param {Array} arr - The array to reduce.
+     * @param {Function} fn - The reducer function.
+     * @param {Any} initialValue - Initial value for the accumulator.
+     * @returns {Any}
+     */
     static reduce(arr, fn, initialValue) {
         initIsSet := !(initialValue = 0)
         accumulator := initIsSet ? initialValue : arr[1]
@@ -112,6 +190,13 @@ class ArrayExt {
         return result
     }
 
+    /**
+     * Returns a new array with the element at the given index replaced with newValue.
+     * @param {Array} arr - The array.
+     * @param {Integer} index - The index to replace.
+     * @param {Any} newValue - The new value.
+     * @returns {Array}
+     */
     static with(arr, index, newValue) {
         if (Abs(index) > arr.Length || index == 0) {
             throw ValueError("Index out of range")
@@ -127,6 +212,12 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Returns a new array with val appended. If val is an array, appends all its elements.
+     * @param {Array} arr - The array.
+     * @param {Any} val - Value or array to append.
+     * @returns {Array}
+     */
     static append(arr, val) {
         newArray := [arr*]
 
@@ -140,6 +231,12 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Returns a new array with val inserted at the start. If val is an array, inserts all its elements.
+     * @param {Array} arr - The array.
+     * @param {Any} val - Value or array to insert.
+     * @returns {Array}
+     */
     static unshift(arr, val) {
         newArray := [arr*]
 
@@ -153,6 +250,11 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Returns a new array with the elements reversed.
+     * @param {Array} arr - The array to reverse.
+     * @returns {Array}
+     */
     static reverse(arr) {
         newArray := []
         index := arr.Length
@@ -165,6 +267,11 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Returns a new array with only unique elements.
+     * @param {Array} arr - The array to filter.
+     * @returns {Array}
+     */
     static unique(arr) {
         newArray := arr
 
@@ -177,6 +284,11 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Returns a new array with all sub-array elements concatenated into it recursively.
+     * @param {Array} arr - The array to flatten.
+     * @returns {Array}
+     */
     static flat(arr) {
         newArray := []
 
@@ -195,6 +307,12 @@ class ArrayExt {
         return newArray
     }
 
+    /**
+     * Joins all elements of the array into a string separated by separator.
+     * @param {Array} arr - The array to join.
+     * @param {String} [separator=','] - Separator string.
+     * @returns {String}
+     */
     static join(arr, separator := ",") {
         joined := ""
 
@@ -210,23 +328,36 @@ class ArrayExt {
         return joined
     }
 
-    ; include start, exclude end
-    static slice(arr, start := 1, end := arr.Length + 1) {
+    /**
+     * Returns a shallow copy of a portion of an array into a new array object.
+     * Includes start, excludes end.
+     * @param {Array} arr - The array to slice.
+     * @param {Integer} start - Start index (inclusive).
+     * @param {Integer} [end] - End index (exclusive).
+     * @returns {Array}
+     */
+    static slice(arr, start, end := arr.Length + 1) {
         newArray := []
 
-        if (start < 1 || start > arr.length || end < 1 || end > arr.length + 1) {
-            return false
-        }
+        loop {
+            if (A_Index < start) {
+                continue
+            }
 
-        index := start
-        loop (end == arr.Length + 1 ? arr.Length + 1 : end) - start {
-            newArray.Push(arr[index])
-            index++
-        }
+            newArray.Push(arr[A_Index])
+
+        } until A_Index == end - 1
 
         return newArray
     }
 
+    /**
+     * Merges two sorted arrays into one sorted array using compareFn.
+     * @param {Array} arr1 - First sorted array.
+     * @param {Array} arr2 - Second sorted array.
+     * @param {Function} compareFn - Comparison function.
+     * @returns {Array}
+     */
     static _merge(arr1, arr2, compareFn) {
         mergedList := []
 
@@ -241,13 +372,19 @@ class ArrayExt {
 
         return mergedList
     }
+    /**
+     * Sorts the array using merge sort and compareFn.
+     * @param {Array} arr - The array to sort.
+     * @param {Function} [compareFn] - Comparison function.
+     * @returns {Array}
+     */
     static sort(arr, compareFn := default(a, b) => a - b) {
         if (arr.Length == 1) {
             return arr
         }
 
         mid := Integer(arr.Length / 2 + 1)
-        left := this.slice(arr, , mid)
+        left := this.slice(arr, 1, mid)
         right := this.slice(arr, mid)
 
         return this._merge(this.sort(left, compareFn), this.sort(right, compareFn), compareFn)
