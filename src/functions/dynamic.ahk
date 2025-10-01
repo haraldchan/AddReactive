@@ -23,7 +23,7 @@ class Dynamic {
      * props := { gui: oGui, style: "w200 h30" }
      * ```
      */
-    __New(_signal, componentEntries, props, &instances := []) {
+    __New(_signal, componentEntries, props := "", &instances := []) {
         checkType(_signal, signal, "Parameter #1 is not a signal")
         checkType(componentEntries, Map, "Parameter #2 is not a Map")
         checkType(props, Object.Prototype, "Parameter #3 is not an Object")
@@ -35,7 +35,7 @@ class Dynamic {
         
         ; mount components
         for val, component in this.componentEntries {
-            instance := component.Call(this.props)
+            instance := this.props ? component.Call(this.props) : component.Call()
             this.components.Push(instance)
 
             instance.render()
@@ -52,8 +52,10 @@ class Dynamic {
 
     _renderDynamic(currentValue) {
         for component in this.components {
-            component.visible(this.componentEntries[currentValue].name == component.name)
+            component.visible(false)
         }
+
+        this.components.find(instance => instance.name == currentValue).visible(true)
     }
 
     _handleNestedComponentRender(childComponents){
