@@ -29,7 +29,10 @@ class unpack {
 
     _refs(rawRefs) {
         if (rawRefs is Array) {
-            return rawRefs.flat().map((&var) => value => var := value)
+            return pipe(
+                ; x => ArrayExt.flat(x),
+                x => ArrayExt.map(x, (&var) => value => var := value)
+            )(rawRefs)
 
         } else if (rawRefs is Map || isPlainObject(rawRefs)) {
             out := {}
@@ -52,7 +55,7 @@ class unpack {
         }
 
         if (source is Array) {
-            source := source.flat()
+            ; source := ArrayExt.flat(source)
             
             for setter in setters {
                 if (A_Index > source.Length) {
