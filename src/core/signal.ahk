@@ -205,11 +205,11 @@ class signal {
     /**
      * Reformat an Object to Map.
      * @param {Object} obj Object to be change.
-     * @returns {false|Map}
+     * @returns {Any|Map}
      */
     _mapify(obj) {
         if (!isPlainObject(obj) && !(obj is Array) && !(obj is Map)) {
-            return false
+            return obj
         }
 
         if (isPlainObject(obj) || obj is Map) {
