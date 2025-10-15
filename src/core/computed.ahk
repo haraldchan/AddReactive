@@ -25,10 +25,10 @@ class computed extends signal {
             for s in this.signal {
                 s.addComp(this)
             }
-            this.value := this.mutation.Call(this.signal.map(s => s.value)*)
+            this.value := this._mapify(this.mutation.Call(this.signal.map(s => s.value)*))
         } else {
             this.signal.addComp(this)
-            this.value := this.mutation.Call(this.signal.value)
+            this.value := this._mapify(this.mutation.Call(this.signal.value))
         }
 
         ; debug mode
@@ -55,9 +55,9 @@ class computed extends signal {
         prevValue := this.value
 
         if (this.signal is Array) {
-            this.value := this.mutation.Call(this.signal.map(s => s.value)*)
+            this.value := this._mapify(this.mutation.Call(this.signal.map(s => s.value)*))
         } else {
-            this.value := this.mutation.Call(subbedSignal.value)
+            this.value := this._mapify(this.mutation.Call(subbedSignal.value))
         }
 
         ; notify all subscribers to update
