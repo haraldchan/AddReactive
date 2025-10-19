@@ -4,6 +4,8 @@
 AppWindowTitle := "MouseSpy"
 MouseSpyGui := Gui("+AlwaysOnTop", AppWindowTitle)
 MouseSpyGui.SetFont("s9")
+MouseSpyGui.OnEvent("Close", (*) => ExitApp())
+
 MouseSpy(MouseSpyGui)
 MouseSpyGui.Show()
 
