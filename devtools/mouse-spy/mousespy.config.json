@@ -1,0 +1,10 @@
+﻿{
+  "hotkeys":{
+    "markAnchor":"!+s",
+    "moveToAnchor":"+!m"
+  },
+  "misc":{
+    "updateInterval":"200"
+  },
+  "stepFiller":"Click\nSleep 200"
+}
