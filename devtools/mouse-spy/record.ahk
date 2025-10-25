@@ -27,7 +27,7 @@ MouseSpy_Record(App, config, anchorPos) {
             recordedLog.value ? recordedLog.value . "`r`n" : "",
             xCoord,
             yCoord,
-            "`r`n" . config["stepFiller"],
+            "`r`n" . config["stepFillerTemplates"][App["stepFillerDDL"].Text],
         )
 
         recordedLog.set(newLog)
@@ -89,13 +89,10 @@ MouseSpy_Record_ClickStepOptions(props) {
     comp.render := this => this.Add(
         App.AddText("xs10 y110 w100 h20 0x200", "Step filler snippets:"),
         
-        App.ARDDL("vstepFillerDDL x+10 w150 Choose1", stepFillerTemplates)
-           .OnEvent("Change", handleConfigTemplateUpdate),
+        App.ARDDL("vstepFillerDDL x+10 w150 Choose1", stepFillerTemplates).onChange(handleConfigTemplateUpdate),
         
-        App.ARButton("x+5 w30 h20", "+")
-           .OnEvent("Click", (*) => MouseSpy_Record_StepFillerEditor("add", stepFillerTemplates)),
-        App.ARButton("x+5 w30 h20", "✎")
-           .OnEvent("Click", (*) => MouseSpy_Record_StepFillerEditor("edit", stepFillerTemplates, { name: App["stepFillerDDL"].Text, snippet: App["stepFillerSnippet"].Value})),
+        App.ARButton("x+5 w30 h20", "+").onClick((*) => MouseSpy_Record_StepFillerEditor("add", stepFillerTemplates)),
+        App.ARButton("x+5 w30 h20", "✎").onClick((*) => MouseSpy_Record_StepFillerEditor("edit", stepFillerTemplates, { name: App["stepFillerDDL"].Text, snippet: App["stepFillerSnippet"].Value})),
         
         App.AddEdit("vstepFillerSnippet xs120 yp+25 w220 R3 ReadOnly", config["stepFillerTemplates"][App["stepFillerDDL"].Text])
     )
@@ -158,12 +155,10 @@ MouseSpy_Record_StepFillerEditor(mode, stepFillerTemplates, selectedTemplate := 
         SFE.AddEdit("vtemplateSnippet x10 h400 w310", selectedTemplate.snippet),
         
         ; btns
-        SFE.AddButton("x120 w80 h20", "&Save")
-           .OnEvent("Click", handleTemplateUpdate),
-        SFE.AddButton("x+10 w80 h20", "&Close")
-           .OnEvent("Click", (*) => SFE.Destroy()),
+        SFE.ARButton("x120 w80 h20", "&Save").onClick(handleTemplateUpdate),
+        SFE.ARButton("x+10 w80 h20", "&Close").onClick((*) => SFE.Destroy()),
         SFE.ARButton("x+10 w20 h20 " . ((mode == "add" || stepFillerTemplates.value.Count == 1) && "Disabled") , "🗑")
-           .OnEvent("Click", handleTemplateUpdate),
+           .onClick(handleTemplateUpdate),
         
         SFE.Show()
     )
@@ -173,7 +168,6 @@ MouseSpy_Record_StepFillerEditor(mode, stepFillerTemplates, selectedTemplate := 
 MouseSpy_Record_RecordingOptions(props) {
     App := props.App
     config := props.config
-    stepFiller := config["stepFiller"]
 
     comp := Component(App, A_ThisFunc)
 
