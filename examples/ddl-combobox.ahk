@@ -22,6 +22,11 @@ DdlComboBoxTest(App) {
         mapList.set(newMap)
     }
 
+    handleReset(*) {
+        arrList.reset()
+        mapList.reset()
+    }
+
     showKV(ctrl) {
         curKey := ctrl.Text
         curVal := App.getCtrlByName("$cb").optionsValues[ctrl.Value]
@@ -33,7 +38,7 @@ DdlComboBoxTest(App) {
         ; ddl with array
         App.ARDropDownList("X20 w150 Choose1", arrList),
         App.AddEdit("vaddToArr w100", ""),
-        App.AddButton("x+10 w50", "添加").OnEvent("Click", handleAddToArr),
+        App.AddButton("x+10 w50", "Add").OnEvent("Click", handleAddToArr),
         
         ; combobox with map
         App.ARComboBox("$cb X20 w150 Choose1", mapList).OnEvent(
@@ -42,6 +47,8 @@ DdlComboBoxTest(App) {
         ),
         App.AddEdit("vaddToMK w50", "key"),
         App.AddEdit("vaddToMV w50 x+10", "val"),
-        App.AddButton("x+10 w50", "添加").OnEvent("Click", handleAddToMap)
+        App.AddButton("x+10 w50", "Add").OnEvent("Click", handleAddToMap),
+
+        App.AddButton("w50", "reset").OnEvent("Click", handleReset)
     )
 }
