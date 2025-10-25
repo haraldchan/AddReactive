@@ -1,14 +1,12 @@
-MouseSpy_InfoPanel(App, config, AppWindowTitle, followMouse, anchorPos, suspendText, curMouseCoordMode) {
+MouseSpy_Information(App, config, AppWindowTitle, followMouse, anchorPos, suspendText, curMouseCoordMode) {
+    Globals.updater := () => curMouseInfo.set(handleMousePosUpdate(followMouse.value))
     effect(followMouse, isFollowing => 
-        SetTimer(updater, isFollowing ? 150 : 0)
+        SetTimer(Globals.updater, isFollowing ? 150 : 0)
         App["followStatus"].Value := isFollowing
     )
 
-    updater() => curMouseInfo.set(handleMousePosUpdate(followMouse.value))
-    global updaterGlobal := updater
-
     curMouseInfo := signal(handleMousePosUpdate())
-    SetTimer(updaterGlobal, 150)
+    SetTimer(Globals.updater, 150)
     
     handleMousePosUpdate(isFollowing := true) {
         CoordMode "Mouse", "Screen"
@@ -26,7 +24,7 @@ MouseSpy_InfoPanel(App, config, AppWindowTitle, followMouse, anchorPos, suspendT
                 color: PixelGetColor(initScreenX, initScreenY)
             }
     }
-    global handleMousePosUpdateGlobal := handleMousePosUpdate
+    Globals.handleMousePosUpdate := handleMousePosUpdate
 
     effect(curMouseInfo, cur => App["colorIndicator"].SetFont(Format("s13 c{1}", StrReplace(cur["color"], "0x", ""))))
     

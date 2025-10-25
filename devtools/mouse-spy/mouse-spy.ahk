@@ -1,12 +1,14 @@
 #SingleInstance Force
 #Include "../../useAddReactive.ahk"
-#Include "./info-panel.ahk"
+#Include "./information.ahk"
 #Include "./record.ahk"
 #Include "./settings.ahk"
 
 MouseSpyWindowTitle := "MouseSpy"
+Globals := {}
+
 MouseSpyGui := Gui("+AlwaysOnTop", MouseSpyWindowTitle)
-MouseSpyGui.SetFont("s9")
+MouseSpyGui.SetFont("s9", "Tahoma")
 MouseSpyGui.OnEvent("Close", (*) => ExitApp())
 MouseSpy(MouseSpyGui)
 MouseSpyGui.Show()
@@ -15,7 +17,7 @@ MouseSpy(App) {
     config := JSON.parse(FileRead("./mousespy.config.json", "UTF-8"))
 
     followMouse := signal(true)
-    anchorPos := signal({ Screen:{ x: 0, y:0 }, Client: { x: 0, y: 0 } })
+    anchorPos := signal({ Screen:{ x: 0, y: 0 }, Client: { x: 0, y: 0 } })
     suspendText := computed(followMouse, isFollowing => isFollowing ? "(Hold Ctrl or Shift to suspend updates)" : "(Update suspended)")
 
     curMouseCoordMode := "Screen"
@@ -28,10 +30,10 @@ MouseSpy(App) {
         ; }
 
         ; { tabs
-        Tab3 := App.AddTab3("x10 w370", ["Info", "Record", "Settings"]),
+        Tab3 := App.AddTab3("x10 w370", ["Information", "Record", "Settings"]),
 
         Tab3.UseTab("Info"),
-        MouseSpy_InfoPanel(App, config, MouseSpyWindowTitle, followMouse, anchorPos, suspendText, curMouseCoordMode),
+        MouseSpy_Information(App, config, MouseSpyWindowTitle, followMouse, anchorPos, suspendText, curMouseCoordMode),
 
         Tab3.UseTab("Record"),
         MouseSpy_Record(App, config, anchorPos),
