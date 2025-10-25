@@ -35,7 +35,7 @@ MouseSpy_Record(App, config, anchorPos) {
 
     return (
         ; { record options
-        App.AddGroupBox("Section w350 h120", "Record Options").SetFont("s10 bold"),
+        App.AddGroupBox("Section w350 h140", "Record Options").SetFont("s10 bold"),
         
         ; record mode
         App.AddText("xs10 yp+22 w100 h20 0x200", "Record Mode:"),
@@ -48,7 +48,7 @@ MouseSpy_Record(App, config, anchorPos) {
         ; }
 
         ; { Click Log
-        App.AddGroupBox("Section w350 h420 x22 y190", "Recorded Log").SetFont("s10 bold"),
+        App.AddGroupBox("Section w350 h420 x22 y210", "Recorded Log").SetFont("s10 bold"),
         App.AddText("xs10 yp+22 w100 h20 0x200", "Coord Mode:"),
         App.AddRadio("x+10 w60 h20 Checked", "Screen")
            .OnEvent("Click", (*) => logMouseCoordMode := "Screen"),
@@ -64,32 +64,111 @@ MouseSpy_Record(App, config, anchorPos) {
     )
 }
 
+
 MouseSpy_Record_ClickStepOptions(props) {
     App := props.App
     config := props.config
-    ; stepFiller := config["stepFiller"]
+    
+    comp := Component(App, A_ThisFunc)
+
     stepFillerTemplates := signal(config["stepFillerTemplates"])
 
-    comp := Component(App, A_ThisFunc)
-    
-    handleConfigUpdate() {
+    effect(stepFillerTemplates, handleStepTemplatesUpdate)
+    handleStepTemplatesUpdate(curTemplates) {
+        config["stepFillerTemplates"] := curTemplates
+        App["stepFillerSnippet"].Value := config["stepFillerTemplates"][App["stepFillerDDL"].Text]
+
         FileDelete("./mousespy.config.json")
         FileAppend(JSON.stringify(config), "./mousespy.config.json", "UTF-8")
     }
 
-    handleStepFillerUpdate(ctrl, _) {
-        config["stepFiller"] := ctrl.Value
-        handleConfigUpdate()
+    handleConfigTemplateUpdate(*) {
+        App["stepFillerSnippet"].Value := config["stepFillerTemplates"][App["stepFillerDDL"].Text]
     }
 
     comp.render := this => this.Add(
-        App.AddText("xs10 y110 w100 h20 0x200", "Step filler:"),
-        App.ARDDL("x+10 w220", stepFillerTemplates)
-        ; App.AREdit("x+10 w220 R3", stepFiller).OnEvent("LoseFocus", handleStepFillerUpdate)
+        App.AddText("xs10 y110 w100 h20 0x200", "Step filler snippets:"),
+        
+        App.ARDDL("vstepFillerDDL x+10 w150 Choose1", stepFillerTemplates)
+           .OnEvent("Change", handleConfigTemplateUpdate),
+        
+        App.ARButton("x+5 w30 h20", "+")
+           .OnEvent("Click", (*) => MouseSpy_Record_StepFillerEditor("add", stepFillerTemplates)),
+        App.ARButton("x+5 w30 h20", "✎")
+           .OnEvent("Click", (*) => MouseSpy_Record_StepFillerEditor("edit", stepFillerTemplates, { name: App["stepFillerDDL"].Text, snippet: App["stepFillerSnippet"].Value})),
+        
+        App.AddEdit("vstepFillerSnippet xs120 yp+25 w220 R3 ReadOnly", config["stepFillerTemplates"][App["stepFillerDDL"].Text])
     )
 
     return comp
 }
+
+
+MouseSpy_Record_StepFillerEditor(mode, stepFillerTemplates, selectedTemplate := { name: "", snippet: "" }) {
+    if (WinExist("Edit Snippet")) {
+        return
+    }
+
+    SFE := Gui("+AlwaysOnTop", "Edit Snippet")
+    SFE.SetFont("s9", "Tahoma")
+    SFE.OnEvent("Close", (*) => SFE.Destroy())
+
+
+    handleTemplateUpdate(ctrl, _) {
+        templName := Trim(SFE["templateName"].Value)
+        templSnippet := SFE["templateSnippet"].Value
+
+        if (!templName || !Trim(SFE["templateSnippet"].Value)) {
+            return
+        }
+
+        newTemplates := MapExt.deepClone(stepFillerTemplates.value)
+
+        if (mode == "add") {
+            newTemplates[templName] := templSnippet
+        }
+
+        if (mode == "edit") {
+            if (!newTemplates.Has(templName)) {
+                newTemplates.Delete(selectedTemplate.name)
+            }
+
+            newTemplates[templName] := templSnippet
+        }
+
+        if (ctrl.Text == "🗑") {
+            confirm := Msgbox("Are you sure to delete this template?", "Edit Snippet", "YesNo 4096")
+            if (confirm == "Yes") {
+                newTemplates.Delete(selectedTemplate.name)
+            } else {
+                return
+            }
+        }
+
+        ; set new templates
+        stepFillerTemplates.set(newTemplates)
+        SFE.Destroy()
+    }
+
+
+    return (
+        ; template name & snippet
+        SFE.AddText("x10 h20 w100 0x200", "Template Name:"),
+        SFE.AddEdit("vtemplateName x+10 h20 w200", selectedTemplate.name),
+        SFE.AddEdit("vtemplateSnippet x10 h400 w310", selectedTemplate.snippet),
+        
+        ; btns
+        SFE.AddButton("x120 w80 h20", "&Save")
+           .OnEvent("Click", handleTemplateUpdate),
+        SFE.AddButton("x+10 w80 h20", "&Close")
+           .OnEvent("Click", (*) => SFE.Destroy()),
+        SFE.ARButton("x+10 w20 h20 " . ((mode == "add" || stepFillerTemplates.value.Count == 1) && "Disabled") , "🗑")
+           .OnEvent("Click", handleTemplateUpdate),
+        
+        SFE.Show()
+    )
+}
+
 
 MouseSpy_Record_RecordingOptions(props) {
     App := props.App
