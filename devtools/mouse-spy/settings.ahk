@@ -6,7 +6,7 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle, followMouse, anchorPos, curM
         },
         moveToAnchor: {
             hotkey: config["hotkeys"]["moveToAnchor"],
-            callback: (*) => moveToAnchorGlobal()
+            callback: Globals.moveToAnchor
         }
     }
 

@@ -104,11 +104,10 @@ MouseSpy_Information(App, config, AppWindowTitle, followMouse, anchorPos, suspen
         editLong: "x+10 w250 h20 ReadOnly",
     }
 
-    moveToAnchor(*) {
-        CoordMode "Mouse", curMouseCoordMode
-        MouseMove anchorPos.value[A_CoordModeMouse]["x"], anchorPos.value[A_CoordModeMouse]["y"]
-    }
-    global moveToAnchorGlobal := moveToAnchor
+    Globals.moveToAnchor := (*) => (
+        CoordMode("Mouse", curMouseCoordMode)
+        MouseMove(anchorPos.value[A_CoordModeMouse]["x"], anchorPos.value[A_CoordModeMouse]["y"])
+    )
 
     return (
         ; { window info 
@@ -172,7 +171,7 @@ MouseSpy_Information(App, config, AppWindowTitle, followMouse, anchorPos, suspen
         App.AddText("xs10 yp+25 w80 h20 0x200", "Coord Mode:"),
         App.AddRadio("x+10 w80 h20 Checked", "Screen").OnEvent("Click", (ctrl, _) => curMouseCoordMode := ctrl.Text),
         App.AddRadio("x+0 w80 h20", "Client").OnEvent("Click", (ctrl, _) => curMouseCoordMode := ctrl.Text),
-        App.AddButton("x+0 h20 w80", "Move").OnEvent("Click", moveToAnchor)
+        App.AddButton("x+0 h20 w80", "Move").OnEvent("Click", Globals.moveToAnchor)
         ; }
 
     )
