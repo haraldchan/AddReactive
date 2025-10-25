@@ -7,6 +7,7 @@
 #Include "./useListPlaceholder.ahk"
 #Include "./useImages.ahk"
 #Include "./useProps.ahk"
+#Include "./useStore.ahk"
 #Include "./match.ahk"
 #Include "./unpack.ahk"
 #Include "./pipe.ahk"
