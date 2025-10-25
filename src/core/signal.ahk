@@ -16,6 +16,7 @@ class signal {
         this.value := isPlainObject(initialValue) || initialValue is Array || initialValue is Map
             ? this._mapify(initialValue)
             : initialValue
+        this.initValue := this.value
         this.subs := []
         this.comps := []
         this.effects := []
@@ -120,6 +121,11 @@ class signal {
 
         this.set(updater)
     }
+
+    /**
+     * Resets the signal to its initial value.
+     */
+    reset() => this.set(this.initValue)
 
     ; find nested key by exact query path
     _setExactMatch(keys, item, newValue, index := 1) {
