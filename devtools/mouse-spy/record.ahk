@@ -67,7 +67,8 @@ MouseSpy_Record(App, config, anchorPos) {
 MouseSpy_Record_ClickStepOptions(props) {
     App := props.App
     config := props.config
-    stepFiller := config["stepFiller"]
+    ; stepFiller := config["stepFiller"]
+    stepFillerTemplates := signal(config["stepFillerTemplates"])
 
     comp := Component(App, A_ThisFunc)
     
@@ -83,7 +84,8 @@ MouseSpy_Record_ClickStepOptions(props) {
 
     comp.render := this => this.Add(
         App.AddText("xs10 y110 w100 h20 0x200", "Step filler:"),
-        App.AREdit("x+10 w220 R3", stepFiller).OnEvent("LoseFocus", handleStepFillerUpdate)
+        App.ARDDL("x+10 w220", stepFillerTemplates)
+        ; App.AREdit("x+10 w220 R3", stepFiller).OnEvent("LoseFocus", handleStepFillerUpdate)
     )
 
     return comp

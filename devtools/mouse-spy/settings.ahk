@@ -2,7 +2,7 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle, followMouse, anchorPos, curM
     hotkeySetup := {
         markAnchor: {
             hotkey: config["hotkeys"]["markAnchor"],
-            callback: (*) => anchorPos.set(handleMousePosUpdateGlobal())
+            callback: (*) => anchorPos.set(Globals.handleMousePosUpdate())
         },
         moveToAnchor: {
             hotkey: config["hotkeys"]["moveToAnchor"],
@@ -44,7 +44,7 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle, followMouse, anchorPos, curM
     }
 
     handleUpdateIntervalUpdate(ctrl, _) {
-        SetTimer(updaterGlobal, ctrl.Value)
+        SetTimer(Globals.updater, ctrl.Value)
         
         config["misc"]["updateInterval"] := ctrl.Value
         handleConfigUpdate()
