@@ -390,7 +390,7 @@ class AddReactive {
      * @param eventCallback The callback function when event is raised.
      * @returns {AddReactive} 
      */
-    onChage(eventCallback) {
+    onChange(eventCallback) {
         this.ctrl.OnEvent("Change", eventCallback)
 
         return this
