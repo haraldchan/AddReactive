@@ -31,11 +31,16 @@ MouseSpy_Information(App, config, AppWindowTitle, followMouse, anchorPos, suspen
     curWindowInfo := computed(curMouseInfo, updateWindowInfoUpdate)
     updateWindowInfoUpdate(curMouseInfo) {
         w := curMouseInfo["window"]
+        try {
+            ahkExe := WinGetProcessName(w)
+        } catch {
+            ahkExe := ""
+        }
 
         return {
             winTitle: WinGetTitle(w),
             ahkClass: WinGetClass(w),
-            ahkExe:   WinGetProcessName(w),
+            ahkExe:   ahkExe,
             ahkPid:   WinGetPID(w),
             ahkId:    w
         }
