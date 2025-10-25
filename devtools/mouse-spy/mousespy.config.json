@@ -7,7 +7,6 @@
     "updateInterval":"200"
   },
   "stepFillerTemplates":{
-    "Template 1":"Click\nSleep 200",
-    "Template 2":"Click\r\nutils.waitLoading()"
+    "Template 1":"Click\nSleep 200"
   }
 }

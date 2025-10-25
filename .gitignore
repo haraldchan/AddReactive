@@ -21,3 +21,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# mousespy config
+/devtools/mouse-spy/mousespy.config.json
