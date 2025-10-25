@@ -1,18 +1,13 @@
 ﻿{
-  "hotkeys": {
-    "markAnchor": "!+s",
-    "moveToAnchor": "+!m"
+  "hotkeys":{
+    "markAnchor":"!+s",
+    "moveToAnchor":"+!m"
   },
-  "misc": {
-    "updateInterval": "200"
+  "misc":{
+    "updateInterval":"200"
   },
-  "stepFiller": "Click\nSleep 200",
-  "stepFillerTemplates": [
-    {
-      "Template 1": "Click\nSleep 200"
-    },
-    {
-      "Template 2": "Click\nutils.waitLoading()"
-    }
-  ]
+  "stepFillerTemplates":{
+    "Template 1":"Click\nSleep 200",
+    "Template 2":"Click\r\nutils.waitLoading()"
+  }
 }
