@@ -35,6 +35,10 @@ UseStoreTest(App) {
         App.AREdit("x+10 w100", "{1}", mouseStore.curMouseInfo, v => v["Screen"]["y"]),
         App.AddText("x20", "DoubledX:"),
         App.AREdit("x+10 w100", "{1}", mouseStore.doubledX),
-        0
+        
+        App.AddButton("x20 w100", "stop")
+           .OnEvent("Click", (ctrl, *) => SetTimer(mouseStore.useMethod("updater"), 0)),
+        App.AddButton("x+10 w100", "resume")
+           .OnEvent("Click", (ctrl, *) => SetTimer(mouseStore.useMethod("updater")))
     )
 }
