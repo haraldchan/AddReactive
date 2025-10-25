@@ -386,6 +386,139 @@ class AddReactive {
     }
 
     /**
+     * Registers a function to be call when "Change" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onChage(eventCallback) {
+        this.ctrl.OnEvent("Change", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "Click" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onClick(eventCallback) {
+        this.ctrl.OnEvent("Click", eventCallback)
+
+        return this
+    }
+    
+    /**
+     * Registers a function to be call when "DoubleClick" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onDoubleClick(eventCallback) {
+        this.ctrl.OnEvent("DoubleClick", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ColClick" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onColClick(eventCallback) {
+        this.ctrl.OnEvent("ColClick", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ContextMenu" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onContextMenu(eventCallback) {
+        this.ctrl.OnEvent("ContextMenu", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "Focus" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onFocus(eventCallback) {
+        this.ctrl.OnEvent("Focus", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "LoseFocus" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onBlur(eventCallback) {
+        this.ctrl.OnEvent("LoseFocus", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ItemCheck" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onItemCheck(eventCallback) {
+        this.ctrl.OnEvent("ItemCheck", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ItemEdit" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onItemEdit(eventCallback) {
+        this.ctrl.OnEvent("ItemEdit", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ItemExpand" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onItemExpand(eventCallback) {
+        this.ctrl.OnEvent("ItemExpand", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ItemFocus" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onItemFocus(eventCallback) {
+        this.ctrl.OnEvent("ItemFocus", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "ItemSelect" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {AddReactive} 
+     */
+    onItemSelect(eventCallback) {
+        this.ctrl.OnEvent("ItemSelect", eventCallback)
+
+        return this
+    }
+
+
+    /**
      * Sets various options and styles for the appearance and behavior of the control.
      * @param newOptions Specify one or more control-specific or general options and styles, each separated from the next with one or more spaces or tabs.
      */
