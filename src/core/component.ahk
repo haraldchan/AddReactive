@@ -17,7 +17,7 @@ class Component {
         checkType(name, String, "Parameter #1 is not a string")
         this.GuiObj := GuiObj
         this.name := name
-        this.props := {}
+        this._props := {}
         this.ctrls := []
         this.children := () => {}
         this.childComponents := []

@@ -30,12 +30,12 @@ class Dynamic {
 
         this.signal := _signal
         this.componentEntries := componentEntries
-        this.props := props
+        this._props := props
         this.components := []
         
         ; mount components
         for val, component in this.componentEntries {
-            instance := this.props ? component.Call(this.props) : component.Call()
+            instance := this._props ? component.Call(this._props) : component.Call()
             this.components.Push(instance)
 
             instance.render()
