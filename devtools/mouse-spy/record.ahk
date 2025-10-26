@@ -1,4 +1,5 @@
-MouseSpy_Record(App, config, anchorPos) {
+; MouseSpy_Record(App, config, anchorPos) {
+MouseSpy_Record(App, config) {
     curRecordMode := signal("clickStep")
     recordModes := Map(
         "clickStep", MouseSpy_Record_ClickStepOptions,
@@ -9,7 +10,7 @@ MouseSpy_Record(App, config, anchorPos) {
     useRelative := false
 
     recordedLog := signal("")
-    effect(anchorPos, handleLogUpdate)
+    effect(store.anchorPos, handleLogUpdate)
     handleLogUpdate(curAnchorPos, prevAnchorPos) {
         if (useRelative) {
             x := curAnchorPos[logMouseCoordMode]["x"] - prevAnchorPos[logMouseCoordMode]["x"]

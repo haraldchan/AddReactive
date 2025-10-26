@@ -1,12 +1,12 @@
-MouseSpy_Settings(App, config, MouseSpyWindowTitle, followMouse, anchorPos, curMouseCoordMode) {
+MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
     hotkeySetup := {
         markAnchor: {
             hotkey: config["hotkeys"]["markAnchor"],
-            callback: (*) => anchorPos.set(Globals.handleMousePosUpdate())
+            callback: (*) => store.anchorPos.set(store.useMethod("handleMousePosUpdate")())
         },
         moveToAnchor: {
             hotkey: config["hotkeys"]["moveToAnchor"],
-            callback: Globals.moveToAnchor
+            callback: store.useMethod("moveToAnchor")
         }
     }
 
@@ -14,10 +14,11 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle, followMouse, anchorPos, curM
         CoordMode("Mouse", "Screen")
 
         HotIfWinExist(MouseSpyWindowTitle)
-        Hotkey "~*Ctrl", (*) => followMouse.set(false)
-        Hotkey "~*Ctrl up", (*) => followMouse.set(true)
-        Hotkey "~*Shift", (*) => followMouse.set(false)
-        Hotkey "~*Shift up", (*) => followMouse.set(true)
+        Hotkey "~*Ctrl", (*) => store.followMouse.set(false)
+        Hotkey "~*Ctrl up", (*) => store.followMouse.set(true)
+        Hotkey "~*Shift", (*) => store.followMouse.set(false)
+        Hotkey "~*Shift up", (*) => store.followMouse.set(true)
+        
         Hotkey hotkeySetup.moveToAnchor.hotkey, hotkeySetup.moveToAnchor.callback, "On"
         
         HotIf((*) => WinExist(MouseSpyWindowTitle) && App["useMousePosAnchor"].Value)
@@ -44,7 +45,7 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle, followMouse, anchorPos, curM
     }
 
     handleUpdateIntervalUpdate(ctrl, _) {
-        SetTimer(Globals.updater, ctrl.Value)
+        SetTimer(store.useMethod("updater"), ctrl.Value)
         
         config["misc"]["updateInterval"] := ctrl.Value
         handleConfigUpdate()
