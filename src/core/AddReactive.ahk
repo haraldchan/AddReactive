@@ -340,6 +340,11 @@ class AddReactive {
             return
         }
 
+        if (this.ctrl is Gui.Pic) {
+            this.ctrl.Value := signal.value
+            return
+        }
+
         ; update text label
         this.ctrl.Text := this._handleFormatStr(this.content, this.depend, this.key)
 
@@ -356,6 +361,14 @@ class AddReactive {
 
         return this
     }
+
+    setKey(newKey) {
+        this.key := newKey
+        this.update(this.depend)
+        
+        return this   
+    }
+
 
     /**
      * Registers one or more functions to be call when given event is raised. 
