@@ -5,17 +5,35 @@ class useImages {
      */
     __New(folderPath) {
         this.folderPath := folderPath
-        this.imgExtends := ["jpg", "jpeg", "gif", "png", "tiff", "bmp", "ico"]
-        this.imgList := Map()
+        this.imageExtends := ["jpg", "jpeg", "gif", "png", "tiff", "bmp", "ico"]
+        this.imageList := OrderedMap()
 
-        loop files, folderPath . "\*.*" {
-            if (this.imgExtends.find(ext => ext == A_LoopFileExt.toLower())) {
-                this.imgList[StrLower(A_LoopFileName)] := A_LoopFileFullPath
+        this.load()
+    }
+
+    __Item[key] {
+        get => this.imageList[StrLower(key)].fullpath
+    }
+
+    load() {
+        this.imageList.clear()
+
+        loop files, this.folderPath . "\*.*" {
+            if (ArrayExt.find(this.imageExtends, ext => ext == A_LoopFileExt.toLower())) {
+                this.imageList[StrLower(A_LoopFileName)] := {
+                    name: A_LoopFileName,
+                    ext: A_LoopFileExt,
+                    fullPath: A_LoopFileFullPath,
+                    shortPath: A_LoopFileShortPath,
+                    timeModified: A_LoopFileTimeModified,
+                    timeCreated: A_LoopFileTimeCreated,
+                    timeAccessed: A_LoopFileTimeAccessed,
+                }
             }
         }
     }
 
-    __Item[key] {
-        get => this.imgList[StrLower(key)]
+    use(filename) {
+        return this.imageList[filename]
     }
 }
