@@ -440,6 +440,35 @@ class ARTreeView extends AddReactiveTreeView {
 }
 
 
+class AddReactivePicture extends AddReactive {
+    /**
+     * Add a reactive Text control to Gui
+     * @param {Gui} GuiObject The target Gui Object.
+     * @param {string} options Options apply to the control, same as Gui.Add.
+     * @param {string} content Text or formatted text to hold signal values.
+     * @param {signal} [depend] Subscribed signal
+     * @param {array} [key] the keys or index of the signal's value
+     * @returns {AddReactiveText}     
+     */
+    __New(GuiObject, options := "", depend := 0, key := 0) {
+        checkType(options, String, "Parameter #1 (options) is not a String")
+        checkTypeDepend(depend)
+
+        this.key := key
+        super.__New(GuiObject, "Picture", options, depend.value, depend, key)
+    }
+}
+class AddReactivePic extends AddReactivePicture {
+    ; alias
+}
+class ARPicture extends AddReactivePicture {
+    ; alias
+}
+class ARPic extends AddReactivePicture {
+    ; alias
+}
+
+
 ; mount to Gui.Prototype
 Gui.Prototype.AddReactiveText := AddReactiveText
 Gui.Prototype.ARText := ARText
@@ -466,3 +495,7 @@ Gui.Prototype.AddReactiveDateTime := AddReactiveTreeView
 Gui.Prototype.ARDateTime := ARTreeView
 Gui.Prototype.AddReactiveTreeView := AddReactiveTreeView
 Gui.Prototype.ARTreeView := ARTreeView
+Gui.Prototype.AddReactivePicture := AddReactivePicture
+Gui.Prototype.AddReactivePic := AddReactivePic
+Gui.Prototype.ARPicture := ARPicture
+Gui.Prototype.ARPic := ARPic
