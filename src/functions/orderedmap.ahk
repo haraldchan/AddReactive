@@ -101,13 +101,13 @@ class OrderedMap extends Map {
      * Returns an Array that contains all keys in insertion order.
      * @returns {Array} 
      */
-    keys() => this._entries.map(entry => entry[1])
+    keys() => ArrayExt.map(this._entries, entry => entry[1])
 
     /**
      * Returns an Array that contains all values in insertion order.
      * @returns {Array} 
      */
-    values() => this._entries.map(entry => entry[2])
+    values() => ArrayExt.map(this._entries, entry => entry[2])
 
     /**
      * Returns an Array of all [key, value] pairs in insertion order.
@@ -121,7 +121,7 @@ class OrderedMap extends Map {
      * @returns {Any} 
      */
     keyOf(value) {
-        foundEntry := this._entries.find(entry => entry[2] == value)
+        foundEntry := ArrayExt.find(this._entries, entry => entry[2] == value)
 
         if (!foundEntry) {
             throw Error("Value not found.", value)
@@ -136,7 +136,7 @@ class OrderedMap extends Map {
      * @returns {Integer} 
      */
     indexOf(key) {
-        foundIndex := this._entries.findIndex(entry => entry[1] == key)
+        foundIndex := ArrayExt.findIndex(this._entries, entry => entry[1] == key)
 
         if (!foundIndex) {
             throw Error(Format("Key:({1}) not found.", key))
@@ -188,7 +188,7 @@ class OrderedMap extends Map {
      * @returns {Any} The removed [key, value] pair.
      */
     delete(key) {
-        index := this._entries.findIndex(entry => entry[1] == key)
+        index := ArrayExt.findIndex(this._entries, entry => entry[1] == key)
         if (!index) {
             throw Error(Format("Key:({1}) not found.", key))
         }
