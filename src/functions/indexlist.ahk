@@ -54,7 +54,7 @@ class IndexList {
             if (control is Array) {
                 this._saveTemplates(control)
             } else {
-                this.templates.Push(control.Text)
+                this.templates.Push(control is AddReactive ? control.ctrl.Text : control.Text)
             }
         }
     }
@@ -62,7 +62,7 @@ class IndexList {
     _updateListContent(newValue) {
         for ctrlGroup in this.ctrlGroups {
             index := A_Index
-            values := this.keys.map(key => key is Func ? key(newValue[index]) : newValue[index][key])
+            values := ArrayExt.map(this.keys, key => key is Func ? key(newValue[index]) : newValue[index][key])
 
             for ctrl in ctrlGroup {
                 updatedText := ""
@@ -72,11 +72,18 @@ class IndexList {
                     updatedText := Format(this.templates[A_Index], values*)
                 }
                 
-                if (ctrl is Gui.Control) {
+                if (ctrl is Gui.Control) {    
                     ctrl.Text := updatedText
+                    if (ctrl.HasOwnProp("Value")) {
+                        ctrl.Vakye := updatedText
+                    } 
                 }
+
                 if (ctrl is AddReactive) {
                     ctrl.ctrl.Text := updatedText
+                    if (ctrl.ctrl.HasOwnProp("Value")) {
+                        ctrl.ctrl.Value := updatedText
+                    } 
                 }
             }
         }
