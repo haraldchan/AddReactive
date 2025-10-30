@@ -19,7 +19,7 @@ class useImages {
         this.imageList.clear()
 
         loop files, this.folderPath . "\*.*" {
-            if (ArrayExt.find(this.imageExtends, ext => ext == A_LoopFileExt.toLower())) {
+            if (ArrayExt.find(this.imageExtends, ext => ext == StrLower(A_LoopFileExt))) {
                 this.imageList[StrLower(A_LoopFileName)] := {
                     name: A_LoopFileName,
                     ext: A_LoopFileExt,
@@ -28,6 +28,9 @@ class useImages {
                     timeModified: A_LoopFileTimeModified,
                     timeCreated: A_LoopFileTimeCreated,
                     timeAccessed: A_LoopFileTimeAccessed,
+                    size: A_LoopFileSize,
+                    sizeKB: A_LoopFileSizeKB,
+                    sizeMB: A_LoopFileSizeMB
                 }
             }
         }
