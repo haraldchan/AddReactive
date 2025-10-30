@@ -341,7 +341,9 @@ class AddReactive {
         }
 
         if (this.ctrl is Gui.Pic) {
-            this.ctrl.Value := signal.value
+            try {
+                this.ctrl.Value := signal.value
+            }
             return
         }
 
