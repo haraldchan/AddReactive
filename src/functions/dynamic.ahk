@@ -55,7 +55,12 @@ class Dynamic {
             component.visible(false)
         }
 
-        this.components.find(instance => instance.name == this.componentEntries[currentValue].name).visible(true)
+        componentToShow := 
+            ArrayExt.find(this.components, instance => instance.name == this.componentEntries[currentValue].name) 
+            || ArrayExt.find(this.components, instance => instance.name == currentValue)
+
+
+        componentToShow.visible(true)
     }
 
     _handleNestedComponentRender(childComponents){
