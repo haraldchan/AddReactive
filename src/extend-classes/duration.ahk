@@ -76,7 +76,7 @@ class Duration {
      * @param {string} toDate - End date/time.
      * @returns {number}
      */
-    static hourBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Hours")
+    static hoursBetween(fromDate, toDate) => DateDiff(toDate, fromDate, "Hours")
     
     /**
      * Returns the number of days between two dates.
