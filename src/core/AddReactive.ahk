@@ -103,6 +103,11 @@ class AddReactive {
 
         optionsArr := StrSplit(optionsString, " ")
         arcNameIndex := ArrayExt.findIndex(optionsArr, item => InStr(item, "$"))
+        for index, option in optionsArr {
+            if (StringExt.startsWith(option, "@")) {
+                optionsArr[index] := optionShorthands[option]
+            }
+        }
 
         if (arcNameIndex) {
             this.name := optionsArr.RemoveAt(arcNameIndex)
