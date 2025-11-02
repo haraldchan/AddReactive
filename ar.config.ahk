@@ -38,7 +38,9 @@ class ARConfig {
             split:         true,
             substr:        true,
             repeat:        true,
-            slice:         true
+            slice:         true,
+            startsWith:    true,
+            endsWith:      true,
         },
         integer: {
             times:     true
@@ -52,6 +54,7 @@ class ARConfig {
         },
         gui: {
             getCtrlByName:    true,
+            getCtrlsByMatch:  true,
             getCtrlByType:    true,
             getCtrlByTypeAll: true,
             getCtrlByText:    true,
