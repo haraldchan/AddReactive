@@ -167,4 +167,17 @@ class StringExt {
 
         return newStr
     }
+
+    static startsWith(haystack, needle, caseSense := false, startPos := 1) {
+        index := InStr(haystack, needle, caseSense, startPos)
+
+        return index == startPos ? true : false
+    }
+
+    static endsWith(haystack, needle, caseSense := false) {
+        startPos := StrLen(haystack) - StrLen(needle) + 1
+        index := InStr(haystack, needle, caseSense, )
+
+        return index == startPos ? true : false
+    }
 }
