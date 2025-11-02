@@ -30,20 +30,65 @@ class GuiExt {
     /**
      * Returns a control from a GUI by its name.
      * @param {Gui} gui - The GUI object.
-     * @param {string} name - The name of the control.
+     * @param {String|Func} name - The name of the control.
      * @returns {Object} The control object.
      * @throws {ValueError} If the control name is not found.
      */
     static getCtrlByName(gui, name) {
-        if (gui.arcs[name]) {
-            return gui.arcs[name]
+        if (name is String) {
+            if (gui.arcs[name]) {
+                return gui.arcs[name]
+            }
+
+            if (gui[name]) {
+                return gui[name]
+            }
         }
 
-        if (gui[name]) {
-            return gui[name]
+        if (name is Func) {
+            for ctrl in gui {
+                if (name(ctrl)) {
+                    return ctrl
+                }
+            }
+
+            for arName, arControl in gui.arcs {
+                if (name(arControl)) {
+                    return arControl
+                }
+            }
         }
 
-        throw ValueError("Control name not found.", -1, name)
+        throw ValueError("Control not found.", -1, name)
+    }
+
+    /**
+     * 
+     * @param {Gui} gui 
+     * @param {Func} fn 
+     */
+    static getCtrlsByMatch(gui, fn, includeArc := false) {
+        ctrls := []
+
+        for ctrl in gui {
+            if (fn(ctrl)) {
+                ctrls.Push(ctrl)
+            }
+        }
+
+        if (includeArc) {
+            for arName, arControl in gui.arcs {
+                if (fn(arControl)) {
+                    ctrls.Push(arControl)
+                }
+            }
+        }
+
+        if (!ctrls.Length) {
+            throw ValueError("Control not found.", -1, fn)
+        }
+
+        return ctrls
     }
 
     /**
