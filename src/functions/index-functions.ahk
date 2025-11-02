@@ -1,6 +1,7 @@
 ; components
 #Include "./dynamic.ahk"
 #Include "./indexlist.ahk"
+#Include "./show.ahk"
 
 ; functions
 #Include "./shareCheckStatus.ahk"
