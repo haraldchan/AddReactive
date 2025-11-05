@@ -18,10 +18,25 @@ class GuiExt {
                         Gui.ListView.Prototype.%lvMethod% := ObjBindMethod(this, lvMethod)
                     }
                 }
-                continue
-            }
+            } 
+            else if (method == "control") {
+                for ctrlMethod, ctrlStatus in status.OwnProps() {
+                    if (ctrlMethod == "setFont") {
+                        _originalSetFont := Gui.Control.Prototype.setFont
+                        Gui.Control.Prototype.DeleteProp("SetFont")
+                        Gui.Control.Prototype.setFont := (control, options := "", fontName := "") => (
+                            _originalSetFont(control, options, fontName),
+                            control
+                        )
+                        continue
+                    }
 
-            if (status) {
+                    if (ctrlStatus) { 
+                        Gui.Control.Prototype.%ctrlMethod% := ObjBindMethod(this, ctrlMethod)
+                    }
+                }
+            }
+            else if (status) {
                 Gui.Prototype.%method% := ObjBindMethod(this, method)
             }
         }
@@ -197,4 +212,147 @@ class GuiExt {
         }
         return focusedRows
     }
+
+    /**
+     * Registers a function to be call when "Change" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onChange(control, eventCallback) {
+        control.OnEvent("Change", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "Click" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onClick(control, eventCallback) {
+        control.OnEvent("Click", eventCallback)
+
+        return control
+    }
+    
+    /**
+     * Registers a function to be call when "DoubleClick" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onDoubleClick(control, eventCallback) {
+        control.OnEvent("DoubleClick", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ColClick" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onColClick(control, eventCallback) {
+        control.OnEvent("ColClick", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ContextMenu" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onContextMenu(control, eventCallback) {
+        control.OnEvent("ContextMenu", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "Focus" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onFocus(control, eventCallback) {
+        control.OnEvent("Focus", eventCallback)
+
+        return this
+    }
+
+    /**
+     * Registers a function to be call when "LoseFocus" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onBlur(control, eventCallback) {
+        control.OnEvent("LoseFocus", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ItemCheck" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onItemCheck(control, eventCallback) {
+        control.OnEvent("ItemCheck", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ItemEdit" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onItemEdit(control, eventCallback) {
+        control.OnEvent("ItemEdit", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ItemExpand" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onItemExpand(control, eventCallback) {
+        control.OnEvent("ItemExpand", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ItemFocus" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onItemFocus(control, eventCallback) {
+        control.OnEvent("ItemFocus", eventCallback)
+
+        return control
+    }
+
+    /**
+     * Registers a function to be call when "ItemSelect" event is raised.
+     * @param eventCallback The callback function when event is raised.
+     * @returns {Gui.Control} 
+     */
+    static onItemSelect(control, eventCallback) {
+        control.OnEvent("ItemSelect", eventCallback)
+
+        return control
+    }
+    
+    /**
+     * Sets the font typeface, size, style, and/or color for controls added to the window from this point onward.
+     * @param {String} options Font options. C: color, S: size, W: weight, Q: quality
+     * @param {String} fontName Name of font to set. 
+     */
+    ; static setFont(control, options := "", fontName := "") {        
+    ;     this._originalSetFont(control, options, fontName)
+
+    ;     return control
+    ; }
 }
