@@ -8,7 +8,8 @@ class Show {
         effect(this._signal, cur => this.toggleShowHide(conditionFn(cur)))
 
         ; mount & save controls
-        this.saveCtrls(this.ctrls, renderCallBack())
+        ctrls := renderCallBack()
+        this.saveCtrls(this.ctrls, ctrls is Array ? ctrls : [ctrls])
         this.toggleShowHide(conditionFn(this._signal.value))
     }
 
