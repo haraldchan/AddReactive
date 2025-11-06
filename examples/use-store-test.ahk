@@ -1,23 +1,15 @@
 #SingleInstance Force
 #Include "../useAddReactive.ahk"
 
-mouseStore := useStore({
+store := useStore({
     states: {
-        curMouseInfo: { Screen: { x: 0, y: 0} }
+        count: 0
     },
     deriveds: {
-        doubledX: this => this.curMouseInfo.value["Screen"]["x"] * 2,
+        doubled: this => this.count.value * 2,
     },
     methods: {
-        handleMousePosUpdate: (this) => (
-            CoordMode("Mouse", "Screen")
-            MouseGetPos(&initScreenX, &initScreenY, &window, &control),
-            WinGetTitle(window) == "MouseSpy" 
-            ? this.curMouseInfo.value 
-            : { Screen: { x: Integer(initScreenX), y: Integer(initScreenY) } }
-        ),
-        updater: (this) => this.curMouseInfo.set(this.useMethod("handleMousePosUpdate")()),
-        greet: (this, name) => MsgBox("hi, " . name)
+        showAdd: this => MsgBox(this.count.value + this.doubled.value)
     }
 })
 
@@ -26,19 +18,11 @@ UseStoreTest(oGui)
 oGui.Show()
 
 UseStoreTest(App) {
-    SetTimer(mouseStore.useMethod("updater"), 50)
 
     return (
-        App.AddText("x20", "X:"),
-        App.AREdit("x+10 w100", "{1}", mouseStore.curMouseInfo, v => v["Screen"]["x"]),
-        App.AddText("x20", "Y:"),
-        App.AREdit("x+10 w100", "{1}", mouseStore.curMouseInfo, v => v["Screen"]["y"]),
-        App.AddText("x20", "DoubledX:"),
-        App.AREdit("x+10 w100", "{1}", mouseStore.doubledX),
-        
-        App.AddButton("x20 w100", "stop")
-           .OnEvent("Click", (ctrl, *) => SetTimer(mouseStore.useMethod("updater"), 0)),
-        App.AddButton("x+10 w100", "resume")
-           .OnEvent("Click", (ctrl, *) => SetTimer(mouseStore.useMethod("updater")))
+        App.ARText("x10 w200", "count:   {1}", store.count),
+        App.ARText("x10 w200", "doubled: {1}", store.doubled),
+        App.AddButton("x10 w80", "++").OnClick((*) => store.count.set(n => n + 1)),
+        App.AddButton("x10 w80", "add").OnClick((*) => store.useMethod("showAdd")())
     )
 }
