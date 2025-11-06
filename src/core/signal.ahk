@@ -20,6 +20,7 @@ class signal {
         this.subs := []
         this.comps := []
         this.effects := []
+        this.stores := []
         this.type := ""
         this.debugger := false
         
@@ -76,6 +77,11 @@ class signal {
         ; notify all computed signals
         for comp in this.comps {
             comp.sync(this)
+        }
+
+        ; notify all stores
+        for store in this.stores {
+            store.set(this.value)
         }
 
         ; run all effects
@@ -198,6 +204,10 @@ class signal {
      */
     addComp(computed) {        
         this.comps.Push(computed)
+    }
+
+    addStore(store) {
+        this.stores.Push(store)
     }
 
     /**
