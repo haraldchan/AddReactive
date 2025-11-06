@@ -6,17 +6,17 @@
 
 MouseSpyWindowTitle := "MouseSpy"
 store := useStore({
-    signals: {
-        curMouseCoordMode: signal("Screen"),
-        curMouseInfo: signal({
+    states: {
+        curMouseCoordMode: "Screen",
+        curMouseInfo: {
             Screen: { x: 0, y: 0 },
             Client: { x: 0, y: 0 },
             window: WinExist("ahk_exe explorer.exe"),
             control: 0,
             color: "0xFFFFFF"
-        }),
-        followMouse: signal(true),
-        anchorPos: signal({ Screen:{ x: 0, y: 0 }, Client: { x: 0, y: 0 } })
+        },
+        followMouse: true,
+        anchorPos: { Screen:{ x: 0, y: 0 }, Client: { x: 0, y: 0 } }
     },
     methods: {
         updater: (this) => this.curMouseInfo.set(this.useMethod("handleMousePosUpdate")()),
