@@ -4,17 +4,21 @@ class useStore {
      * @param {Object} storeConfig Configuration object for the store.
      */
     __New(storeConfig) {
-        this.signals := storeConfig.HasOwnProp("signals") ? storeConfig.signals : {}
+        this.store := signal(0)
+        this.states := storeConfig.HasOwnProp("states") ? storeConfig.states : {}
         this.deriveds := storeConfig.HasOwnProp("deriveds") ? storeConfig.deriveds : {}
         this.methods := storeConfig.HasOwnProp("methods") ? storeConfig.methods : {}
         this.boundMethods := {}
 
-        for name, _signal in this.signals.OwnProps() {
-            this.DefineProp(name, { value: _signal })
+        for name, state in this.states.OwnProps() {
+            s := signal(state)
+            s.addStore(this.store)
+            this.DefineProp(name, { value: s })
         }
 
         for name, derived in this.deriveds.OwnProps() {
-            this.DefineProp(name, { value: derived(this) })
+            d := derived
+            this.DefineProp(name, { value: computed(this.store, (*) => d(this)) })
         }
 
         for name, method in this.methods.OwnProps() {
