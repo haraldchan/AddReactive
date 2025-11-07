@@ -81,7 +81,7 @@ class signal {
 
         ; notify all stores
         for store in this.stores {
-            store.set(this.value)
+            store.set({ newValue: this.value })
         }
 
         ; run all effects
