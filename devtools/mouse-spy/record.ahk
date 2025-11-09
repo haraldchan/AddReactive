@@ -10,7 +10,7 @@ MouseSpy_Record(App, config) {
     useRelative := false
 
     recordedLog := signal("")
-    effect(store.anchorPos, handleLogUpdate)
+    effect(mouseStore.anchorPos, handleLogUpdate)
     handleLogUpdate(curAnchorPos, prevAnchorPos) {
         if (useRelative) {
             x := curAnchorPos[logMouseCoordMode]["x"] - prevAnchorPos[logMouseCoordMode]["x"]

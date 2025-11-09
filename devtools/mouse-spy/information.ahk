@@ -1,13 +1,24 @@
 MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
-    effect(store.followMouse, isFollowing => 
-        SetTimer(store.useMethod("updater"), isFollowing ? 150 : 0)
+    unpack({ 
+        curMouseCoordMode: &curMouseCoordMode,
+        curMouseInfo:      &curMouseInfo,
+        anchorPos:         &anchorPos,
+        followMouse:       &followMouse,
+        methods: { 
+            updater:       &updater,
+            moveToAnchor:  &moveToAnchor
+        }
+    }, mouseStore)
+
+    effect(followMouse, isFollowing => 
+        SetTimer(updater, isFollowing ? config["misc"]["updateInterval"] : 0)
         App["followStatus"].Value := isFollowing
     )
 
-    SetTimer(store.useMethod("updater"), 150)
-    effect(store.curMouseInfo, cur => App["colorIndicator"].SetFont(Format("s13 c{1}", StrReplace(cur["color"], "0x", ""))))
+    SetTimer(updater, config["misc"]["updateInterval"])
+    effect(curMouseInfo, cur => App["colorIndicator"].SetFont(Format("s13 c{1}", StrReplace(cur["color"], "0x", ""))))
     
-    curWindowInfo := computed(store.curMouseInfo, updateWindowInfoUpdate)
+    curWindowInfo := computed(curMouseInfo, updateWindowInfoUpdate)
     updateWindowInfoUpdate(curMouseInfo) {
         w := curMouseInfo["window"]
         try {
@@ -26,7 +37,7 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
     }
 
     distance := computed( 
-        [store.curMouseInfo, store.anchorPos], 
+        [curMouseInfo, anchorPos], 
         (curMP, curAP) => (
             x := curMP["Screen"]["x"] - curAP["Screen"]["x"],
             y := curMP["Screen"]["y"] - curAP["Screen"]["y"],
@@ -67,11 +78,11 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
         ImageSearch(&foundXClient, &foundYClient, 0, 0, A_ScreenWidth, A_ScreenHeight, selectedFile)
         if (!foundScreen) {
             MsgBox("Image not found.", AppWindowTitle, "T1")
-            store.anchorPos.set({ Screen: { x: 0, y: 0 }, Client: { x: 0, y: 0 } })
+            anchorPos.set({ Screen: { x: 0, y: 0 }, Client: { x: 0, y: 0 } })
             return
         }
 
-        store.anchorPos.set({ 
+        anchorPos.set({ 
             Screen: { x: foundXScreen, y: foundYScreen }, 
             Client: { x: foundXClient, y: foundYClient } 
         })
@@ -102,16 +113,16 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
         
         ; Screen
         App.AddText("xs10 yp+25 w60 h20 0x200", "Screen:"),
-        App.AREdit(style.editLong, "{1}, {2}", store.curMouseInfo, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
+        App.AREdit(style.editLong, "{1}, {2}", curMouseInfo, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
         
         ; Client
         App.AddText("xs10 yp+25 w60 h20 0x200", "Client:"),
-        App.AREdit(style.editLong, "{1}, {2}", store.curMouseInfo, [v => v["Client"]["x"], v => v["Client"]["y"]]),
+        App.AREdit(style.editLong, "{1}, {2}", curMouseInfo, [v => v["Client"]["x"], v => v["Client"]["y"]]),
         
         ; color
         App.AddText("xs10 yp+25 w50 h20 0x200", "Color: "),
         App.AddText("vcolorIndicator x+0 w20 h20 0x200", "■"),
-        App.AREdit(style.editLong . " x+0 ", "{1}", store.curMouseInfo, ["color"]),
+        App.AREdit(style.editLong . " x+0 ", "{1}", curMouseInfo, ["color"]),
         ; }
 
         ; { anchoring & distance
@@ -119,9 +130,9 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
         
         ; anchors
         App.AddText(style.labelText, "Screen:"), 
-        App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", store.anchorPos, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
+        App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", anchorPos, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
         App.AddText("x+30 w50 h20 0x200", "Client:"), 
-        App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", store.anchorPos, [v => v["Client"]["x"], v => v["Client"]["y"]]),
+        App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", anchorPos, [v => v["Client"]["x"], v => v["Client"]["y"]]),
 
         ; relative distance
         App.AddText(style.labelText . " yp+30", "Distance:"),
@@ -142,9 +153,9 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
         ; move to anchor
         App.AddText("xs10 yp+35 w150 h20 0x200", "Move to anchor").SetFont("s9 bold"),
         App.AddText("xs10 yp+25 w80 h20 0x200", "Coord Mode:"),
-        App.AddRadio("x+10 w80 h20 Checked", "Screen").OnEvent("Click", (ctrl, _) => store.curMouseCoordMode.set(ctrl.Text)),
-        App.AddRadio("x+0 w80 h20", "Client").OnEvent("Click", (ctrl, _) => store.curMouseCoordMode.set(ctrl.Text)),
-        App.AddButton("x+0 h20 w80", "Move").OnEvent("Click", store.useMethod("moveToAnchor"))
+        App.AddRadio("x+10 w80 h20 Checked", "Screen").OnEvent("Click", (ctrl, _) => curMouseCoordMode.set(ctrl.Text)),
+        App.AddRadio("x+0 w80 h20", "Client").OnEvent("Click", (ctrl, _) => curMouseCoordMode.set(ctrl.Text)),
+        App.AddButton("x+0 h20 w80", "Move").OnEvent("Click", moveToAnchor)
         ; }
 
     )

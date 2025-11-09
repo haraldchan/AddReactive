@@ -5,7 +5,7 @@
 #Include "./settings.ahk"
 
 MouseSpyWindowTitle := "MouseSpy"
-store := useStore({
+mouseStore := useStore({
     states: {
         curMouseCoordMode: "Screen",
         curMouseInfo: {
@@ -53,12 +53,12 @@ MouseSpyGui.Show()
 
 MouseSpy(App) {
     config := JSON.parse(FileRead("./mousespy.config.json", "UTF-8"))
-    suspendText := computed(store.followMouse, isFollowing => isFollowing ? "(Hold Ctrl or Shift to suspend updates)" : "(Update suspended)")
+    suspendText := computed(mouseStore.followMouse, isFollowing => isFollowing ? "(Hold Ctrl or Shift to suspend updates)" : "(Update suspended)")
     
     return (
         ; { follow switch
         App.AddCheckBox("vfollowStatus x10 w100 h20 Checked", "Follow Mouse")
-           .OnEvent("Click", (ctrl, _) => store.followMouse.set(ctrl.value)),
+           .OnEvent("Click", (ctrl, _) => mouseStore.followMouse.set(ctrl.value)),
         App.ARText("vsuspendStatus x+10 h20 w260 0x200 +Right", "{1}", suspendText),
         ; }
 
