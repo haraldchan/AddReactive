@@ -2,64 +2,41 @@ class useStore {
     /**
      * Creates a new store with signals, deriveds, and actions.
      * @param {Object} storeConfig Configuration object for the store.
+     * ```
+     * store := useStore({
+     *     states: {
+     *         count: 0
+     *     },
+     *     deriveds: {
+     *         doubled: this => this.count.value * 2,
+     *     },
+     *     methods: {
+     *         showAdd: this => MsgBox(this.count.value + this.doubled.value)
+     *     }
+     * })
+     * ```
      */
     __New(storeConfig) {
-        this.store := signal(0)
-        this.states := storeConfig.HasOwnProp("states") ? storeConfig.states : {}
-        this.deriveds := storeConfig.HasOwnProp("deriveds") ? storeConfig.deriveds : {}
-        this.methods := storeConfig.HasOwnProp("methods") ? storeConfig.methods : {}
-        this.boundMethods := {}
+        this.__store := signal(0)
+        this.__states := storeConfig.HasOwnProp("states") ? storeConfig.states : {}
+        this.__deriveds := storeConfig.HasOwnProp("deriveds") ? storeConfig.deriveds : {}
+        this.__methods := storeConfig.HasOwnProp("methods") ? storeConfig.methods : {}
+        this.methods := {}
 
-        for name, state in this.states.OwnProps() {
+        for name, state in this.__states.OwnProps() {
             s := signal(state)
-            s.addStore(this.store)
+            s.addStore(this.__store)
             this.DefineProp(name, { value: s })
         }
 
-        for name, derived in this.deriveds.OwnProps() {
+        for name, derived in this.__deriveds.OwnProps() {
             d := derived
-            this.DefineProp(name, { value: computed(this.store, (*) => d(this)) })
+            this.DefineProp(name, { value: computed(this.__store, (*) => d(this)) })
         }
 
-        for name, method in this.methods.OwnProps() {
-            this.boundMethods.%name% := method.MaxParams == 0 ? method : method.Bind(this)
+        for name, method in this.__methods.OwnProps() {
+            this.methods.%name% := method.MaxParams == 0 ? method : method.Bind(this)
         }
-    }
-
-    /**
-     * Add a new signal to the store.
-     * @param {String} name The name of the signal.
-     * @param {signal} _signal The signal object.
-     */
-    addSignal(name, _signal) {
-        checkType(name, String)
-        checkType(_signal, signal)
-
-        this.DefineProp(name, { value: _signal })
-    }
-
-    /**
-     * Add a new derived signal to the store.
-     * @param {String} name The name of the derived signal.
-     * @param {Func} derivedFn The computed function that defines the computed. 
-     */
-    addDerived(name, derivedFn) {
-        checkType(name, String)
-        checkType(derivedFn, computed)
-
-        this.DefineProp(name, { value: derivedFn(this) })
-    }
-
-    /**
-     * Add a new method to the store.
-     * @param {String} name The name of the method.
-     * @param {Func} methodFn The method function.
-     */
-    addMethod(name, methodFn) {
-        checkType(name, String)
-        checkType(methodFn, Func)
-
-        this.boundMethods.%name% := methodFn.MaxParams == 0 ? methodFn : methodFn.Bind(this)
     }
 
     /** 
@@ -67,10 +44,10 @@ class useStore {
      * @returns {Func} The method function.
     */
     useMethod(methodName) {
-        if (!this.boundMethods.HasOwnProp(methodName)) {
-            throw ValueError("Action '" . methodName . "' does not exist in the store.", -1, methodName)
+        if (!this.methods.HasOwnProp(methodName)) {
+            throw ValueError("Method '" . methodName . "' does not exist in the store.", -1, methodName)
         }
 
-        return this.boundMethods.%methodName%
+        return this.methods.%methodName%
     }
 }
