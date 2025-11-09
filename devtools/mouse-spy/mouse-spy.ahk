@@ -21,9 +21,11 @@ store := useStore({
     methods: {
         updater: (this) => this.curMouseInfo.set(this.useMethod("handleMousePosUpdate")()),
         handleMousePosUpdate: (this) => (
-            CoordMode("Mouse", "Screen")
-            MouseGetPos(&initScreenX, &initScreenY, &window, &control)
-            CoordMode("Mouse", "Client")
+            CoordMode("Mouse", "Screen"),
+            MouseGetPos(&initScreenX, &initScreenY, &window, &control),
+            CoordMode("Pixel", "Screen"),
+            color := PixelGetColor(initScreenX, initScreenY),
+            CoordMode("Mouse", "Client"),
             MouseGetPos(&initClientX, &initClientY),
             ; return 
             WinGetTitle(window) == MouseSpyWindowTitle 
@@ -33,7 +35,7 @@ store := useStore({
                     Client: { x: Integer(initClientX), y: Integer(initClientY) },
                     window: window,
                     control: control,
-                    color: PixelGetColor(initScreenX, initScreenY)
+                    color: color
                 }
         ),
         moveToAnchor: (this, params*) => (
