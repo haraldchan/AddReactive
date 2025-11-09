@@ -17,12 +17,12 @@ class unpack {
      * Supports deep nesting and type-safe value mapping from the source object or array.
      * 
      * @param {Array<VarRef>|Object<string, VarRef>} outputVars - An array or object containing VarRefs to receive values.
-     * @param {Array|Object} source - An array, Map, or plain object whose values are unpack into outputVars.
+     * @param {Array|Object|useStore} source - An array, Map, or plain object whose values are unpack into outputVars.
      * @throws {ValueError} If a key or index is missing in the source.
      */
     __New(outputVars, source) {
-        checkType(outputVars, [Array, Map, Object.Prototype])
-        checkType(source, [Array, Map, Object.Prototype])
+        checkType(outputVars, [Array, Map, Object.Prototype, useStore])
+        checkType(source, [Array, Map, Object.Prototype, useStore])
 
         this._resolve(this._refs(outputVars), source)
     }
@@ -34,7 +34,7 @@ class unpack {
                 x => ArrayExt.map(x, (&var) => value => var := value)
             )(rawRefs)
 
-        } else if (rawRefs is Map || isPlainObject(rawRefs)) {
+        } else if (rawRefs is Map || isPlainObject(rawRefs) || rawRefs is useStore) {
             out := {}
             for k, v in (rawRefs is Map ? rawRefs : rawRefs.OwnProps()) {
                 if (v is Map || isPlainObject(v)) {
@@ -66,11 +66,11 @@ class unpack {
             }
         }
 
-        if (source is Map || isPlainObject(source)) {
+        if (source is Map || isPlainObject(source) || source is useStore) {
             isMap := source is Map
 
             for k, setter in setters.OwnProps() {
-                if (setter is Map || isPlainObject(setter)) {
+                if (setter is Map || isPlainObject(setter) || source is useStore) {
                     this._resolve(setter, isMap ? source[k] : source.%k%)
                 }
 
