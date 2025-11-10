@@ -12,11 +12,11 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
 
     effect(followMouse, isFollowing => 
         SetTimer(updater, isFollowing ? config["misc"]["updateInterval"] : 0)
-        App["followStatus"].Value := isFollowing
+        App["follow-status"].Value := isFollowing
     )
 
     SetTimer(updater, config["misc"]["updateInterval"])
-    effect(curMouseInfo, cur => App["colorIndicator"].SetFont(Format("s13 c{1}", StrReplace(cur["color"], "0x", ""))))
+    effect(curMouseInfo, cur => App["color-indicator"].SetFont(Format("s13 c{1}", StrReplace(cur["color"], "0x", ""))))
     
     curWindowInfo := computed(curMouseInfo, updateWindowInfoUpdate)
     updateWindowInfoUpdate(curMouseInfo) {
@@ -51,11 +51,11 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
     handleAnchorTypeToggling(ctrl, _) {
         isUsingMousePosAnchor := InStr(ctrl.Text, "mouse") ? true : false
 
-        App["useMousePosAnchor"].Value := isUsingMousePosAnchor
-        App["useImageAnchor"].Value := !isUsingMousePosAnchor
+        App["use-mouse-pos-anchor"].Value := isUsingMousePosAnchor
+        App["use-image-anchor"].Value := !isUsingMousePosAnchor
 
-        App["imageAnchorFilepath"].Enabled := !isUsingMousePosAnchor
-        App["chooseImageAnchorBtn"].Enabled := !isUsingMousePosAnchor
+        App["image-anchor-filepath"].Enabled := !isUsingMousePosAnchor
+        App["choose-image-anchor-btn"].Enabled := !isUsingMousePosAnchor
     }
 
 
@@ -70,7 +70,7 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
             MsgBox("Please choose a image file.")
             return
         }
-        App["imageAnchorFilepath"].Value := selectedFile
+        App["image-anchor-filepath"].Value := selectedFile
 
         CoordMode "Pixel", "Screen"
         foundScreen := ImageSearch(&foundXScreen, &foundYScreen, 0, 0, A_ScreenWidth, A_ScreenHeight , selectedFile)
@@ -121,7 +121,7 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
         
         ; color
         App.AddText("xs10 yp+25 w50 h20 0x200", "Color: "),
-        App.AddText("vcolorIndicator x+0 w20 h20 0x200", "■"),
+        App.AddText("vcolor-indicator x+0 w20 h20 0x200", "■"),
         App.AREdit(style.editLong . " x+0 ", "{1}", curMouseInfo, ["color"]),
         ; }
 
@@ -141,13 +141,13 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
         ; anchor types
         App.AddText("xs10 yp+35 w150 h20 0x200", "Anchor Type").SetFont("s9 bold"),
         ; mouse pos anchor
-        App.AddRadio("vuseMousePosAnchor xs10 yp+30 w180 h20 Checked", "Use mouse position")
+        App.AddRadio("vuse-mouse-pos-anchor xs10 yp+30 w180 h20 Checked", "Use mouse position")
            .OnEvent("Click", handleAnchorTypeToggling),
         ; image anchor
-        App.AddRadio("vuseImageAnchor xs10 yp+25 w80 h20", "Use image")
+        App.AddRadio("vuse-image-anchor xs10 yp+25 w80 h20", "Use image")
            .OnEvent("Click", handleAnchorTypeToggling),
-        App.AddEdit("vimageAnchorFilepath x+10 h20 w150 Disabled", ""),
-        App.AddButton("vchooseImageAnchorBtn x+10 h20 w80 Disabled", "Choose File").OnEvent("Click", handleSelectImageAnchor),
+        App.AddEdit("vimage-anchor-filepath x+10 h20 w150 Disabled", ""),
+        App.AddButton("vchoose-image-anchor-btn x+10 h20 w80 Disabled", "Choose File").OnEvent("Click", handleSelectImageAnchor),
 
         
         ; move to anchor

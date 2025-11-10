@@ -33,7 +33,7 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
         
         Hotkey hotkeySetup.moveToAnchor.hotkey, hotkeySetup.moveToAnchor.callback, "On"
         
-        HotIf((*) => WinExist(MouseSpyWindowTitle) && App["useMousePosAnchor"].Value)
+        HotIf((*) => WinExist(MouseSpyWindowTitle) && App["use-mouse-pos-anchor"].Value)
         Hotkey hotkeySetup.markAnchor.hotkey, hotkeySetup.markAnchor.callback, "On"
     }
 
@@ -68,11 +68,11 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
         App.AddGroupBox("Section w350 h80", "Hotkeys").SetFont("s10 bold"),
         ; anchor marking
         App.AddText("xs10 yp+22 w100 h20 0x200", "Mark Anchor:"),
-        App.AddHotkey("vmarkAnchorHotkey x+10", config["hotkeys"]["markAnchor"])
+        App.AddHotkey("vmark-anchor-hotkey x+10", config["hotkeys"]["markAnchor"])
            .OnEvent("Change", handleSetHotkeys),
         ; move to anchor
         App.AddText("xs10 yp+25 w100 h20 0x200", "Move to Anchor:"),
-        App.AddHotkey("vmoveToAnchorHotkey x+10", config["hotkeys"]["moveToAnchor"])
+        App.AddHotkey("vmove-to-anchor-hotkey x+10", config["hotkeys"]["moveToAnchor"])
            .OnEvent("Change", handleSetHotkeys),
         ; }
 
@@ -80,7 +80,7 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
         App.AddGroupBox("Section w350 x22 yp+40 h160", "Misc").SetFont("s10 bold"),
         ; refresh interval
         App.AddText("xs10 yp+22 w100 h20 0x200", "Update Interval:"),
-        App.AddEdit("vupdateInterval x+10 w110 h20 Number", config["misc"]["updateInterval"])
+        App.AddEdit("vupdate-interval x+10 w110 h20 Number", config["misc"]["updateInterval"])
            .OnEvent("LoseFocus", handleUpdateIntervalUpdate),
         App.AddText("x+5 w50 h20 0x200", "ms"),
         ; }

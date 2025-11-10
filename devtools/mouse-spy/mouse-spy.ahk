@@ -57,9 +57,9 @@ MouseSpy(App) {
     
     return (
         ; { follow switch
-        App.AddCheckBox("vfollowStatus x10 w100 h20 Checked", "Follow Mouse")
+        App.AddCheckBox("vfollow-status x10 w100 h20 Checked", "Follow Mouse")
            .OnEvent("Click", (ctrl, _) => mouseStore.followMouse.set(ctrl.value)),
-        App.ARText("vsuspendStatus x+10 h20 w260 0x200 +Right", "{1}", suspendText),
+        App.ARText("vsuspend-status x+10 h20 w260 0x200 +Right", "{1}", suspendText),
         ; }
 
         ; { tabs
