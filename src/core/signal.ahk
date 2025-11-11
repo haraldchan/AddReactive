@@ -17,6 +17,7 @@ class signal {
             ? this._mapify(initialValue)
             : initialValue
         this.initValue := this.value
+        this.prevValue := 0
         this.subs := []
         this.comps := []
         this.effects := []
@@ -49,6 +50,7 @@ class signal {
         if (newSignalValue == this.value) {
             return
         }
+        this.prevValue := this.value
 
         ; validates new value if it matches the Struct
         if (this.type is Struct) {
