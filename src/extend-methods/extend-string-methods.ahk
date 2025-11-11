@@ -108,7 +108,7 @@ class StringExt {
      * @param {integer} [length] - Length of substring (optional).
      * @returns {string} Substring.
      */
-    static substr(str, start, length := "") => SubStr(str, start, length)
+    static substr(str, start, length := StrLen(str)) => SubStr(str, start, length)
 
     /**
      * Replaces multiple substrings in a string.
