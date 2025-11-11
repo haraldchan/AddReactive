@@ -16,6 +16,7 @@ class computed extends signal {
 
         this.signal := _signal
         this.mutation := mutation
+        this.prevValue := 0
         this.subs := []
         this.comps := []
         this.effects := []
@@ -25,7 +26,21 @@ class computed extends signal {
             for s in this.signal {
                 s.addComp(this)
             }
-            this.value := this._mapify(this.mutation.Call(this.signal.map(s => s.value)*))
+
+            this.insertPrevCount := this.signal.Length * 2 == this.mutation.MaxParams 
+                ? this.mutation.MaxParams
+                : Mod(this.mutation.MaxParams, this.signal.Length)
+            
+            values := []
+            for s in this.signal {
+                if (A_Index <= this.insertPrevCount) {
+                    values.Push(s.prevValue, s.value)
+                } else {
+                    values.Push(s.value)
+                }
+            }
+
+            this.value := this._mapify(this.mutation.Call(values*))
         } else {
             this.signal.addComp(this)
             this.value := this._mapify(this.mutation.Call(this.signal.value))
@@ -52,10 +67,18 @@ class computed extends signal {
      * @param {signal} subbedSignal subscribed signal
      */
     sync(subbedSignal) {
-        prevValue := this.value
+        this.prevValue := this.value
 
         if (this.signal is Array) {
-            this.value := this._mapify(this.mutation.Call(this.signal.map(s => s.value)*))
+            values := []
+            for s in this.signal {
+                if (A_Index <= this.insertPrevCount) {
+                    values.Push(s.prevValue, s.value)
+                } else {
+                    values.Push(s.value)
+                }
+            }
+            this.value := this._mapify(this.mutation.Call(values*))
         } else {
             this.value := this._mapify(this.mutation.Call(subbedSignal.value))
         }
@@ -77,7 +100,7 @@ class computed extends signal {
                 if (effect.effectFn.MaxParams == 1) {
                     e(this.value)
                 } else if (effect.effectFn.MaxParams == 2) {
-                    e(this.value, prevValue)
+                    e(this.value, this.prevValue)
                 } else {
                     e()
                 }
