@@ -344,15 +344,4 @@ class GuiExt {
 
         return control
     }
-    
-    /**
-     * Sets the font typeface, size, style, and/or color for controls added to the window from this point onward.
-     * @param {String} options Font options. C: color, S: size, W: weight, Q: quality
-     * @param {String} fontName Name of font to set. 
-     */
-    ; static setFont(control, options := "", fontName := "") {        
-    ;     this._originalSetFont(control, options, fontName)
-
-    ;     return control
-    ; }
 }
