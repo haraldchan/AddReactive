@@ -1,4 +1,3 @@
-; MouseSpy_Record(App, config, anchorPos) {
 MouseSpy_Record(App, config) {
     curRecordMode := signal("clickStep")
     recordModes := Map(
@@ -6,12 +5,16 @@ MouseSpy_Record(App, config) {
         "recording", MouseSpy_Record_RecordingOptions
     )
 
-    logMouseCoordMode := "Screen"
     useRelative := false
+    logMouseCoordMode := "Screen"
 
-    recordedLog := signal("")
-    effect(mouseStore.anchorPos, handleLogUpdate)
-    handleLogUpdate(curAnchorPos, prevAnchorPos) {
+    recordedLog := signal("CoordMode(`"Mouse`", `"Screen`")")
+    effect(mouseStore.anchorPos, handleLogUpdateClickStep)
+    handleLogUpdateClickStep(curAnchorPos, prevAnchorPos) {
+        if (curRecordMode.value != "clickStep") {
+            return
+        }
+
         if (useRelative) {
             x := curAnchorPos[logMouseCoordMode]["x"] - prevAnchorPos[logMouseCoordMode]["x"]
             y := curAnchorPos[logMouseCoordMode]["y"] - prevAnchorPos[logMouseCoordMode]["y"]
@@ -32,6 +35,16 @@ MouseSpy_Record(App, config) {
         )
 
         recordedLog.set(newLog)
+    }
+
+    handleSetLogMouseCoordMode(ctrl, _){
+        logMouseCoordMode := ctrl.Text
+
+        recordedLog.set(recordedLog.value . "`r`n" . Format("CoordMode(`"Mouse`", `"{}`")", logMouseCoordMode))
+    }
+
+    handleLogReset(*) {
+        recordedLog.set(Format("CoordMode(`"Mouse`", `"{}`")", logMouseCoordMode))
     }
 
     handleLogExport(*) {
@@ -62,14 +75,14 @@ MouseSpy_Record(App, config) {
         App.AddGroupBox("Section w350 h420 x22 y210", "Recorded Log").SetFont("s10 bold"),
         ; CoordMode
         App.AddText("xs10 yp+22 w100 h20 0x200", "Coord Mode:"),
-        App.AddRadio("x+10 w60 h20 Checked", "Screen").onClick((*) => logMouseCoordMode := "Screen"),
-        App.AddRadio("x+10 w60 h20", "Client").onClick((*) => logMouseCoordMode := "Client"),
+        App.AddRadio("x+10 w60 h20 Checked", "Screen").onClick(handleSetLogMouseCoordMode),
+        App.AddRadio("x+10 w60 h20", "Client").onClick(handleSetLogMouseCoordMode),
         App.AddCheckBox("x+10 w60 h20", "Relative").onClick((ctrl, _) => useRelative := ctrl.Value),
 
         ; log code
         App.AREdit("xs10 yp+25 w330 r23 0x40", "{1}", recordedLog).onBlur((ctrl, _) => recordedLog.set(ctrl.Value)),
         App.AddButton("xs170 y+8 w80 h20", "Export").onClick(handleLogExport),
-        App.AddButton("x+10 w80 h20", "Clear").onClick((*) => recordedLog.set(""))
+        App.AddButton("x+10 w80 h20", "Clear").onClick(handleLogReset)
         ; }
     )
 }
