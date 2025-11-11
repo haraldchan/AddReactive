@@ -11,7 +11,7 @@ Effect 可以通过 `effect()` 函数进行创建。它接收的参数分别为�
 ```go
 count := signal(0)
 
-// 当 count.set() 被调用时，这个 effect 就会被执行
+/* 当 count.set() 被调用时，这个 effect 就会被执行 */
 effect(count, () => MsgBox("count changed!"))
 ```
 
@@ -54,7 +54,7 @@ effect(
 > oGui.AddButton("w300 h30", "++")
 >    .OnEvent("Click", () =>
 >        count.set(c => c + 1)
->        // 这个 effect 在每次点击后将被触发 c + 1 次
+>        /* 这个 effect 在每次点击后将被触发 c + 1 次 */
 >        effect(count, newVal => MsgBox(Format("new count: {1}", newVal)))
 >    )
 > ```

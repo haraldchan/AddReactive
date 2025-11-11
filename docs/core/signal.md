@@ -36,6 +36,13 @@ count.set(val => val + 1) /* count.value : 4 */
 
 <br>
 
+通过 `.reset()` 方法可将 `signal` 重置为创建时的初始值
+```go
+count.reset() /* count.value : 0 */
+```
+
+<br>
+
 > **‼️ 注意点**
 >
 > 需要注意的是，只有通过 `.set()` 方法更新 `signal` 的值，才能保持所有订阅者能够获取到最新的值。 虽然可以通过直接修改 `.value` 来改变值，但这样做会破坏响应性，因此，即使 `.value` 可写，但仍然应被视为是只读的。
@@ -115,3 +122,4 @@ staff := signal({
 staff.update("tel", 13894769392) /* 更新的是 staff.value["contact"]["tel"] */
 
 staff.update(["company", "tel"], 88683728) /* 更新的是 staff.value["company"]["tel"] */
+```

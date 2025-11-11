@@ -80,14 +80,14 @@ AddReactive 组件化提倡 **单向数据流**，即组件函数除了返回一
 当嵌套的组件形成父子关系时，便可通过在父组件中为子组件传递参数的形式实现：
 
 ```go
-// 父组件
+/* 父组件 */
 App(gui) {
     initNumber := 5
 
     return Increment(gui, initNumber)
 }
 
-// 子组件
+/* 子组件 */
 Increment(gui, number) {
     num := signal(number)
 
@@ -116,7 +116,7 @@ App(gui) {
     )
 }
 
-// 接收到父组件的 signal，即可调用其 .set() 方法改变它的值
+/* 接收到父组件的 signal，即可调用其 .set() 方法改变它的值 */
 Double(gui, num) {
     doubling(*) {
         num.set(n => n * 2)
@@ -126,7 +126,7 @@ Double(gui, num) {
                .OnEvent("Click", doubling)
 }
 
-// 根据组件自身关注点对父组件 signal 作出响应改变
+/* 根据组件自身关注点对父组件 signal 作出响应改变 */
 Triple(gui, num) {
     tripling(*) {
         num.set(n => n * 3)
@@ -145,11 +145,11 @@ Triple(gui, num) {
 
 ```go
 Increment(gui, number) {
-    // 使用  Component 类创建一个组件实例。需要传入的参数未 Gui 和 组件名称 (使用 A_ThisFunc 最为便利)
+    /* 使用  Component 类创建一个组件实例。需要传入的参数未 Gui 和 组件名称 (使用 A_ThisFunc 最为便利) */
     i := Component(gui, A_ThisFunc)
     num := signal(number)
 
-    ...
+    /* ... */
 }
 ```
 
@@ -162,14 +162,14 @@ Increment(gui, number) {
     i := Component(gui, A_ThisFunc)
     num := signal(number)
 
-    // render 函数应添加到组件实例 `i` 上，因此第一个参数为实例自身
+    /* render 函数应添加到组件实例 `i` 上，因此第一个参数为组件实例自身 */
     i.render := (this) => this.Add(
         gui.AddReactiveText("w300 h25", "counter: {1}", num),
         gui.AddButton("w300 h30", "++")
            .OnEvent("Click", (*) => num.set(n => n + 1))
     )
 
-    // 返回时不在返回控件，而是组件实例。如果添加组件时需要立即渲染，应返回 i.render()
+    /* 返回时不在返回控件，而是组件实例。如果添加组件时需要立即渲染，应返回 i.render() */
     return i
 }
 ```
@@ -178,7 +178,7 @@ Increment(gui, number) {
 
 > **‼️ 注意点**
 >
-> 因 `Component.Add()` 方法只接收控件实例作为参数，链式调用原生控件的 `.OnEvent()` 方法将返回空字符串，因此如果想使用 OnEvent 直接绑定事件，只能使用 AddReactive 控件。
+> 因 `Component.Add()` 方法只接收控件实例作为参数，链式调用原生控件的 `.OnEvent()` 方法将返回空字符串，因此如果想使用 OnEvent 直接绑定事件，只能使用 AddReactive 控件或使用 `GuiExt` 的扩展事件方法。
 
 <br>
 
