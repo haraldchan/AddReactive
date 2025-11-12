@@ -13,7 +13,7 @@ oGui := Gui(, "Gui Methods")
 
 oGui.AddText("vTextCtrl w300 h25", "A text control.")
 
-// 获取 TextCtrl 并修改它的文本
+/* 获取 TextCtrl 并修改它的文本 */
 oGui.getCtrlByName("Text").Text := "Now, change the text."
 ```
 
@@ -24,7 +24,7 @@ oGui.getCtrlByName("Text").Text := "Now, change the text."
 ```go
 oGui.AddReactiveText("$arText vTextCtrl w300 h25", "A reactive text control.")
 
-// 获取的是 AddReactive 控件，可以使用 AddReactive 控件实例方法
+/* 获取的是 AddReactive 控件，可以使用 AddReactive 控件实例方法 */
 oGui.getCtrlByName("$arText").OnEvent(Map(
     "Click", (*) => MsgBox("Clicked!"),
     "DoubleClick", (*) => MsgBox("Double clicked!")
@@ -40,7 +40,7 @@ oGui.getCtrlByName("$arText").OnEvent(Map(
 oGui.AddReactiveText("$arText vTextCtrl w300 h25", "A reactive text control.")
 
 textCtrl := oGui.getCtrlByName("$arText").ctrl
-// 等效于：oGui.getCtrlByName("TextCtrl")，因此应用中只需使用"$"命名
+/* 等效于：oGui.getCtrlByName("TextCtrl")，因此应用中只需使用"$"命名 */
 ```
 
 <br>
@@ -52,7 +52,7 @@ textCtrl := oGui.getCtrlByName("$arText").ctrl
 ```go
 calendar := oGui.AddMonthCal("...")
 
-// 获取并修改 calendar 的 Value
+/* 获取并修改 calendar 的 Value */
 oGui.getCtrlByType("MonthCal").Value := "20240101"
 ```
 
@@ -69,7 +69,7 @@ textCtrls := oGui.getCtrlByTypeAll("Text")
 
 for ctrl in textCtrls {
     MsgBox(ctrl.Text)
-    // 将分别弹出：“first line.”、“second line.”、“third line.”
+    /* 将分别弹出：“first line.”、“second line.”、“third line.” */
 }
 ```
 
@@ -89,7 +89,7 @@ comp(gui) {
     return c
 }
 
-oGui.getComponent("comp").visible(false) // 可以获取实例并对其进行响应操作
+oGui.getComponent("comp").visible(false) /* 可以获取实例并对其进行响应操作 */
 ```
 
 
@@ -105,7 +105,7 @@ oGui.getComponent("comp").visible(false) // 可以获取实例并对其进行响
 oGui.AddListView("...")
 
 focusedRows := oGui.getCtrlByType("ListView").getFocusedRows()
-// focusedRows : [1, 2, 3, ...]
+/* focusedRows : [1, 2, 3, ...] */
 ```
 
 <br>
@@ -118,5 +118,25 @@ focusedRows := oGui.getCtrlByType("ListView").getFocusedRows()
 oGui.AddListView("Checked ...")
 
 checkedRows := oGui.getCtrlByType("ListView").getCheckdRows()
-// checkedRows : [1, 2, 3, ...]
+/* checkedRows : [1, 2, 3, ...] */
 ```
+<br>
+
+## `on:` 事件方法
+
+为了更方便地串联方法和控件，AddReactive 对原生控件 `OnEvent` 方法进行了封装。这些方法在 AddReactive 控件上同样可用。
+
+| `OnEvent`                     | `on:`                 |
+| ----------------------------- | -------------------- |
+| `.OnEvent("Change", fn)`      | `.onChange(fn)`      |
+| `.OnEvent("Click", fn)`       | `.onClick(fn)`       |
+| `.OnEvent("DoubleClick", fn)` | `.onDoubleClick(fn)` |
+| `.OnEvent("ColClick", fn)`    | `.onColClick(fn)`    |
+| `.OnEvent("ContextMenu", fn)` | `.onContextMenu(fn)` |
+| `.OnEvent("Focus", fn)`       | `.onFocus(fn)`       |
+| `.OnEvent("LoseFocus", fn)`   | `.onBlur(fn)`        |
+| `.OnEvent("ItemCheck", fn)`   | `.onItemCheck(fn)`   |
+| `.OnEvent("ItemEdit", fn)`    | `.onItemEdit(fn)`    |
+| `.OnEvent("ItemExpand", fn)`  | `.onItemExpand(fn)`  |
+| `.OnEvent("ItemFocus", fn)`   | `.onItemFocus(fn)`   |
+| `.OnEvent("ItemSelect", fn)`  | `.onItemSelect(fn)`  |
