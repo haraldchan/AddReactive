@@ -1,4 +1,11 @@
-KeyLogger(recordedLog, isKeyRecording, saveLog := true) {
+KeyLogger(props) {
+    unpack({
+        recordedLog: &recordedLog,
+        isKeyRecording: &isKeyRecording,
+        replaceSleep: &replaceSleep,
+        saveLog: &saveLog
+    }, props)
+
     ih := InputHook("V")
     ih.KeyOpt("{All}", "N")
     ih.KeyOpt("{Esc}", "E")
@@ -12,15 +19,15 @@ KeyLogger(recordedLog, isKeyRecording, saveLog := true) {
     ih.recordedLog := recordedLog
     ih.isKeyRecording := isKeyRecording
 
-    ih.OnKeyDown := logKey.Bind(,,,"Down")
-    ih.OnKeyUp := logKey.Bind(,,,"Up")
+    ih.OnKeyDown := logKey.Bind(,,,"Down", replaceSleep)
+    ih.OnKeyUp := logKey.Bind(,,,"Up", replaceSleep)
     ih.OnEnd := (ih) => ih.isKeyRecording.set(false)
 
     ih.Start()
     ih.Wait()
 }
 
-logKey(ih, vk, sc, state) {
+logKey(ih, vk, sc, state, replaceSleep) {
     keyName := GetKeyName(Format("vk{:x}sc{:x}", VK, SC))
     elapsed := ih.ticker ? A_TickCount - ih.ticker : 0 
     isModifier := ih.Modifiers.find(m => keyName == m)
@@ -29,9 +36,15 @@ logKey(ih, vk, sc, state) {
         "{3}Send `"{{1}{2}}`"", 
         keyName, 
         isModifier ? (" " . state) : "",
-        elapsed ? "Sleep " . elapsed . "`r`n" : ""
+        ; elapsed ? "Sleep " . elapsed . "`r`n" : ""
+        match(replaceSleep.isReplace, Map(
+            replace => replace == true,      replaceSleep.stepFiller . "`r`n",
+            replace => !replace && elapsed,  "Sleep " . elapsed . "`r`n",
+            replace => !replace && !elapsed, ""
+        ))
     )
 
+    ; prevent recording same key on keep pushing down.
     if (ih.strokeRecord.key == keyName) {
         if (ih.strokeRecord.state == "Down" && state == "Up") {
             scriptLine := ""
