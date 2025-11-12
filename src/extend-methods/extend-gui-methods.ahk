@@ -81,6 +81,7 @@ class GuiExt {
      * 
      * @param {Gui} gui 
      * @param {Func} fn 
+     * @returns {Gui.Control[]}
      */
     static getCtrlsByMatch(gui, fn, includeArc := false) {
         ctrls := []
