@@ -40,8 +40,10 @@ MouseSpy_Record(App, config) {
             return
         }
 
-        if (FileExist(savename)) FileDelete(savename)
-
+        if (FileExist(savename)) {
+            FileDelete(savename)
+        }
+        
         FileAppend(recordedLog.Value, savename, "UTF-8")
         WinSetAlwaysOnTop(true, MouseSpyWindowTitle)
     }
@@ -80,7 +82,8 @@ MouseSpy_Record(App, config) {
 
         ; log code
         App.AREdit("xs10 yp+25 w330 r23 0x40", "{1}", recordedLog).onBlur((ctrl, _) => recordedLog.set(ctrl.Value)),
-        App.AddButton("xs170 y+8 w80 h20", "Export").onClick(handleLogExport),
+        App.AddButton("xs80 y+8 w80 h20", "Export").onClick(handleLogExport),
+        App.AddButton("x+10 w80 h20", "Copy").onClick((*) => A_Clipboard := recordedLog.value),
         App.AddButton("x+10 w80 h20", "Clear").onClick(handleLogReset)
         ; }
     )
