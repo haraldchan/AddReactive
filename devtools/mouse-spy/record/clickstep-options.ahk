@@ -11,7 +11,7 @@ MouseSpy_Record_ClickStepOptions(props) {
     
     comp := Component(App, A_ThisFunc)
 
-    stepFillerTemplates := signal(config["stepFillerTemplates"])
+    stepFillerTemplates := signal(config["stepFillerTemplates"], { name: "stepFillerTemplates" })
 
     effect(stepFillerTemplates, handleStepTemplatesUpdate)
     handleStepTemplatesUpdate(curTemplates) {

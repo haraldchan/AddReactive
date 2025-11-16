@@ -10,7 +10,7 @@ MouseSpy_Record_KeyRecordOptions(props) {
 
     comp := Component(App, A_ThisFunc)
 
-    logLinePrint := signal([{ keyName: "", updn: "", elapsed: "" }])
+    logLinePrint := signal([{ keyName: "", updn: "", elapsed: "" }], { name: "logLinePrint" })
     recorder := KeyRecorder({
         recordedLog: recordedLog, 
         isKeyRecording: isKeyRecording, 

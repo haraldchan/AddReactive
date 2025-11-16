@@ -18,7 +18,7 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
     SetTimer(updater, config["misc"]["updateInterval"])
     effect(curMouseInfo, cur => App["color-indicator"].SetFont(Format("s13 c{1}", StrReplace(cur["color"], "0x", ""))))
     
-    curWindowInfo := computed(curMouseInfo, updateWindowInfoUpdate)
+    curWindowInfo := computed(curMouseInfo, updateWindowInfoUpdate, { name: "curWindowInfo" })
     updateWindowInfoUpdate(curMouseInfo) {
         w := curMouseInfo["window"]
         try {
@@ -46,7 +46,7 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
                 y: y < 0 ? " - " . Abs(y) : " + " . y
             }
         )
-    )
+    , { name: "distance" })
 
     handleAnchorTypeToggling(ctrl, _) {
         isUsingMousePosAnchor := InStr(ctrl.Text, "mouse") ? true : false

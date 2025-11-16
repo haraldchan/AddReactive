@@ -2,16 +2,16 @@
 #Include "./record/keyrecord-options.ahk"
 
 MouseSpy_Record(App, config) {
-    curRecordMode := signal("clickStep")
+    curRecordMode := signal("clickStep", { name: "clickStep" })
     recordModes := Map(
         "clickStep", MouseSpy_Record_ClickStepOptions,
         "keyRecord", MouseSpy_Record_KeyRecordOptions
     )
 
-    useRelative := signal(false)
-    logMouseCoordMode := signal("Screen")
-    recordedLog := signal("CoordMode(`"Mouse`", `"Screen`")")
-    isKeyRecording := signal(false)
+    useRelative := signal(false, { name:"useRelative" })
+    logMouseCoordMode := signal("Screen", { name: "logMouseCoordMode" })
+    recordedLog := signal("CoordMode(`"Mouse`", `"Screen`")", { name: "recordedLog" })
+    isKeyRecording := signal(false, { name: "isKeyRecording" })
 
     handleRecordModeSetting(ctrl, _) {
         if (ctrl.Text == "Click Step") {
@@ -50,7 +50,7 @@ MouseSpy_Record(App, config) {
 
     return (
         ; { record options
-        App.AddGroupBox("Section w350 h160", "Record Options").SetFont("s10 bold"),
+        App.AddGroupBox("Section w350 h175", "Record Options").SetFont("s10 bold"),
         
         ; record mode
         App.AddText("xs10 yp+22 w100 h20 0x200", "Record Mode:"),
@@ -73,7 +73,7 @@ MouseSpy_Record(App, config) {
         ; }
 
         ; { Click Log
-        App.AddGroupBox("Section x22 y225 w350 h420", "Recorded Log").SetFont("s10 bold"),
+        App.AddGroupBox("Section x22 y240 w350 h420", "Recorded Log").SetFont("s10 bold"),
         ; CoordMode
         App.AddText("xs10 yp+22 w100 h20 0x200", "Coord Mode:"),
         App.AddRadio("x+10 w60 h20 Checked", "Screen").onClick(handleSetLogMouseCoordMode),

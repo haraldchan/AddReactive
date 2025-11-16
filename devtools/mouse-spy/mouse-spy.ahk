@@ -5,7 +5,7 @@
 #Include "./settings.ahk"
 
 MouseSpyWindowTitle := "MouseSpy"
-mouseStore := useStore({
+mouseStore := useStore("mouseStore", {
     states: {
         curMouseCoordMode: "Screen",
         curMouseInfo: {
@@ -53,7 +53,7 @@ MouseSpyGui.Show()
 
 MouseSpy(App) {
     config := JSON.parse(FileRead("./mousespy.config.json", "UTF-8"))
-    suspendText := computed(mouseStore.followMouse, isFollowing => isFollowing ? "(Hold Ctrl or Shift to suspend updates)" : "(Update suspended)")
+    suspendText := computed(mouseStore.followMouse, isFollowing => isFollowing ? "(Hold Ctrl or Shift to suspend updates)" : "(Update suspended)", { name: "suspendText" })
     
     return (
         ; { follow switch
@@ -78,3 +78,5 @@ MouseSpy(App) {
         ; }
     )
 }
+
+; DevToolsUI()

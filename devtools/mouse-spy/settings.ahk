@@ -13,10 +13,12 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
 
     hotkeySetup := {
         markAnchor: {
+            defaultHotkey: "+!s",
             hotkey: config["hotkeys"]["markAnchor"],
             callback: (*) => anchorPos.set(handleMousePosUpdate())
         },
         moveToAnchor: {
+            defaultHotkey: "+!q",
             hotkey: config["hotkeys"]["moveToAnchor"],
             callback: moveToAnchor
         }
@@ -31,6 +33,18 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
         Hotkey "~*Shift", (*) => followMouse.set(false)
         Hotkey "~*Shift up", (*) => followMouse.set(true)
         
+        if (!hotkeySetup.moveToAnchor.hotkey) {
+            hotkeySetup.moveToAnchor.hotkey := hotkeySetup.moveToAnchor.defaultHotkey
+            config["hotkeys"]["moveToAnchor"] := hotkeySetup.moveToAnchor.defaultHotkey
+            App["move-to-anchor-hotkey"].Value := hotkeySetup.moveToAnchor.defaultHotkey
+            handleConfigUpdate()
+        }
+        if (!hotkeySetup.markAnchor.hotkey) {
+            hotkeySetup.markAnchor.hotkey := hotkeySetup.markAnchor.defaultHotkey
+            config["hotkeys"]["markAnchor"] := hotkeySetup.markAnchor.defaultHotkey
+            App["mark-anchor-hotkey"].Value := hotkeySetup.markAnchor.defaultHotkey
+            handleConfigUpdate()
+        }
         Hotkey hotkeySetup.moveToAnchor.hotkey, hotkeySetup.moveToAnchor.callback, "On"
         
         HotIf((*) => WinExist(MouseSpyWindowTitle) && App["use-mouse-pos-anchor"].Value)
@@ -43,8 +57,15 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
     }
     
     handleSetHotkeys(ctrl, _) {
-        curHotkeyName := StrReplace(ctrl.Name, "Hotkey", "")
+        ; curHotkeyName := StrReplace(ctrl.Name, "-hotkey", "")
+        curHotkeyName := pipe(
+            name => StrReplace(name, "-hotkey", ""),
+            name => StrSplit(name, "-"),
+            name => ArrayExt.map(name, (chunk, index) => index > 1 ? StrTitle(chunk) : chunk),
+            name => ArrayExt.join(name, "")
+        )(ctrl.Name)
 
+        Sleep 200
         try {
             Hotkey hotkeySetup.%curHotkeyName%.hotkey, hotkeySetup.%curHotkeyName%.callback, "Off"
             hotkeySetup.%curHotkeyName%.hotkey := ctrl.Value
