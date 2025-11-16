@@ -10,16 +10,23 @@ class computed extends signal {
      * @param {Func} mutation computation function expression.
      * @return {computed}
      */
-    __New(_signal, mutation) {
+    __New(_signal, mutation, options := { name: "" }) {
         checkType(_signal, [signal, computed, Array], "First parameter is not a signal.")
         checkType(mutation, Func, "Second parameter is not a Function.")
 
         this.signal := _signal
         this.mutation := mutation
         this.prevValue := 0
+
+        ; options
+        this.name := options.HasOwnProp("name") ? options.name : ""
+
+        ; subscribers
         this.subs := []
         this.comps := []
         this.effects := []
+        
+        ; debugger
         this.debugger := false
 
         if (this.signal is Array) {
@@ -51,10 +58,10 @@ class computed extends signal {
             return
         }
 
-        if (ARConfig.debugMode && !(this is debugger)) {
+        if (ARConfig.debugMode && this.name && !(this is debugger)) {
             this.createDebugger := DebugUtils.createDebugger
             this.debugger := this.createDebugger(this)
-            if (InStr(this.debugger.value["caller"]["file"], "\AddReactive\devtools")) {
+            if (InStr(this.debugger.value["fromFile"], "AddReactive\devtools\devtools-ui")) {
                 this.debugger := false
             } else {
                 IsSet(CALL_TREE) && CALL_TREE.addDebugger(this.debugger)
