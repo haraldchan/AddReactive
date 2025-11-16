@@ -1,6 +1,14 @@
 #Include "./components.ahk"
 
+if (ARConfig.debugMode) {
+    global CALL_TREE := CallTree()
+}
+
 DevToolsUI() {
+    if (!ARConfig.debugMode) {
+        return
+    }
+
     ARConfig.useDevtoolsUI := true
 
     dtUI := Gui("", "AddReactive DevTools")

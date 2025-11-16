@@ -9,53 +9,44 @@ class debugger extends signal {
 }
 
 class DebugUtils {
-	/**
-	 * Gets the caller name from stack string.
-	 * @param {String} stackString 
-	 * @returns {false|String}
-	 */
-	static getCallerNameFromStack(stackString) {
-		if (!InStr(stackString, ".ahk")) {
-			return false
-		}
-		
-		callerSplitted := []
-		isCollecting := false
+	static getCallerFromStack(stack) {
+		l := ") : ["
+		r := "]"
 
-		for char in StrSplit(StrSplit(stackString, ".ahk")[2], "") {
-			if (isCollecting && char == "]") {
-				return callerSplitted.Length == 0 ? "root" : ArrayExt.join(callerSplitted, "")
-			}
+		callerName := pipe(
+			s => StrSplit(s, l)[2],
+			s => !StringExt.startsWith(s, "[") && StrSplit(s, r)[1]
+		)(stack) 
 
-			if (char == "[") {
-				isCollecting := true
-				continue
-			}
+		callerFile := StrSplit(stack, ".ahk")[1] . ".ahk"
 
-			if (isCollecting) {
-				callerSplitted.Push(char)
-			}
-
-			if (!isCollecting) {
-				continue
-			}
-		}
-
-		return false
+		return Map(
+			"callerName", callerName,
+			"callerFile", callerFile
+		)
 	}
 
+	static getCallerChainAndFilename(callStacks, signalName) {
+		callerChain := []
 
-	/**
-	 * Gets the caller full file name from stack string.
-	 * @param {String} stackString 
-	 * @returns {String}
-	 */
-	static getCallerFileFromStack(stackString) {
-		if (!InStr(stackString, ".ahk")) {
-			return false
+		startIndex := ArrayExt.findIndex(callStacks, item => InStr(item, "Object.Call"))
+		endIndex := ArrayExt.findIndex(callStacks, item => !InStr(item, ") : ["))
+		trimmedCallStacks := ArrayExt.slice(callStacks, startIndex + 1, endIndex)
+
+		; SetTimer((*) => msgbox(JSON.stringify(callStacks), signalName), -1)
+
+		for stack in trimmedCallStacks {
+			caller := DebugUtils.getCallerFromStack(stack)
+			if (!caller["callerName"]) {
+				continue
+			}
+
+			callerChain.InsertAt(1, caller)
 		}
 
-		return StrSplit(stackString, ".ahk")[1] . ".ahk"
+		fromFile := StrSplit(callStacks[startIndex], ".ahk")[1] . ".ahk"
+
+		return [callerChain, fromFile]
 	}
 
 
@@ -69,49 +60,28 @@ class DebugUtils {
 			throw Error()
 		} catch Error as err {
 			stacks := StrSplit(err.Stack, "`r`n")
-			stacks.RemoveAt(stacks.Length - 1)
 
-			varLineIndex := ArrayExt.findIndex(stacks, line => line && InStr(line, "[Object.Call]"))
-			endIndex := ArrayExt.findIndex(stacks, item => !InStr(item, ".ahk"))
-
-			; signal var name
-			varLine := StrSplit(stacks[varLineIndex], "[Object.Call]")[2]
-			varName := Trim(StrSplit(varLine, ":=")[1])
-
-			; type: signal | computed
-			classType := Type(signal)
-
-			; caller: caller name(direct caller), stack, call chain(full stack)
-			callerName := DebugUtils.getCallerNameFromStack(stacks[varLineIndex + 1])
+			; SetTimer((*) => msgbox(JSON.stringify(stacks)), -1)
 			
-			try {
-				callerStack := stacks[varLineIndex + 2]
-			} catch {
-				callerStack := ""
+			signalName := signal.name
+			signalType := match(stacks[2], Map(
+				s => InStr(s, "[signal.Prototype.__New]"), "signal",
+				s => InStr(s, "[computed.Prototype.__New]"), "computed",
+			))
+
+			unpack([&callerChain, &fromFile], DebugUtils.getCallerChainAndFilename(stacks, signalName))
+
+			debuggerObj := {
+				signalInstance: signal,
+				signalName: signalName,
+				signalType: signalType,
+				callerChain: callerChain,
+				fromFile: fromFile,
 			}
 
-			callerChainMap := []
-			for stackString in ArrayExt.reverse(ArrayExt.slice(stacks, varLineIndex, endIndex)) {
-				callerChainMap.Push([
-					DebugUtils.getCallerNameFromStack(stackString),
-					DebugUtils.getCallerFileFromStack(stackstring),
-					stackString
-				])
-			}
+			; msgbox JSON.stringify(debuggerObj)
 
-			return debugger({
-				signal: signal,
-				varName: varName,
-				class: classType,
-				stacks: ArrayExt.slice(stacks, 3, stacks.Length),
-				file: DebugUtils.getCallerFileFromStack(varLine),
-				caller: {
-					name: callerName,
-					stack: callerStack,
-					file: DebugUtils.getCallerFileFromStack(callerStack),
-					callChainMap: callerChainMap
-				}
-			})
+			return debugger(debuggerObj)
 		}
 	}
 }
