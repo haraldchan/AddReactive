@@ -12,7 +12,7 @@ NestedComponentTest(App) {
 
 Parent(App) {
     comp := Component(App, A_ThisFunc)
-    isShow := signal(true)
+    isShow := signal(true, { name: "isShow" })
 
     handleSubmit(*) {
         formData := comp.submit()
@@ -60,6 +60,8 @@ Child_2(App) {
 
 GrandChild(App) {
     comp := Component(App, A_ThisFunc)
+    someSignal := signal("", { name: "someSignal" })
+    someComputed := computed(someSignal, cur => cur, { name: "someComputed" })
 
     comp.render := this => this.Add(
         App.AddEdit("vgrandChild w200", "This is the Grandchild.")
