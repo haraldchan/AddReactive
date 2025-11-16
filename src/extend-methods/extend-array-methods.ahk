@@ -104,6 +104,26 @@ class ArrayExt {
     }
 
     /**
+     * Returns the value of the last element in the array that satisfies the provided testing function.
+     * @param {Array} arr  The array to search.
+     * @param {Function} fn - The test function.
+     * @returns {Any|false} - The found element or false if none found.
+     */
+    static findLast(arr, fn) {
+        index := arr.Length
+
+        loop {
+            if (fn(arr[index])) {
+                return arr[index]
+            }
+
+            index--
+        } until (index == 0)
+    
+        return false
+    }
+
+    /**
      * Returns the index of the first element in the array that satisfies the provided testing function.
      * @param {Array} arr - The array to search.
      * @param {Function} fn - The test function.
@@ -115,6 +135,26 @@ class ArrayExt {
                 return A_Index
             }
         }
+
+        return false
+    }
+
+    /**
+     * Returns the index of the last element in the array that satisfies the provided testing function.
+     * @param {Array} arr - The array to search.
+     * @param {Function} fn - The test function.
+     * @returns {Integer|false} - The index of the found element or false if none found.
+     */
+    static findLastIndex(arr, fn) {
+        index := arr.Length
+        
+        loop {
+            if (fn(arr[index])) {
+                return index
+            }
+
+            index--
+        } until (index == 0)
 
         return false
     }
