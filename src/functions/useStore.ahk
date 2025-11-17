@@ -25,14 +25,14 @@ class useStore {
         this.methods := {}
 
         for name, state in this.__states.OwnProps() {
-            s := signal(state, { name: "store::" . storeName . "::" . name })
+            s := useStore.state(state, { name: "store::" . storeName . "::" . name })
             s.addStore(this.__store)
             this.DefineProp(name, { value: s })
         }
 
-        for name, derived in this.__deriveds.OwnProps() {
-            d := derived
-            this.DefineProp(name, { value: computed(this.__store, (*) => d(this), { name: "store::" . storeName . "::" . name }) })
+        for name, mutationFn in this.__deriveds.OwnProps() {
+            mut := mutationFn
+            this.DefineProp(name, { value: computed(this.__store, (*) => mut(this), { name: "store::" . storeName . "::" . name }) })
         }
 
         for name, method in this.__methods.OwnProps() {
@@ -50,5 +50,31 @@ class useStore {
         }
 
         return this.methods.%methodName%
+    }
+
+    class state extends signal {
+        __New(initialValue, options := { name: "", forceUpdate: false }) {
+            super.__New(initialValue, options)
+
+            this.stores := []
+            this.deriveds := []
+
+        }
+
+        set(newSignalValue) {
+            if (!this.forceUpdate && newSignalValue == this.value) {
+                return
+            }
+
+            super.set(newSignalValue)
+
+            for store in this.stores {
+                store.set({ newValue: this.value })
+            }
+        }
+
+        addStore(store) {
+            this.stores.Push(store)
+        }
     }
 }
