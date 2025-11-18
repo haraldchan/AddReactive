@@ -2,8 +2,9 @@
 class Dynamic {
     /**
      * Render stateful component dynamically base on signal.
+     * @param {Gui} guiObj The GUI object to which the Dynamic belongs
      * ```
-     * Dynamic(color, colorEntries, props)
+     * Dynamic(gui, color, colorEntries, props)
      * ```
      * @param {signal} _signal Depend signal.
      * ```
@@ -20,13 +21,14 @@ class Dynamic {
      * ```
      * @param {Object} props additional props
      * ```
-     * props := { gui: oGui, style: "w200 h30" }
+     * props := { style: "w200 h30" }
      * ```
      */
-    __New(_signal, componentEntries, props := "", &instances := []) {
-        checkType(_signal, signal, "Parameter #1 is not a signal")
-        checkType(componentEntries, Map, "Parameter #2 is not a Map")
-        checkType(props, Object.Prototype, "Parameter #3 is not an Object")
+    __New(guiObj, _signal, componentEntries, props := "", &instances := []) {
+        checkType(guiObj, Gui, "Parameter is not a Gui object")
+        checkType(_signal, signal, "Parameter is not a signal")
+        checkType(componentEntries, Map, "Parameter is not a Map")
+        checkType(props, Object.Prototype, "Parameter is not an Object")
 
         this.signal := _signal
         this.componentEntries := componentEntries
@@ -35,7 +37,7 @@ class Dynamic {
         
         ; mount components
         for val, component in this.componentEntries {
-            instance := this._props ? component.Call(this._props) : component.Call()
+            instance := this._props ? component.Call(guiObj, this._props) : component.Call(guiObj)
             this.components.Push(instance)
 
             instance.render()
@@ -76,3 +78,5 @@ class Dynamic {
         }
     }
 }
+
+Gui.Prototype.AddDynamic := Dynamic
