@@ -2,6 +2,7 @@
 #Include "./dynamic.ahk"
 #Include "./indexlist.ahk"
 #Include "./show.ahk"
+#Include "./stackbox.ahk"
 
 ; functions
 #Include "./shareCheckStatus.ahk"
