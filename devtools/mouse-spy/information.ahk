@@ -94,69 +94,91 @@ MouseSpy_Information(App, config, AppWindowTitle, suspendText) {
     }
 
     return (
-        ; { window info 
-        App.AddGroupBox("Section w350 h160", "Window Info").SetFont("s10 bold"),
-        App.AddText(style.labelText, "Win Title:"),
-        App.AREdit(style.editLong,   "{1}", curWindowInfo, ["winTitle"]),
-        App.AddText(style.labelText, "Win Class:"),
-        App.AREdit(style.editLong,   "ahk_class {1}", curWindowInfo, ["ahkClass"]),
-        App.AddText(style.labelText, "Win Exe:"),
-        App.AREdit(style.editLong,   "ahk_exe {1}", curWindowInfo, ["ahkExe"]),
-        App.AddText(style.labelText, "Win PID:"),
-        App.AREdit(style.editLong,   "ahk_pid {1}", curWindowInfo, ["ahkPid"]),
-        App.AddText(style.labelText, "Win ID:"),
-        App.AREdit(style.editLong,   "ahk_id {1}", curWindowInfo, ["ahkId"]),
-        ; }
+        App.AddStackBox(
+            {
+                name: "window-info",
+                fontOptions: "s10 bold",
+                groupbox: {
+                    title: "Window Info",
+                    options: "Section w345 h160"
+                }
+            },
+            () => [
+                App.AddText(style.labelText, "Win Title:"),
+                App.AREdit(style.editLong,   "{1}", curWindowInfo, ["winTitle"]),
+                App.AddText(style.labelText, "Win Class:"),
+                App.AREdit(style.editLong,   "ahk_class {1}", curWindowInfo, ["ahkClass"]),
+                App.AddText(style.labelText, "Win Exe:"),
+                App.AREdit(style.editLong,   "ahk_exe {1}", curWindowInfo, ["ahkExe"]),
+                App.AddText(style.labelText, "Win PID:"),
+                App.AREdit(style.editLong,   "ahk_pid {1}", curWindowInfo, ["ahkPid"]),
+                App.AddText(style.labelText, "Win ID:"),
+                App.AREdit(style.editLong,   "ahk_id {1}", curWindowInfo, ["ahkId"]),
+            ]
+        ),
 
-        ; { current Mouse Pos
-        App.AddGroupBox("Section x22 yp+40 w350 h110", "Mouse Position").SetFont("s10 bold"),
-        
-        ; Screen
-        App.AddText("xs10 yp+25 w60 h20 0x200", "Screen:"),
-        App.AREdit(style.editLong, "{1}, {2}", curMouseInfo, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
-        
-        ; Client
-        App.AddText("xs10 yp+25 w60 h20 0x200", "Client:"),
-        App.AREdit(style.editLong, "{1}, {2}", curMouseInfo, [v => v["Client"]["x"], v => v["Client"]["y"]]),
-        
-        ; color
-        App.AddText("xs10 yp+25 w50 h20 0x200", "Color: "),
-        App.AddText("vcolor-indicator x+0 w20 h20 0x200", "■"),
-        App.AREdit(style.editLong . " x+0 ", "{1}", curMouseInfo, ["color"]),
-        ; }
+        StackBox(App,
+            {
+                name: "current-mouse-pos",
+                fontOptions: "s10 bold",
+                groupbox: {
+                    title: "Mouse Position",
+                    options: "Section x22 y+5 w345 h110"
+                }
+            },
+            () => [
+                ; Screen
+                App.AddText("xs10 yp+25 w60 h20 0x200", "Screen:"),
+                App.AREdit(style.editLong, "{1}, {2}", curMouseInfo, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
 
-        ; { anchoring & distance
-        App.AddGroupBox("Section x22 yp+40 w350 h250", "Anchoring / Distance").SetFont("s10 bold"),
-        
-        ; anchors
-        App.AddText(style.labelText, "Screen:"), 
-        App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", anchorPos, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
-        App.AddText("x+30 w50 h20 0x200", "Client:"), 
-        App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", anchorPos, [v => v["Client"]["x"], v => v["Client"]["y"]]),
+                ; Client
+                App.AddText("xs10 yp+25 w60 h20 0x200", "Client:"),
+                App.AREdit(style.editLong, "{1}, {2}", curMouseInfo, [v => v["Client"]["x"], v => v["Client"]["y"]]),
 
-        ; relative distance
-        App.AddText(style.labelText . " yp+30", "Distance:"),
-        App.AREdit(style.editLong, "x {1}, y {2}", distance, ["x", "y"]),
+                ; color
+                App.AddText("xs10 yp+25 w50 h20 0x200", "Color: "),
+                App.AddText("vcolor-indicator x+0 w20 h20 0x200", "■"),
+                App.AREdit(style.editLong . " x+0 ", "{1}", curMouseInfo, ["color"]),                
+            ]
+        ),
 
-        ; anchor types
-        App.AddText("xs10 yp+35 w150 h20 0x200", "Anchor Type").SetFont("s9 bold"),
-        ; mouse pos anchor
-        App.AddRadio("vuse-mouse-pos-anchor xs10 yp+30 w180 h20 Checked", "Use mouse position")
-           .OnEvent("Click", handleAnchorTypeToggling),
-        ; image anchor
-        App.AddRadio("vuse-image-anchor xs10 yp+25 w80 h20", "Use image")
-           .OnEvent("Click", handleAnchorTypeToggling),
-        App.AddEdit("vimage-anchor-filepath x+10 h20 w150 Disabled", ""),
-        App.AddButton("vchoose-image-anchor-btn x+10 h20 w80 Disabled", "Choose File").OnEvent("Click", handleSelectImageAnchor),
+        StackBox(App,
+            {
+                name: "anchoring-distance",
+                fontOptions: "s10 bold",
+                groupbox: {
+                    title: "Anchoring / Distance",
+                    options: "Section x22 y+5 w345 h250"
+                }    
+            },
+            () => [
+                App.AddText(style.labelText, "Screen:"), 
+                App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", anchorPos, [v => v["Screen"]["x"], v => v["Screen"]["y"]]),
+                App.AddText("x+30 w50 h20 0x200", "Client:"), 
+                App.AREdit("x+10 w80 ReadOnly", "{1}, {2}", anchorPos, [v => v["Client"]["x"], v => v["Client"]["y"]]),
 
-        
-        ; move to anchor
-        App.AddText("xs10 yp+35 w150 h20 0x200", "Move to anchor").SetFont("s9 bold"),
-        App.AddText("xs10 yp+25 w80 h20 0x200", "Coord Mode:"),
-        App.AddRadio("x+10 w80 h20 Checked", "Screen").OnEvent("Click", (ctrl, _) => curMouseCoordMode.set(ctrl.Text)),
-        App.AddRadio("x+0 w80 h20", "Client").OnEvent("Click", (ctrl, _) => curMouseCoordMode.set(ctrl.Text)),
-        App.AddButton("x+0 h20 w80", "Move").OnEvent("Click", moveToAnchor)
-        ; }
+                ; relative distance
+                App.AddText(style.labelText . " yp+30", "Distance:"),
+                App.AREdit(style.editLong, "x {1}, y {2}", distance, ["x", "y"]),
 
+                ; anchor types
+                App.AddText("xs10 yp+35 w150 h20 0x200", "Anchor Type").SetFont("s9 bold"),
+                
+                ; mouse pos anchor
+                App.AddRadio("vuse-mouse-pos-anchor xs10 yp+30 w180 h20 Checked", "Use mouse position").onClick(handleAnchorTypeToggling),
+                
+                ; image anchor
+                App.AddRadio("vuse-image-anchor xs10 yp+25 w80 h20", "Use image").onClick(handleAnchorTypeToggling),
+                App.AddEdit("vimage-anchor-filepath x+10 h20 w145 Disabled", ""),
+                App.AddButton("vchoose-image-anchor-btn x+10 h20 w80 Disabled", "Choose File").onClick(handleSelectImageAnchor),
+
+                ; move to anchor
+                App.AddText("xs10 yp+35 w150 h20 0x200", "Move to anchor").SetFont("s9 bold"),
+                App.AddText("xs10 yp+25 w80 h20 0x200", "Coord Mode:"),
+                App.AddRadio("x+10 w75 h20 Checked", "Screen").onClick((ctrl, _) => curMouseCoordMode.set(ctrl.Text)),
+                App.AddRadio("x+0 w75 h20", "Client").onClick((ctrl, _) => curMouseCoordMode.set(ctrl.Text)),
+                App.AddButton("x+5 h20 w80", "Move").onClick(moveToAnchor)
+            ]
+        )
     )
 }

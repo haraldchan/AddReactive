@@ -1,6 +1,5 @@
 MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
     unpack({ 
-        ; curMouseCoordMode: &curMouseCoordMode,
         curMouseInfo:      &curMouseInfo,
         anchorPos:         &anchorPos,
         followMouse:       &followMouse,
@@ -85,26 +84,42 @@ MouseSpy_Settings(App, config, MouseSpyWindowTitle) {
     }
 
     return (
-        ; { hotkeys setup
-        App.AddGroupBox("Section w350 h80", "Hotkeys").SetFont("s10 bold"),
-        ; anchor marking
-        App.AddText("xs10 yp+22 w100 h20 0x200", "Mark Anchor:"),
-        App.AddHotkey("vmark-anchor-hotkey x+10", config["hotkeys"]["markAnchor"])
-           .OnEvent("Change", handleSetHotkeys),
-        ; move to anchor
-        App.AddText("xs10 yp+25 w100 h20 0x200", "Move to Anchor:"),
-        App.AddHotkey("vmove-to-anchor-hotkey x+10", config["hotkeys"]["moveToAnchor"])
-           .OnEvent("Change", handleSetHotkeys),
-        ; }
+        StackBox(App,
+            {
+                name: "hotkey-setup",
+                fontOptions: "s10 bold",
+                groupbox: {
+                    title: "Record Options",
+                    options: "Section w345 h80"
+                }
+            },
+            () => [
+                ; anchor marking
+                App.AddText("xs10 yp+22 w100 h20 0x200", "Mark Anchor:"),
+                App.AddHotkey("vmark-anchor-hotkey x+10", config["hotkeys"]["markAnchor"]).onChange(handleSetHotkeys),
+                
+                ; move to anchor
+                App.AddText("xs10 yp+25 w100 h20 0x200", "Move to Anchor:"),
+                App.AddHotkey("vmove-to-anchor-hotkey x+10", config["hotkeys"]["moveToAnchor"]).onChange(handleSetHotkeys)
+            ]
+        ),
 
-        ; { misc
-        App.AddGroupBox("Section w350 x22 yp+40 h160", "Misc").SetFont("s10 bold"),
-        ; refresh interval
-        App.AddText("xs10 yp+22 w100 h20 0x200", "Update Interval:"),
-        App.AddEdit("vupdate-interval x+10 w110 h20 Number", config["misc"]["updateInterval"])
-           .OnEvent("LoseFocus", handleUpdateIntervalUpdate),
-        App.AddText("x+5 w50 h20 0x200", "ms"),
-        ; }
+        StackBox(App,
+            {
+                name: "misc-settings",
+                fontOptions: "s10 bold",
+                groupbox: {
+                    title: "Misc",
+                    options: "Section w345 x22 y+5 h160"
+                }
+            },
+            () => [
+                ; refresh interval
+                App.AddText("xs10 yp+22 w100 h20 0x200", "Update Interval:"),
+                App.AddEdit("vupdate-interval x+10 w110 h20 Number", config["misc"]["updateInterval"]).onBlur(handleUpdateIntervalUpdate),
+                App.AddText("x+5 w50 h20 0x200", "ms"),
+            ]
+        ),
 
         setHotkeys()
     )

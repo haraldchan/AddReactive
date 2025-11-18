@@ -1,6 +1,5 @@
-MouseSpy_Record_ClickStepOptions(props) {
+MouseSpy_Record_ClickStepOptions(App, props) {
     unpack({
-        App: &App, 
         config: &config, 
         curRecordMode: &curRecordMode,
         logMouseCoordMode: &logMouseCoordMode,
@@ -59,16 +58,16 @@ MouseSpy_Record_ClickStepOptions(props) {
 
     comp.render := this => this.Add(
         App.AddText("xs10 y110 w100 h20 0x200", "Click action:"),        
-        App.AddDDL("vclick-action-ddl x+10 w150 Choose1", ["Click", "Click 2", "Click `"Right`""]),
+        App.AddDDL("vclick-action-ddl x+10 w145 Choose1", ["Click", "Click 2", "Click `"Right`""]),
         
         App.AddText("xs10 y135 w100 h20 0x200", "Step filler snippets:"),
         
-        App.ARDDL("vstep-filler-ddl x+10 w150 Choose1", stepFillerTemplates).onChange(handleConfigTemplateUpdate),
+        App.ARDDL("vstep-filler-ddl x+10 w145 Choose1", stepFillerTemplates).onChange(handleConfigTemplateUpdate),
         
         App.ARButton("x+5 w30 h20", "+").onClick((*) => MouseSpy_Record_StepFillerEditor("add", stepFillerTemplates)),
         App.ARButton("x+5 w30 h20", "✎").onClick((*) => MouseSpy_Record_StepFillerEditor("edit", stepFillerTemplates, { name: App["step-filler-ddl"].Text, snippet: App["step-filler-snippet"].Value})),
         
-        App.AddEdit("vstep-filler-snippet xs120 yp+25 w220 R3 ReadOnly", config["stepFillerTemplates"][App["step-filler-ddl"].Text])
+        App.AddEdit("vstep-filler-snippet xs120 yp+25 w215 R3 ReadOnly", config["stepFillerTemplates"][App["step-filler-ddl"].Text])
     )
 
     return comp

@@ -1,8 +1,7 @@
 #Include "./key-recorder.ahk"
 
-MouseSpy_Record_KeyRecordOptions(props) {
+MouseSpy_Record_KeyRecordOptions(App, props) {
     unpack({
-        App: &App,
         config: &config,
         recordedLog: &recordedLog,
         isKeyRecording: &isKeyRecording
