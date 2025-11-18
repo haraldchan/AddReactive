@@ -35,7 +35,7 @@ class Component {
      * @returns {Component}
      */
     Add(controls*) {
-        saveControls(ctrlsArray, controls) {
+        _saveControls(ctrlsArray, controls) {
             for control in controls {
                 ; native control
                 if (control is Gui.Control) {
@@ -51,13 +51,13 @@ class Component {
 
                 ; Array
                 if (control is Array) {
-                    saveControls(ctrlsArray, control)
+                    _saveControls(ctrlsArray, control)
                 }
 
                 ; IndexList
                 if (control is IndexList) {
                     for listControl in control.ctrlGroups {
-                        saveControls(ctrlsArray, listControl)
+                        _saveControls(ctrlsArray, listControl)
                     }
                 }
 
@@ -65,11 +65,16 @@ class Component {
                 if (control is Component) {
                     this.childComponents.Push(control)
                 }
+
+                ; StackBox
+                if (control is StackBox) {
+                    _saveControls(ctrlsArray, control.ctrls)
+                }
             }
         }
 
         ctrls := []
-        saveControls(ctrls, controls)
+        _saveControls(ctrls, controls)
         this.ctrls.Push(ctrls*)
 
         return this
