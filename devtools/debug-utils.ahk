@@ -3,8 +3,39 @@
 class debugger extends signal {
 	notifyChange() {
 		if (ARConfig.useDevtoolsUI) {
-			CALL_TREE.updateTimeStamp.set(A_Now . A_MSec)
+			; CALL_TREE.updateTimeStamp.set(A_Now . A_MSec)
+			DebuggerList.getLatest()
 		}
+	}
+}
+
+class DebuggerList {
+	static debuggers := signal([])
+
+	static addDebugger(debugger) {
+		listed := {
+			signalName: debugger.value["signalName"],
+			signalType: debugger.value["signalType"],
+			value: (debugger.value["signalInstance"].value is Object) 
+				? JSON.stringify(debugger.value["signalInstance"].value, 0, "") 
+				: debugger.value["signalInstance"].value,
+			caller: ArrayExt.at(debugger.value["callerChain"], -1)["callerName"],
+			debugger: debugger
+		}
+
+		this.debuggers.set([this.debuggers.value*].append(listed))
+	}
+
+	static getLatest() {
+		new := [this.debuggers.value*]
+
+		for d in new {
+			d["value"] := d["value"] is Object 
+				? JSON.stringify(d["debugger"].value["signalInstance"].value, 0, "")
+				: d["debugger"].value["signalInstance"].value
+		}
+
+		this.debuggers.set(new)
 	}
 }
 
@@ -15,8 +46,9 @@ class DebugUtils {
 
 		callerName := pipe(
 			s => StrSplit(s, l)[2],
-			s => !StringExt.startsWith(s, "[") && StrSplit(s, r)[1]
-		)(stack) 
+			s => !StringExt.startsWith(s, "[") && StrSplit(s, r)[1],
+			s => StrReplace(s, ".Prototype.__New", "")
+		)(stack)
 
 		callerFile := StrSplit(stack, ".ahk")[1] . ".ahk"
 
@@ -33,8 +65,6 @@ class DebugUtils {
 		endIndex := ArrayExt.findIndex(callStacks, item => !InStr(item, ") : ["))
 		trimmedCallStacks := ArrayExt.slice(callStacks, startIndex + 1, endIndex)
 
-		; SetTimer((*) => msgbox(JSON.stringify(callStacks), signalName), -1)
-
 		for stack in trimmedCallStacks {
 			caller := DebugUtils.getCallerFromStack(stack)
 			if (!caller["callerName"]) {
@@ -49,7 +79,6 @@ class DebugUtils {
 		return [callerChain, fromFile]
 	}
 
-
 	/**
 	 * Creates a debugger.
 	 * @param {signal} signal
@@ -60,8 +89,6 @@ class DebugUtils {
 			throw Error()
 		} catch Error as err {
 			stacks := StrSplit(err.Stack, "`r`n")
-
-			; SetTimer((*) => msgbox(JSON.stringify(stacks)), -1)
 			
 			signalName := signal.name
 			signalType := match(stacks[2], Map(
@@ -78,8 +105,6 @@ class DebugUtils {
 				callerChain: callerChain,
 				fromFile: fromFile,
 			}
-
-			; msgbox JSON.stringify(debuggerObj)
 
 			return debugger(debuggerObj)
 		}
