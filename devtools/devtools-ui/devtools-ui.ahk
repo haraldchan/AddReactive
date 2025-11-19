@@ -1,4 +1,5 @@
-#Include "./components.ahk"
+; #Include "./components.ahk"
+#Include "./reactives.ahk"
 
 if (ARConfig.debugMode) {
     global CALL_TREE := CallTree()
@@ -12,13 +13,16 @@ DevToolsUI() {
     ARConfig.useDevtoolsUI := true
 
     dtUI := Gui("", "AddReactive DevTools")
-    dtUI.SetFont(,"微软雅黑")
+    dtUI.SetFont(,"Verdana")
 
     return (
-        Tabs := dtUI.AddTab3(, ["Components", "Code Preview", "Replay"]),
+        Tabs := dtUI.AddTab3(, ["Reactives", "Components", "Code Preview", "Replay"]),
         
-        Tabs.UseTab(1),
-        Components(dtUI),
+        Tabs.UseTab("Reactives"),
+        Reactives(dtUI),
+
+        ; Tabs.UseTab("Components"),
+        ; Components(dtUI),
 
         dtUI.Show()
     )
