@@ -61,11 +61,13 @@ class computed extends signal {
         if (ARConfig.debugMode && this.name && !(this is debugger)) {
             this.createDebugger := DebugUtils.createDebugger
             this.debugger := this.createDebugger(this)
-            if (InStr(this.debugger.value["fromFile"], "AddReactive\devtools\devtools-ui")) {
-                this.debugger := false
-            } else {
-                IsSet(CALL_TREE) && CALL_TREE.addDebugger(this.debugger)
-            }
+            DebuggerList.addDebugger(this.debugger)
+
+            ; if (InStr(this.debugger.value["fromFile"], "AddReactive\devtools\devtools-ui")) {
+            ;     this.debugger := false
+            ; } else {
+            ;     IsSet(CALL_TREE) && CALL_TREE.addDebugger(this.debugger)
+            ; }
         }
     }
 
@@ -115,6 +117,11 @@ class computed extends signal {
                 e := effect.effectFn
                 e(effect.depend.map(dep => dep.value)*)
             }
+        }
+
+        ; notify debugger
+        if (ARConfig.debugMode && this.name && this.debugger) {
+            this.debugger.notifyChange()
         }
     }
 

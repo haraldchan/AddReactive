@@ -40,13 +40,15 @@ class signal {
         }
 
         if (ARConfig.debugMode && this.name && !(this is debugger)) {
-            this.createDebugger := DebugUtils.createDebugger
-            this.debugger := this.createDebugger(this)
-            if (InStr(this.debugger.value["fromFile"], "AddReactive\devtools\devtools-ui")) {
-                this.debugger := false
-            } else {
-                IsSet(CALL_TREE) && CALL_TREE.addDebugger(this.debugger)
-            }
+            ; this.createDebugger := DebugUtils.createDebugger
+            this.debugger := DebugUtils.createDebugger(this)
+            DebuggerList.addDebugger(this.debugger)
+
+            ; if (InStr(this.debugger.value["fromFile"], "AddReactive\devtools\devtools-ui")) {
+            ;     this.debugger := false
+            ; } else {
+            ;     IsSet(CALL_TREE) && CALL_TREE.addDebugger(this.debugger)
+            ; }
         }
     }
 
@@ -107,8 +109,8 @@ class signal {
             }
         }
 
-        ; notify signal tracker
-        if (ARConfig.debugMode && this.debugger) {
+        ; notify debugger
+        if (ARConfig.debugMode && this.name && this.debugger) {
             this.debugger.notifyChange()
         }
     }
