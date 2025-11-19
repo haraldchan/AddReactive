@@ -25,14 +25,14 @@ class useStore {
         this.methods := {}
 
         for name, state in this.__states.OwnProps() {
-            s := useStore.state(state, { name: "store::" . storeName . "::" . name })
+            s := useStore.state(state, { name: storeName . "::" . name })
             s.addStore(this.__store)
             this.DefineProp(name, { value: s })
         }
 
         for name, mutationFn in this.__deriveds.OwnProps() {
             mut := mutationFn
-            this.DefineProp(name, { value: computed(this.__store, (*) => mut(this), { name: "store::" . storeName . "::" . name }) })
+            this.DefineProp(name, { value: useStore.derived(this.__store, (*) => mut(this), { name: storeName . "::" . name }) })
         }
 
         for name, method in this.__methods.OwnProps() {
@@ -76,5 +76,9 @@ class useStore {
         addStore(store) {
             this.stores.Push(store)
         }
+    }
+
+    class derived extends computed {
+        
     }
 }
