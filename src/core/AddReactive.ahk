@@ -12,6 +12,8 @@ class AddReactive {
     __New(GuiObject, controlType, options := "", content := "", depend := 0, key := 0) {
         this.GuiObject := GuiObject
         this.ctrlType := controlType
+         ; enable directives
+        this.directives := useDirectives(GuiObject)
         this.options := options ? this._handleOptionsFormatting(options) : ""
         this.content := content ? content : ""
         this.depend := depend ? this._filterDepends(depend) : 0
@@ -104,9 +106,7 @@ class AddReactive {
         optionsArr := StrSplit(optionsString, " ")
         arcNameIndex := ArrayExt.findIndex(optionsArr, item => InStr(item, "$"))
         for index, option in optionsArr {
-            if (StringExt.startsWith(option, "@")) {
-                optionsArr[index] := optionShorthands[option]
-            }
+            optionsArr[index] := this.directives.parseDirective(option)
         }
 
         if (arcNameIndex) {

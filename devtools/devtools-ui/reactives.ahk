@@ -33,7 +33,7 @@ Reactives(App) {
                 fontOptions: "bold",
                 groupbox: {
                     title: "Signals / States",
-                    options: "Section x20 y30 w380 r11"
+                    options: "vsignals-stackbox Section w380 r11"
                 }
             },
             () => [
@@ -48,7 +48,7 @@ Reactives(App) {
                 fontOptions: "bold",
                 groupbox: {
                     title: "Computeds / Deriveds",
-                    options: "Section x20 y+5 w380 r11"
+                    options: "Section @AlignXWH:signals-stackbox y+5"
                 }
             },
             () => [

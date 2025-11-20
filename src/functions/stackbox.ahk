@@ -43,13 +43,16 @@ class StackBox {
             this.gui.components.Push(this)
         }
 
+        ; enable directives
+        this.directives := useDirectives(guiObj)
+
         this.fontName := options.HasOwnProp("fontName") ? options.fontName : ""
         this.fontOptions := options.HasOwnProp("fontOptions") ? options.fontOptions : ""
         this.renderCallback := (*) => renderCallback()
         this.ctrls := []
 
         ; GroupBox option
-        this.gbOption := options.groupbox.options
+        this.gbOption := this._parseOptions(options.groupbox.options)
         this.gbTitle := options.groupbox.HasOwnProp("title") && !options.HasOwnProp("checkbox") ? options.groupbox.title : ""
         ; CheckBox option
         this.checkbox := options.HasOwnProp("checkbox") ? options.checkbox : ""
@@ -59,6 +62,20 @@ class StackBox {
 
         ; mount controls
         this._renderStackBox(this.gui)
+    }
+
+    _parseOptions(gbOptions) {
+        splittedGbOptions := StrSplit(gbOptions, " ")
+        for index, opt in splittedGbOptions {
+            splittedGbOptions[index] := this.directives.parseDirective(opt)
+        }
+
+        parsedGbOptions := ""
+        for opt in splittedGbOptions {
+            parsedGbOptions .= opt . " "
+        }
+
+        return parsedGbOptions
     }
 
     _saveCtrls(savedCtrls, renderedCtrls) {
@@ -137,7 +154,7 @@ class StackBox {
         }
 
         ; bottom
-        bottom := App.AddText(Format("xs10 h20 {1} {2}", gbWidth, "y" . (gbY + gbHeight - 20)))
+        bottom := App.AddText(Format("xs10 h20 w{1} y{2}", gbWidth, gbY + gbHeight - 20))
         bottom.Visible := false
         this.ctrls.InsertAt(this.checkbox ? 3 : 2, bottom)
     }
