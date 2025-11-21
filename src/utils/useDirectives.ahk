@@ -1,6 +1,7 @@
 class useDirectives {
     __New(GuiObj) {
         this.guiObj := GuiObj
+        this.guiObj.directives := this
         this.directiveOptionMap := Map(
             "@IconOnly", " 0x40 0x300 ",
             "@TextAlignCenter", " Center 0x200 ",
@@ -17,7 +18,9 @@ class useDirectives {
         }
         else if (StringExt.startsWith(opt, "@Align")) {
         ; else if (RegExMatch(opt, "^@Align(?!.*(.).*\1)[XYWH]+:.*$")) {
-            unpack([&alignment, &targetCtrl], StrSplit(opt, ":"))
+            splittedOpts := StrSplit(opt, ":")
+            alignment := splittedOpts[1]
+            targetCtrl := splittedOpts[2]
             
             this.guiObj[targetCtrl].GetPos(&X, &Y, &Width, &Height)
 
