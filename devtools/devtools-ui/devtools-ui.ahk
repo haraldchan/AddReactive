@@ -14,6 +14,7 @@ DevToolsUI() {
 
     dtUI := Gui("", "AddReactive DevTools")
     dtUI.SetFont(,"Verdana")
+    dtUI.useDirectives()
 
     return (
         Tabs := dtUI.AddTab3(, ["Reactives", "Components", "Code Preview", "Replay"]),

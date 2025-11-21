@@ -37,14 +37,11 @@ class StackBox {
      * ```
      */
     __New(guiObj, options, renderCallback) {
-        this.gui := guiObj
+        this.guiObj := guiObj
         this.name := options.HasOwnProp("name") ? "$" . options.name : ""
         if (this.name) {
-            this.gui.components.Push(this)
+            this.guiObj.components.Push(this)
         }
-
-        ; enable directives
-        this.directives := useDirectives(guiObj)
 
         this.fontName := options.HasOwnProp("fontName") ? options.fontName : ""
         this.fontOptions := options.HasOwnProp("fontOptions") ? options.fontOptions : ""
@@ -61,13 +58,15 @@ class StackBox {
         }
 
         ; mount controls
-        this._renderStackBox(this.gui)
+        this._renderStackBox(this.guiObj)
     }
 
     _parseOptions(gbOptions) {
         splittedGbOptions := StrSplit(gbOptions, " ")
-        for index, opt in splittedGbOptions {
-            splittedGbOptions[index] := this.directives.parseDirective(opt)
+        if (this.guiObj.HasOwnProp("directives")) {
+            for index, opt in splittedGbOptions {
+                splittedGbOptions[index] := this.guiObj.directives.parseDirective(opt)
+            }
         }
 
         parsedGbOptions := ""
